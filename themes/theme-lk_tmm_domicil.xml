@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+    <clientlayers>
+        <clientlayer name="clientlayer">
+            <singletile>true</singletile>
+        </clientlayer>
+    </clientlayers>
+    <cbinfo-metadata/>
+    <layer datasource="lk_tmm_domicil" editable="true" name="lk_tmm_domicil" type="polygon">[datasource:lk_tmm_domicil.mapfile-datasource]
+        <class>
+            <name>Rum</name>
+            <style>
+                <color>255 0 0</color>
+                <opacity>0</opacity>
+            </style>
+            <style>
+                <outlinecolor>255 0 0</outlinecolor>
+            </style>
+        </class>
+    </layer>
+</theme>

@@ -1,0 +1,4 @@
+/dist
+/internal/node_modules
+/internal/.parcel-cache
+/internal/dist

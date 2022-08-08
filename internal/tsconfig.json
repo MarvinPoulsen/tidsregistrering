@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "jsx": "react",
+        "lib": [ "es2015", "DOM" ]
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "node_modules/minimap-types/lib/*.d.ts"
+    ],
+}

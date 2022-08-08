@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="ep_lk_tmm">
+        <connect>[cbinfo.pg_endpoint.connect]</connect>
+        <user>[cbinfo.pg_endpoint.usr]</user>
+        <pwd>[cbinfo.pg_endpoint.pwd]</pwd>
+    </endpoint>
+    <datasource endpoint="ep_lk_tmm" name="lk_tmm_registration">
+        <table name="registration" pkcolumn="id" schema="tmm"/>
+        <sql command="read-by-user">select * from tmm.registration where user_id=[string:getUsershortid(sessionid)];</sql>
+        <sql command="insert-registration">
+            insert into 
+                tmm.registration(
+                    user_id, 
+                    date, 
+                    time, 
+                    task_id,
+                    timestamp, 
+                    note
+                ) 
+                values (
+                    [string:getUsershortid(sessionid)],
+                    [timestamp:toTimestamp(date, 'yyyy-MM-dd')],
+                    [number:time],
+                    [number:taskId],
+                    CURRENT_TIMESTAMP,
+                    [string:if isdefined (note) then note else NULL endif]
+                );
+        </sql>
+        <sql command="delete-by-id">delete from tmm.registration where id=[number:id];</sql>
+        <sql command="update-by-id">
+            update tmm.registration
+            set 
+                date = [timestamp:toTimestamp(date, 'yyyy-MM-dd')], 
+                time = [number:time], 
+                task_id = [number:taskId],
+                timestamp = CURRENT_TIMESTAMP, 
+                note = [string:if isdefined (note) then note else NULL endif]
+            where
+                id = [number: id];
+        </sql>
+    </datasource>
+    <datasource endpoint="ep_lk_tmm" name="lk_tmm_tasks">
+        <table name="tasks" pkcolumn="id" schema="tmm"/>
+    </datasource>
+    <datasource endpoint="ep_lk_tmm" name="lk_tmm_projects">
+        <table name="projects" pkcolumn="id" schema="tmm"/>
+    </datasource>
+    <datasource endpoint="ep_lk_tmm" name="lk_tmm_users">
+        <table name="users" pkcolumn="id" schema="tmm"/>
+    </datasource>
+</datasources>

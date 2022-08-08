@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presentation>
+    <text name="overskrift" plural="flertal" value="ental"/>
+    <columns>
+        <column format="heading">
+            <label>'overskrift1'</label>
+            <value>navn</value>
+        </column>
+		<column>
+            <label>'id'</label>
+            <value>id</value>
+            <condition/>
+        </column>
+        <column>
+            <label>'WWAN'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(wwan)</condition>
+        </column>
+        <column>
+            <label>'Maskinenavn'</label>
+            <value>maskinenavn</value>
+            <condition/>
+        </column>
+        <column>
+            <label>'Navn'</label>
+            <value>navn</value>
+            <condition/>
+        </column>
+        <column>
+            <label>'Model'</label>
+            <value>model</value>
+            <condition/>
+        </column>
+        <column>
+            <label>'Retur'</label>
+            <value>retur</value>
+            <condition/>
+        </column>
+        <column>
+            <label>'Note'</label>
+            <value>note</value>
+            <condition>IsDefined(note) and trim(note) != null</condition>
+        </column>
+        <column>
+            <label>'Fejl'</label>
+            <value>fejl</value>
+            <condition>IsDefined(fejl) and trim(fejl) != null</condition>
+        </column>
+        <column>
+            <label>'Bestilt'</label>
+            <value>bestilt</value>
+            <condition>IsDefined(bestilt) and trim(bestilt) != null</condition>
+        </column>
+        <column>
+            <label>'Status'</label>
+            <value>status</value>
+            <condition>IsDefined(status) and trim(status) != null</condition>
+        </column>
+        <column>
+            <label>'USB-dock'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(usbdock)</condition>
+        </column>
+		<column format="level-heading">
+		<label>'PROGRAMMER:'</label>
+		<value>'  '</value>
+		</column>
+        <column format="level-sub">
+            <label>'Adobe Pro Skylicens'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(adobepro)</condition>
+        </column>
+        <column format="level-sub">
+            <label>'MapInfo'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(mapinfo)</condition>
+        </column>
+        <column format="level-sub">
+            <label>'AutoCad'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(autocad)</condition>
+        </column>
+        <column format="level-sub">
+            <label>'Photoshop'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(photoshop)</condition>
+        </column>
+        <column format="level-sub">
+            <label>'InDesign'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(indesign)</condition>
+        </column>
+        <column format="level-sub">
+            <label>'Creative Cloud alle apps'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(creativecloud)</condition>
+        </column>
+        <column format="level-sub">
+            <label>'Access'</label>
+            <value>'Ja'</value>
+			<condition>IsDefinedAndTrue(access)</condition>
+        </column>
+    </columns>
+</presentation>
