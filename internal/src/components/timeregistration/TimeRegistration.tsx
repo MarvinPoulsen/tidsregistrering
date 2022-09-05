@@ -59,9 +59,9 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
   }
 
   const options = props.data;
-  console.log(options, taskId)
   const selectedOption = options.find((item)=>item.id === taskId)
-  const description = selectedOption ? selectedOption.description : 'This is a description of the selected task';
+  const description = selectedOption && selectedOption.description !== '' ? selectedOption.description : 'Ingen beskrivelse af den valgte opgave endnu';
+
   return (
     <div className="box">
       <form onSubmit={handleSubmit}>
@@ -82,9 +82,6 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
           <div className="column is-3">
             <div className="field">
               <label className="label">Vælg opgave</label>
-              <p className="help is-success">
-                {description}
-              </p>
               <div className="select is-fullwidth">
                 <select
                   onChange={handleTaskIdChange}
@@ -158,6 +155,14 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
           </div>
         </div>
       </form>
+      <div class="block">
+      </div>
+      
+      <article className="message is-success is-small">
+        <div className="message-body">
+          {description}
+        </div>
+      </article>
     </div>
   );
 };
