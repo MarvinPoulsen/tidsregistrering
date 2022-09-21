@@ -75,61 +75,94 @@ export const options = {
   },
 };
 
+interface StackedDatasets {
+  label: string;
+  data: number[];
+  stack: string;
+  backgroundColor: string;
+}
+  // DATA
+  const datasets: StackedDatasets[] = [];
+
+
 const datasetsLabel: string[] = ['Arbejdstid'];
 
 const datasetsBgColor: string[] = ['rgba(62, 142, 208, 0.5)'];
 
 function TimeChart(props: TimeChartProps) {
-  let labelList: string[] = [];
+  // console.log('TimeChartProps: ',props)
+
 
   let currentDate = new Date(props.date);
   const dateRange = 13;
   currentDate.setDate(currentDate.getDate() - dateRange);
+  let taskList: number[] = [];
+  let dateList: Date[] = [];
   let labels: string[][] = [];
   let dataset: number[] = [];
-  for (let i = 0; i <= dateRange; i++) {
+    for (let i = 0; i <= dateRange; i++) {
     const labelPair: string[] = [];
     labelPair.push(new Intl.DateTimeFormat('da-DK', { weekday: 'short'}).format(currentDate));
     labelPair.push(currentDate.toLocaleDateString('da-DK', { month: 'short', day: 'numeric' }));
     labels.push(labelPair)
-
     let filteredTasks = props.data.filter((te) => isSameDay(te.date, currentDate ));
-
-    // console.log('filteredTasks: ',typeof filteredTasks,filteredTasks)
-
-    // datasets: [
-    //   {
-    //     label: 'Dataset 1',
-    //     data: Utils.numbers(NUMBER_CFG),
-    //     backgroundColor: Utils.CHART_COLORS.red,
-    //   },
-    //   {
-    //     label: 'Dataset 2',
-    //     data: Utils.numbers(NUMBER_CFG),
-    //     backgroundColor: Utils.CHART_COLORS.blue,
-    //   },
-    //   {
-    //     label: 'Dataset 3',
-    //     data: Utils.numbers(NUMBER_CFG),
-    //     backgroundColor: Utils.CHART_COLORS.green,
-    //   },
-    // ]
-
-
-    for (let j = 0; j<filteredTasks.length; j++) {
-
-    // console.log('filteredTasks[j].taskId: ',filteredTasks[j].taskId)
-    }
-
     let sumTime = filteredTasks.reduce((accumulator, object) => {
       return accumulator + object.time;
     }, 0);
-
-    // console.log('sumTime: ',typeof sumTime,sumTime)
-
     dataset.push(sumTime);
+    taskList = taskList.concat(filteredTasks.map(item=>item.taskId))
+    dateList.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
   }
+  const uniqueTaskList: number[] = [...new Set<number>(taskList)];
+
+  for (let j = 0; j<uniqueTaskList.length; j++){
+    const taskId: number = uniqueTaskList[j];
+    const labelName = props.taskData.filter((task) => task.id === taskId)[0].name
+    // console.log('labelName: ',labelName)
+        for (let k = 0; k < dateList.length; k++) {
+          const date = dateList[k];
+          // console.log('date: ',date)
+        }
+  }
+  //   let dataset: number[] = [];
+  //   let currentDate = new Date(props.date);
+  //   let filteredTasks = props.data.filter((te) => te.taskId === taskId);
+  //     for (let i = 0; i <= dateRange; i++) {
+  //       let data = filteredTasks.filter((te) => isSameDay(te.date, currentDate ));
+  //       let sumData = data.reduce((accumulator, object) => {
+  //         return accumulator + object.time;
+  //       }, 0);
+  //       dataset.push(sumData);
+  //       currentDate.setDate(currentDate.getDate() + 1);
+  //     }
+
+
+      // console.log('dataset: ',dataset)
+
+  
+
+
+
+
+
+  //     datasets.push({
+  //   name: props.taskData.filter((task) => task.id === taskId)[0].name,
+  //   values:
+  //     parishCode && parishCode !== ''
+  //       ? parishData.map((row) => row.uskadte)
+  //       : sumParishData.map((row) => row.uskadte),
+  //   stack: '0',
+  // });
+
+
+  // }
+
+
+
+
+
+  // console.log('dataset: ',dataset)
   let datasetsData: number[][] = [];
   datasetsData.push(dataset);
   
