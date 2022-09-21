@@ -6,7 +6,7 @@ import TimeRegistration from '../timeregistration/TimeRegistration';
 import TimeTable from '../timetable/TimeTable';
 import TimeChart from '../timechart/TimeChart';
 import SPS, { TimeEntry } from '../../SPS';
-import format from 'date-fns/format'
+import format from 'date-fns/format';
 let sps: SPS;
 
 // getSession().getPrincipal().id.split(',')[1].split('=')[1]
@@ -29,7 +29,7 @@ const App: FC = () => {
   }, []);
   const onSave = async (entry: TimeEntry) => {
     // eksistensen af id afgør om det er en update eller insert
-    if (entry.id){
+    if (entry.id) {
       await sps.updateTimeRegistration(entry);
       setEditEntry(null);
     } else {
@@ -46,32 +46,40 @@ const App: FC = () => {
     closeModal();
   };
   const onEdit = (e: TimeEntry) => {
-    setEditEntry(e)
-  }
+    setEditEntry(e);
+  };
   const refresh = async () => {
     const timeRegistrationData = await sps.getTimeRegistrationData(); //user.shortId
     setTimeRegistrationData(timeRegistrationData);
   };
 
-  const closeModal = ()=>{
+  const closeModal = () => {
     setIsDeletingId(null);
-  }
+  };
 
   const [date, setDate] = useState(new Date());
 
-  const getTaskDescription = (id: number):string =>{
+  const getTaskDescription = (id: number): string => {
     function toHoursAndMinutes(totalMinutes) {
       const minutes = totalMinutes % 60;
-      const hours = Math.floor(totalMinutes / 60);    
+      const hours = Math.floor(totalMinutes / 60);
       return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
     }
     function padTo2Digits(num) {
       return num.toString().padStart(2, '0');
     }
-    const entry = timeRegistrationData.find(te=>te.id === id)
-    const task = taskData.find(t=>t.id === entry.taskId)
-    return toHoursAndMinutes(entry.time) + ' - ' + task.name + ' - ' + format(entry.date, 'dd-MM-yyyy') + ', note: ' + entry.note
-  } 
+    const entry = timeRegistrationData.find((te) => te.id === id);
+    const task = taskData.find((t) => t.id === entry.taskId);
+    return (
+      toHoursAndMinutes(entry.time) +
+      ' - ' +
+      task.name +
+      ' - ' +
+      format(entry.date, 'dd-MM-yyyy') +
+      ', note: ' +
+      entry.note
+    );
+  };
 
   return (
     <>
@@ -79,16 +87,21 @@ const App: FC = () => {
         {user && <Navbar user={user} />}
       </section>
       <section className="section">
-        {taskData && (
-          <TimeRegistration
-            onDateChanged={setDate}
-            date={date}
-            data={taskData}
-            userId={user.shortid}
-            onSave={onSave}
-            editEntry={editEntry}
-          />
-        )}
+        <div className="columns">
+          {/* <div className="column is-four-fifths"> */}
+          <div className="column is-full">
+            {taskData && (
+              <TimeRegistration
+                onDateChanged={setDate}
+                date={date}
+                data={taskData}
+                userId={user.shortid}
+                onSave={onSave}
+                editEntry={editEntry}
+              />
+            )}
+          </div>
+        </div>
         <div className="columns">
           <div className="column is-half">
             {timeRegistrationData && (
@@ -113,16 +126,29 @@ const App: FC = () => {
           </div>
         </div>
       </section>
-      <div className={"modal" + (isDeletingId ? ' is-active' : '')}>
+      <div className={'modal' + (isDeletingId ? ' is-active' : '')}>
         <div className="modal-background" onClick={closeModal}></div>
         <div className="modal-content">
           <div className="box">
-            {isDeletingId && (<p>Vil du slette de registrede tid? <br />{getTaskDescription(isDeletingId)}</p>)}
-						<button className="button is-danger" onClick={confirmDelete}>Slet</button>
-						<button className="button" onClick={closeModal}>Annuler</button>
+            {isDeletingId && (
+              <p>
+                Vil du slette de registrede tid? <br />
+                {getTaskDescription(isDeletingId)}
+              </p>
+            )}
+            <button className="button is-danger" onClick={confirmDelete}>
+              Slet
+            </button>
+            <button className="button" onClick={closeModal}>
+              Annuler
+            </button>
           </div>
         </div>
-        <button className="modal-close is-large" aria-label="close" onClick={closeModal}></button>
+        <button
+          className="modal-close is-large"
+          aria-label="close"
+          onClick={closeModal}
+        ></button>
       </div>
     </>
   );
