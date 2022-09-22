@@ -7,6 +7,7 @@ import TimeTable from '../timetable/TimeTable';
 import TimeChart from '../timechart/TimeChart';
 import SPS, { TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
+import TimeChartData from '../timechart/TimeChartData';
 let sps: SPS;
 
 // getSession().getPrincipal().id.split(',')[1].split('=')[1]
@@ -22,6 +23,8 @@ const App: FC = () => {
     await sps.initialize();
     const user = sps.getUser();
     setUser(user);
+    console.log('sps: ',sps)
+    
 
     const taskData = await sps.getTaskData(); //
     setTaskData(taskData);
@@ -51,6 +54,7 @@ const App: FC = () => {
   const refresh = async () => {
     const timeRegistrationData = await sps.getTimeRegistrationData(); //user.shortId
     setTimeRegistrationData(timeRegistrationData);
+    console.log('timeRegistrationData: ',timeRegistrationData)
   };
 
   const closeModal = () => {
@@ -117,6 +121,15 @@ const App: FC = () => {
           <div className="column">
             {timeRegistrationData && (
               <TimeChart
+                onDateChanged={setDate}
+                date={date}
+                data={timeRegistrationData}
+                taskData={taskData}
+              />
+            )}
+            
+            {timeRegistrationData && (
+              <TimeChartData
                 onDateChanged={setDate}
                 date={date}
                 data={timeRegistrationData}

@@ -82,6 +82,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
       : 'Ingen beskrivelse af den valgte opgave endnu';
 
   return (
+    <>
     <div className="box">
       <div className="block">
         <form onSubmit={handleSubmit}>
@@ -189,7 +190,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
                 </div>
                 <div className="field-body column">
                   <div className="field">
-                    <p className="control">
+                    <span className="control">
                       <DatePicker
                         selected={time}
                         onChange={(newTime) => setTime(newTime.getTime())}
@@ -203,7 +204,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
                         name="time"
                         value={time}
                       />
-                    </p>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -222,10 +223,10 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
             </div>
             <div className="column is-narrow">
               <div className="field is-grouped">
-                <p className="control">
+                <span className="control">
                   <button className="button is-success">Save</button>
-                </p>
-                <p className="control">
+                </span>
+                <span className="control">
                   <button
                     className="button is-light"
                     type="button"
@@ -233,7 +234,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
                   >
                     Cancel
                   </button>
-                </p>
+                </span>
               </div>
             </div>
           </div>
@@ -243,6 +244,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
         <div className="message-body">{description}</div>
       </article>
     </div>
+    </>
   );
 };
 
