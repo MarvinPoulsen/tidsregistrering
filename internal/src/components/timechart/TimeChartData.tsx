@@ -1,6 +1,6 @@
 import React, { MouseEvent, useRef } from 'react';
 import { TaskList, TimeEntry } from '../../SPS';
-import { isSameDay } from 'date-fns';
+import { isSameDay, isWithinInterval, subDays } from 'date-fns';
 
 interface TimeChartDataProps {
     onDateChanged: (date: Date) => void;
@@ -10,12 +10,15 @@ interface TimeChartDataProps {
   }
 const TimeChartData = (props: TimeChartDataProps) => {
     console.log('TimeChartDataProps: ',props)
-    let currentDate = new Date(props.date);
+    let lastDate = new Date(props.date);
     // https://mui.com/material-ui/react-slider/
-    const dateRange = 13;
-    console.log('currentDate: ',currentDate)
-    currentDate.setDate(currentDate.getDate() - dateRange);
-    console.log('firstDate: ',currentDate)
+    const dateRange = 23;
+    console.log('lastDate: ',lastDate)
+    const firstDate = subDays(lastDate, dateRange);
+    console.log('firstDate: ',firstDate)
+
+    let filteredTasks = props.data.filter((te) => isWithinInterval(te.date, {start: firstDate,end: lastDate} ));
+console.log('filteredTasks: ',filteredTasks)
     return <></>
 }
 export default TimeChartData;
