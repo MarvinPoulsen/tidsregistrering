@@ -27,7 +27,9 @@ const App: FC = () => {
     
 
     const taskData = await sps.getTaskData(); //
-    setTaskData(taskData);
+    const favoritTasks = await sps.getFavoritTasks();
+    const favoritTaskData = taskData.filter(td=>favoritTasks.includes(td.id));
+    setTaskData(favoritTaskData);
     refresh();
   }, []);
   const onSave = async (entry: TimeEntry) => {

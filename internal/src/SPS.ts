@@ -139,4 +139,9 @@ export default class SPS {
             throw new Error('Opdatering af tidsregistrering fejlede');
         }        
     }
+
+    async getFavoritTasks(): Promise<number[]> {
+        const data = await this.executeOnDs('lk_tmm_favorites', {command: "read-by-user"});
+        return data.map(r=> parseInt(r.task_id as string))
+    }
 }

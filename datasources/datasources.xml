@@ -49,4 +49,8 @@
     <datasource endpoint="ep_lk_tmm" name="lk_tmm_users">
         <table name="users" pkcolumn="id" schema="tmm"/>
     </datasource>
+    <datasource endpoint="ep_lk_tmm" name="lk_tmm_favorites">
+        <table name="favorites" pkcolumn="id" schema="tmm"/>
+        <sql command="read-by-user">select * from tmm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
+    </datasource>
 </datasources>
