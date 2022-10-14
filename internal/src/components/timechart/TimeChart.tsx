@@ -90,8 +90,6 @@ const datasetsLabel: string[] = ['Arbejdstid'];
 const datasetsBgColor: string[] = ['rgba(62, 142, 208, 0.5)'];
 
 function TimeChart(props: TimeChartProps) {
-  // console.log('TimeChartProps: ',props)
-
 
   let currentDate = new Date(props.date);
   const dateRange = 13;
@@ -114,59 +112,10 @@ function TimeChart(props: TimeChartProps) {
     dateList.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  const uniqueTaskList: number[] = [...new Set<number>(taskList)];
 
-  for (let j = 0; j<uniqueTaskList.length; j++){
-    const taskId: number = uniqueTaskList[j];
-    const labelName = props.taskData.filter((task) => task.id === taskId)[0].name
-    // console.log('labelName: ',labelName)
-        for (let k = 0; k < dateList.length; k++) {
-          const date = dateList[k];
-          // console.log('date: ',date)
-        }
-  }
-  //   let dataset: number[] = [];
-  //   let currentDate = new Date(props.date);
-  //   let filteredTasks = props.data.filter((te) => te.taskId === taskId);
-  //     for (let i = 0; i <= dateRange; i++) {
-  //       let data = filteredTasks.filter((te) => isSameDay(te.date, currentDate ));
-  //       let sumData = data.reduce((accumulator, object) => {
-  //         return accumulator + object.time;
-  //       }, 0);
-  //       dataset.push(sumData);
-  //       currentDate.setDate(currentDate.getDate() + 1);
-  //     }
-
-
-      // console.log('dataset: ',dataset)
-
-  
-
-
-
-
-
-  //     datasets.push({
-  //   name: props.taskData.filter((task) => task.id === taskId)[0].name,
-  //   values:
-  //     parishCode && parishCode !== ''
-  //       ? parishData.map((row) => row.uskadte)
-  //       : sumParishData.map((row) => row.uskadte),
-  //   stack: '0',
-  // });
-
-
-  // }
-
-
-
-
-
-  // console.log('dataset: ',dataset)
   let datasetsData: number[][] = [];
   datasetsData.push(dataset);
   
-    // console.log('datasetsData: ',typeof datasetsData,datasetsData)
   const data = {
     labels,
     datasets: [

@@ -27,7 +27,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
   const [endTime, setEndTime] = useState(
     props.date.setHours(startHours, endMinuts, 0, 0)
   );
-  const timeMinuts = 15;
+  const timeMinuts = 30;
   const [time, setTime] = useState(new Date().setHours(0, timeMinuts, 0, 0));
 
   useEffect(() => {
@@ -132,58 +132,6 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
               />
             </div>
             <div className="column is-2">
-              {/* <div className="field is-horizontal is-align-items-flex-end columns">
-                <div className="field-label is-normal column is-2">
-                  <label className="label">Start:</label>
-                </div>
-                <div className="field-body column">
-                  <div className="field">
-                    <p className="control">
-                      <DatePicker
-                        selected={startTime}
-                        onChange={(newStartTime) =>
-                          setStartTime(newStartTime.getTime())
-                        }
-                        timeFormat="HH:mm"
-                        showTimeSelect
-                        showTimeSelectOnly
-                        timeIntervals={15}
-                        timeCaption="Time"
-                        dateFormat="HH:mm"
-                        className="input"
-                        name="startTime"
-                        value={startTime}
-                      />
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="field is-horizontal is-align-items-flex-end columns">
-                <div className="field-label is-normal column is-2">
-                  <label className="label">Slut:</label>
-                </div>
-                <div className="field-body column">
-                  <div className="field">
-                    <p className="control">
-                      <DatePicker
-                        selected={endTime}
-                        onChange={(newEndTime) =>
-                          setEndTime(newEndTime.getTime())
-                        }
-                        timeFormat="HH:mm"
-                        showTimeSelect
-                        showTimeSelectOnly
-                        timeIntervals={15}
-                        timeCaption="Time"
-                        dateFormat="HH:mm"
-                        className="input"
-                        name="flexTimeOut"
-                        value={endTime}
-                      />
-                    </p>
-                  </div>
-                </div>
-              </div> */}
               <div className="field is-horizontal is-align-items-flex-end columns">
                 <div className="field-label is-normal column is-2">
                   <label className="label">Tid:</label>

@@ -7,10 +7,7 @@ import TimeTable from '../timetable/TimeTable';
 import TimeChart from '../timechart/TimeChart';
 import SPS, { TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
-import TimeChartData from '../timechart/TimeChartData';
 let sps: SPS;
-
-// getSession().getPrincipal().id.split(',')[1].split('=')[1]
 
 const App: FC = () => {
   const [user, setUser] = useState(null);
@@ -23,7 +20,6 @@ const App: FC = () => {
     await sps.initialize();
     const user = sps.getUser();
     setUser(user);
-    console.log('sps: ',sps)
     
 
     const taskData = await sps.getTaskData(); //
@@ -56,7 +52,6 @@ const App: FC = () => {
   const refresh = async () => {
     const timeRegistrationData = await sps.getTimeRegistrationData(); //user.shortId
     setTimeRegistrationData(timeRegistrationData);
-    console.log('timeRegistrationData: ',timeRegistrationData)
   };
 
   const closeModal = () => {
@@ -64,6 +59,7 @@ const App: FC = () => {
   };
 
   const [date, setDate] = useState(new Date());
+  const [range, setRange] = useState(14);
 
   const getTaskDescription = (id: number): string => {
     function toHoursAndMinutes(totalMinutes) {
@@ -94,7 +90,6 @@ const App: FC = () => {
       </section>
       <section className="section">
         <div className="columns">
-          {/* <div className="column is-four-fifths"> */}
           <div className="column is-full">
             {taskData && (
               <TimeRegistration
@@ -130,14 +125,6 @@ const App: FC = () => {
               />
             )}
             
-            {timeRegistrationData && (
-              <TimeChartData
-                onDateChanged={setDate}
-                date={date}
-                data={timeRegistrationData}
-                taskData={taskData}
-              />
-            )}
           </div>
         </div>
       </section>

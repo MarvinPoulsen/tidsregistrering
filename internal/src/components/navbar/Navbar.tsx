@@ -1,14 +1,15 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { MdPerson } from 'react-icons/md';
 
+
 const Navbar: FC = (props) => {
-  const user = props.user.name
+  const user = props.user.name;
   return (
     <>
       <nav className="navbar" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
-				<a className="navbar-item noHover">
-					<img 
+          <a className="navbar-item noHover">
+            <img
               src="https://www.lolland.dk/Files/Images/system/Lolland9.png"
               width="112"
               height="28"
@@ -16,16 +17,20 @@ const Navbar: FC = (props) => {
           </a>
         </div>
 
-          <div className="navbar-end">
-            <div className="navbar-item">
-					<a id="user-name" className="navbar-item noHover" href="">{user}
+        <div className="navbar-start">
+        </div>
+
+        <div className="navbar-end">
+          <div className="navbar-item">
+            <a id="user-name" className="navbar-item noHover" href="">
+              {user}
             </a>
-            
+
             <span className="icon is-large">
-            <MdPerson size={30} />
-              </span>
-            </div>
+              <MdPerson size={30} />
+            </span>
           </div>
+        </div>
       </nav>
     </>
   );
