@@ -1,7 +1,7 @@
 import React, { MouseEvent, useRef } from 'react';
 import type { InteractionItem } from 'chart.js';
 import { Bar, getElementAtEvent } from 'react-chartjs-2';
-import { TaskList, TimeEntry } from '../../SPS';
+import { Task, TimeEntry } from '../../SPS';
 import { isSameDay } from 'date-fns';
 import {
   Chart as ChartJS,
@@ -26,7 +26,7 @@ interface TimeChartProps {
   onDateChanged: (date: Date) => void;
   date: Date;
   data: TimeEntry[];
-  taskData: TaskList[];
+  taskData: Task[];
 }
 
 function toHoursAndMinutes(totalMinutes) {

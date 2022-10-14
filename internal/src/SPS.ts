@@ -18,10 +18,11 @@ export interface TimeEntry {
     userId: string;
 }  
 
-export interface TaskList {
+export interface Task {
     id: number;
     name: string;
     description: string;
+    isFavorite: boolean;
 }  
 
 
@@ -88,13 +89,16 @@ export default class SPS {
         return timeEntries
     }
 
-    async getTaskData(): Promise<TaskList[]> {
+    async getTaskData(): Promise<Task[]> {
         const data = await this.executeOnDs('lk_tmm_tasks');
-        const taskData: TaskList[] = data.map(element => {
+        const favorites = await this.getFavoritTasks();
+        const taskData: Task[] = data.map(element => {
+            const id = parseInt(element.id as string);
             return {
-                id: parseInt(element.id as string),
+                id,
                 name: element.name as string,
                 description: element.description as string,
+                isFavorite: favorites.includes(id)
             }
         })
         return taskData
