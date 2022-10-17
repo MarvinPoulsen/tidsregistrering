@@ -1,0 +1,40 @@
+input[type='range'] {
+    appearance: auto;
+    -webkit-appearance: none;
+    height: 7px;
+    width:50%;
+    background: grey;
+    border-radius: 5px;
+    background-image: linear-gradient(#d46a6a, #d46a6a);
+    background-repeat: no-repeat;
+}
+input[type='range']::-webkit-slider-thumb {
+    appearance: auto;
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #d46a6a;
+    cursor: pointer;
+    box-shadow: 0 0 2px 0 #555;
+    transition: background 0.3s ease-in-out;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+    appearance: auto;
+    -webkit-appearance: none;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+    box-shadow: #d46a6a50 0px 0px 0px 8px;
+}
+
+input[type='range']::-webkit-slider-thumb:active {
+    box-shadow: #d46a6a50 0px 0px 0px 11px;
+    transition: box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+        left 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+        bottom 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}

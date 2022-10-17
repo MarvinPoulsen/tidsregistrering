@@ -8,6 +8,7 @@ import TimeChart from '../timechart/TimeChart';
 import SPS, { TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
 import Favorites from '../modal/Favorites';
+import Slider from '../slider/Slider';
 let sps: SPS;
 
 const App: FC = () => {
@@ -127,6 +128,7 @@ const App: FC = () => {
                         )}
                     </div>
                     <div className="column">
+                        <Slider />
                         {timeRegistrationData && (
                             <TimeChart
                                 onDateChanged={setDate}
