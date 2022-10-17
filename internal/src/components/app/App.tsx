@@ -17,14 +17,18 @@ const App: FC = () => {
     const [isDeletingId, setIsDeletingId] = useState<number>(null);
     const [editEntry, setEditEntry] = useState();
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
+    const [projectsData, setProjectsData] = useState(null);
     useEffect(async () => {
         sps = new SPS();
         await sps.initialize();
         const user = sps.getUser();
         setUser(user);
 
-        const taskData = await sps.getTaskData(); //
+        const taskData = await sps.getTaskData();
         setTaskData(taskData);
+
+        const projectsData = await sps.getProjectsData();
+        setProjectsData(projectsData);
         refresh();
     }, []);
     const onSave = async (entry: TimeEntry) => {
@@ -89,6 +93,8 @@ const App: FC = () => {
     const editFavorites = () => {
         setIsFavoriteActive(true);
     };
+    
+    console.log('myProjecks: ',projectsData)
 
     return (
         <>
@@ -140,7 +146,7 @@ const App: FC = () => {
                     taskList={taskData}
                     onSave={saveFavorites}
                     onClose={closeFavorites}
-                />
+                    projectList={projectsData}                />
             )}
             <div className={'modal' + (isDeletingId ? ' is-active' : '')}>
                 <div className="modal-background" onClick={closeModal}></div>

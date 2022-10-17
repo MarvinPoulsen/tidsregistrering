@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Task } from '../../SPS';
+import { Task, Project } from '../../SPS';
 
 interface FavoritesProps {
     isActive: boolean;
     taskList: Task[];
     onSave: () => void;
     onClose: () => void;
+    projectList: Project[];
 }
 
 const Favorites = (props: FavoritesProps) => {
-    console.log(props);
+    console.log('FavoritesProps :', props);
     const [taskListCopy, setTaskListCopy] = useState<Task[]>([]);
 
     useEffect(() => {
@@ -17,6 +18,7 @@ const Favorites = (props: FavoritesProps) => {
     }, [props.taskList]);
 
     const onChange = (e) => {
+        console.log('entry: ',e)
         const id = parseInt(e.target.value);
         const on = e.target.checked;
         const newTaskList = [...taskListCopy];
@@ -24,6 +26,7 @@ const Favorites = (props: FavoritesProps) => {
         task.isFavorite = on;
         setTaskListCopy(newTaskList);
     };
+    console.log('taskListCopy: ', taskListCopy);
     const checkboxes = [];
     for (const task of taskListCopy) {
         checkboxes.push(
@@ -40,13 +43,21 @@ const Favorites = (props: FavoritesProps) => {
             </div>
         );
     }
+    console.log('checkboxes: ', checkboxes);
+    const projeckName = 'prjektnavn';
+    const sublist = [];
+    <div className="field">
+        <label className="label">{projeckName}</label>
+        {sublist}
+    </div>;
+
     return (
         <>
             <div className={'modal' + (props.isActive ? ' is-active' : '')}>
                 <div className="modal-background" onClick={props.onClose}></div>
                 <div className="modal-content">
                     <div className="box">
-                        <p>vælg favoritter</p>
+                        <p>Vælg favoritter</p>
                         {checkboxes}
                         <button
                             className="button is-success"
