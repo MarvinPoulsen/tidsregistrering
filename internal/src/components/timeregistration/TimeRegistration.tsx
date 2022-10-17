@@ -70,7 +70,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
   }
   function resetForm() {
     setTaskId(1);
-    setTime(new Date().setHours(0, 0, 0, 0));
+    setTime(new Date().setHours(0, timeMinuts, 0, 0));
     setNote('');
   }
 
