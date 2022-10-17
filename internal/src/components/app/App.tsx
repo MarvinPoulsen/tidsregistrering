@@ -94,8 +94,6 @@ const App: FC = () => {
         setIsFavoriteActive(true);
     };
     
-    console.log('myProjecks: ',projectsData)
-
     return (
         <>
             <section className="hero is-info is-small">
@@ -140,7 +138,8 @@ const App: FC = () => {
                     </div>
                 </div>
             </section>
-            {taskData && (
+            {taskData &&
+            projectsData && (
                 <Favorites
                     isActive={isFavoriteActive}
                     taskList={taskData}
