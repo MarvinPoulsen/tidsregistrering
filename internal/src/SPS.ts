@@ -20,6 +20,7 @@ export interface TimeEntry {
 
 export interface Task {
     id: number;
+    projectId: number;
     name: string;
     description: string;
     isFavorite: boolean;
@@ -104,8 +105,10 @@ export default class SPS {
         const favorites = await this.getFavoritTasks();
         const taskData: Task[] = data.map(element => {
             const id = parseInt(element.id as string);
+            const projectId = parseInt(element.project_id as string);
             return {
                 id,
+                projectId,
                 name: element.name as string,
                 description: element.description as string,
                 isFavorite: favorites.includes(id)
