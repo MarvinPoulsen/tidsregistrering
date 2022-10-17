@@ -23,7 +23,17 @@ export interface Task {
     name: string;
     description: string;
     isFavorite: boolean;
-}  
+} 
+
+export interface Project {
+    id: number;
+    group_id: string;
+    horizon: Date;
+    importance: number;
+    name: string;
+    sbsys_id: number;
+    timeframe: number;
+}
 
 
 
