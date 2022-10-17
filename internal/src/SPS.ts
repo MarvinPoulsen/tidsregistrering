@@ -28,12 +28,12 @@ export interface Task {
 
 export interface Project {
     id: number;
-    group_id: string;
-    horizon: Date;
-    importance: number;
+    // groupId: string;
+    // horizon: Date;
+    // importance: number;
     name: string;
-    sbsys_id: number;
-    timeframe: number;
+    // sbsysId: number;
+    // timeframe: number;
 }
 
 
@@ -120,7 +120,14 @@ export default class SPS {
         
     async getProjectsData(): Promise<any[]> {
         const data = await this.executeOnDs('lk_tmm_projects');
-        return data
+        const projectData: Project[] = data.map(element => {
+            const id = parseInt(element.id as string);
+            return {
+                id,
+                name: element.name as string,
+            }
+        })
+        return projectData
     }
 
         
