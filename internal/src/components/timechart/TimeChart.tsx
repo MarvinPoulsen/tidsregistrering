@@ -27,6 +27,7 @@ interface TimeChartProps {
   date: Date;
   data: TimeEntry[];
   taskData: Task[];
+  displayRange: number;
 }
 
 function toHoursAndMinutes(totalMinutes) {
@@ -92,7 +93,7 @@ const datasetsBgColor: string[] = ['rgba(62, 142, 208, 0.5)'];
 function TimeChart(props: TimeChartProps) {
 
   let currentDate = new Date(props.date);
-  const dateRange = 13;
+  const dateRange = props.displayRange-1;
   currentDate.setDate(currentDate.getDate() - dateRange);
   let taskList: number[] = [];
   let dateList: Date[] = [];

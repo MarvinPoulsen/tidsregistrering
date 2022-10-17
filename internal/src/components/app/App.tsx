@@ -133,6 +133,7 @@ const App: FC = () => {
                                 date={date}
                                 data={timeRegistrationData}
                                 taskData={taskData}
+                                displayRange={range}
                             />
                         )}
                     </div>
