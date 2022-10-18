@@ -18,7 +18,7 @@ interface TimeRegistrationProps {
 
 const TimeRegistration: FC = (props: TimeRegistrationProps) => {
   const [taskId, setTaskId] = useState<number>(1);
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState<String>('');
   const startHours = props.date.getDay() > 0 && props.date.getDay() < 6 ? 8 : 0; // change to -> if (filter for user and date tmm.registration) has time end set to highest value else 8
   const [startTime, setStartTime] = useState(
     props.date.setHours(startHours, 0, 0, 0)
