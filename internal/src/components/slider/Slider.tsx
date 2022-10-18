@@ -1,36 +1,35 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import './slider.scss';
 
 export interface Sliderprops {
-    any: any;
+    onRangeChange: (value: number)=> void;
+    maxValue: number;
+    minValue: number;
+    value: number;
 }
-const max = 90;
-const min = 7;
 
-const Slider: FC = () => {
-    const [value, setValue] = useState(14);
+const Slider: FC = (props: Sliderprops) => {
     const handleChange = (e) => {
-        setValue(e.target.value);
-        console.log(value);
+        props.onRangeChange(e.target.value);
     };
 
     const getBackgroundSize = () => {
         return {
-            backgroundSize: `${((value - min) * 100) / (max - min)}% 100%`,
+            backgroundSize: `${((props.value - props.minValue) * 100) / (props.maxValue - props.minValue)}% 100%`,
         };
     };
     return (
         <>
             <div className="field">
-                <label className="label">Vælg periode: {value} dage</label>
+                <label className="label">Vælg periode: {props.value} dage</label>
                 <div className="control is-expanded">
                     <input
                         type="range"
-                        min={min}
-                        max={max}
+                        min={props.minValue}
+                        max={props.maxValue}
                         onChange={handleChange}
                         style={getBackgroundSize()}
-                        value={value}
+                        value={props.value}
                     />
                 </div>
             </div>

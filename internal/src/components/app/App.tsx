@@ -128,7 +128,12 @@ const App: FC = () => {
                         )}
                     </div>
                     <div className="column">
-                        <Slider />
+                        <Slider 
+                            onRangeChange={setRange}
+                            maxValue={90}
+                            minValue={7}
+                            value={range}
+                        />
                         {timeRegistrationData && (
                             <TimeChart
                                 onDateChanged={setDate}
