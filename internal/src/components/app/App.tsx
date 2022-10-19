@@ -94,7 +94,7 @@ const App: FC = () => {
     const editFavorites = () => {
         setIsFavoriteActive(true);
     };
-    
+
     return (
         <>
             <section className="hero is-info is-small">
@@ -128,7 +128,7 @@ const App: FC = () => {
                         )}
                     </div>
                     <div className="column">
-                        <Slider 
+                        <Slider
                             onRangeChange={setRange}
                             maxValue={90}
                             minValue={7}
@@ -140,20 +140,22 @@ const App: FC = () => {
                                 date={date}
                                 data={timeRegistrationData}
                                 taskData={taskData}
+                                projectList={projectsData}
                                 displayRange={range}
+                                bgColorsStart={0}
                             />
                         )}
                     </div>
                 </div>
             </section>
-            {taskData &&
-            projectsData && (
+            {taskData && projectsData && (
                 <Favorites
                     isActive={isFavoriteActive}
                     taskList={taskData}
                     onSave={saveFavorites}
                     onClose={closeFavorites}
-                    projectList={projectsData}                />
+                    projectList={projectsData}
+                />
             )}
             <div className={'modal' + (isDeletingId ? ' is-active' : '')}>
                 <div className="modal-background" onClick={closeModal}></div>
