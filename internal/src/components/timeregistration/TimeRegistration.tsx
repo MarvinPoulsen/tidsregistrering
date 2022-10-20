@@ -176,7 +176,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
                 </span>
                 <span className="control">
                   <button
-                    className="button is-light"
+                    className="button"
                     type="button"
                     onClick={resetForm}
                   >
