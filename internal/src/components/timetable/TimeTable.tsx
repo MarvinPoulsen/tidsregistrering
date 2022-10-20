@@ -3,32 +3,17 @@ import { useTable } from 'react-table';
 import { MdModeEdit, MdDelete } from 'react-icons/md';
 import { Task, TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
-import { isSameDay } from 'date-fns';
+import {toHoursAndMinutes} from '../../utils'
 
 // const editButton: string = ''
 interface TimeTableProps {
-    date: Date;
     data: TimeEntry[];
     taskData: Task[];
     onDelete: (id: number) => void;
     onEdit: (entry: TimeEntry) => void;
 }
-function toHoursAndMinutes(totalMinutes) {
-    const minutes = totalMinutes % 60;
-    const hours = Math.floor(totalMinutes / 60);
-
-    return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
-}
-
-function padTo2Digits(num) {
-    return num.toString().padStart(2, '0');
-}
-
 function TimeTable(props: TimeTableProps) {
-    const filteredTasks = props.data.filter((te) =>
-        isSameDay(te.date, props.date)
-    );
-    const tasks = filteredTasks.map((element) => {
+    const tasks = props.data.map((element) => {
         const task = props.taskData.find((t) => t.id === element.taskId);
         return {
             col1: (
@@ -47,7 +32,7 @@ function TimeTable(props: TimeTableProps) {
             col6: element.note,
         };
     });
-    const data = React.useMemo(() => tasks, [props.date, props.data]);
+    const data = React.useMemo(() => tasks, [props.data]);
 
     const columns = React.useMemo(
         () => [

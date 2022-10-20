@@ -7,9 +7,21 @@ import TimeTable from '../timetable/TimeTable';
 import TimeChart from '../timechart/TimeChart';
 import SPS, { TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
+import { isSameDay } from 'date-fns';
 import Favorites from '../modal/Favorites';
 import Slider from '../slider/Slider';
 let sps: SPS;
+
+interface StackedDataSeries {
+    name: string;
+    values: number[];
+    stack: string;
+}
+interface PieGroup {
+    name: string;
+    value: number;
+    on: boolean;
+}
 
 const App: FC = () => {
     const [user, setUser] = useState(null);
@@ -95,6 +107,82 @@ const App: FC = () => {
         setIsFavoriteActive(true);
     };
 
+    //TEST
+    const filteredTasks = timeRegistrationData && timeRegistrationData.filter((te) =>
+        isSameDay(te.date, date)
+    );
+
+    let currentDate = new Date(date);    
+    const dateRange = range - 1;
+    currentDate.setDate(currentDate.getDate() - dateRange);
+    const filterData = timeRegistrationData && timeRegistrationData.filter((a) => {
+        var date = new Date(a.date);
+        return date >= currentDate && date <= date;
+    });
+    const tasks = filterData && filterData.map((element) => {
+        const task = taskData.find((t) => t.id === element.taskId);
+        const project = projectsData.find((p) => p.id === task.projectId);
+        return {
+            taskDate: element.date,
+            taskTime: element.time,
+            // taskName: task.name,
+            // projectId: task.projectId,
+            projectName: project.name,
+        };
+    });
+    let projectList: string[] = [];
+    projectList = tasks && projectList.concat(tasks.map((item) => item.projectName));
+    const projects: any[] = tasks && [...new Set(tasks.map((item) => item.projectName))];
+
+    let dataSeries: StackedDataSeries[] = [];
+    let pieGroups: PieGroup[] = [];
+    projects && projects.forEach((element) => {
+        const filteredProjects = tasks.filter((p) => p.projectName === element);
+        let dateCopy = new Date(date.getTime());
+        dateCopy.setDate(dateCopy.getDate() - dateRange);
+
+        let values: number[] = [];
+        let sum: number = 0;
+        for (let i = 0; i <= dateRange; i++) {
+            let filteredByDate = filteredProjects.filter((d) =>
+                isSameDay(d.taskDate, dateCopy)
+            );
+            values.push(
+                filteredByDate.reduce(
+                    (total, currentItem) =>
+                        (total = total + (currentItem.taskTime || 0)),
+                    0
+                )
+            );
+            sum += filteredByDate.reduce(
+                (total, currentItem) =>
+                    (total = total + (currentItem.taskTime || 0)),
+                0
+            );
+            dateCopy.setDate(dateCopy.getDate() + 1);
+        }
+        dataSeries.push({ name: element, values, stack: '0' });
+        pieGroups.push({ name: element, value: sum, on: true });
+    });
+
+    let labels: string[][] = [];
+    for (let i = 0; i <= dateRange; i++) {
+        const labelPair: string[] = [];
+        labelPair.push(
+            new Intl.DateTimeFormat('da-DK', { weekday: 'short' }).format(
+                currentDate
+            )
+        );
+        labelPair.push(
+            currentDate.toLocaleDateString('da-DK', {
+                month: 'short',
+                day: 'numeric',
+            })
+        );
+        labels.push(labelPair);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    // TEST
     return (
         <>
             <section className="hero is-info is-small">
@@ -119,8 +207,7 @@ const App: FC = () => {
                     <div className="column is-half">
                         {timeRegistrationData && (
                             <TimeTable
-                                data={timeRegistrationData}
-                                date={date}
+                                data={filteredTasks}
                                 taskData={taskData}
                                 onDelete={onDelete}
                                 onEdit={onEdit}
@@ -138,11 +225,10 @@ const App: FC = () => {
                             <TimeChart
                                 onDateChanged={setDate}
                                 date={date}
-                                data={timeRegistrationData}
-                                taskData={taskData}
-                                projectList={projectsData}
-                                displayRange={range}
+                                dateRange={dateRange}
                                 bgColorsStart={0}
+                                labels={labels}
+                                dataSeries={dataSeries}
                             />
                         )}
                     </div>

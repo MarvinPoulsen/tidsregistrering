@@ -1,9 +1,8 @@
-import React, { MouseEvent, useRef } from 'react';
+import React, { MouseEvent, useRef, useState } from 'react';
 import type { InteractionItem } from 'chart.js';
 import { Bar, getElementAtEvent } from 'react-chartjs-2';
-import { Project, Task, TimeEntry } from '../../SPS';
-import { isSameDay } from 'date-fns';
 import colors from '../../colors';
+import {toHoursAndMinutes} from '../../utils'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -26,23 +25,22 @@ ChartJS.register(
 interface TimeChartProps {
     onDateChanged: (date: Date) => void;
     date: Date;
-    data: TimeEntry[];
-    taskData: Task[];
-    projectList: Project[];
-    displayRange: number;
+    dateRange: number;
     bgColorsStart: number;
+    labels: string[] | string[][];
+    dataSeries: StackedDataSeries[];
 }
 
-function toHoursAndMinutes(totalMinutes) {
-    const minutes = totalMinutes % 60;
-    const hours = Math.floor(totalMinutes / 60);
+// function toHoursAndMinutes(totalMinutes) {
+//     const minutes = totalMinutes % 60;
+//     const hours = Math.floor(totalMinutes / 60);
 
-    return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
-}
+//     return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
+// }
 
-function padTo2Digits(num) {
-    return num.toString().padStart(2, '0');
-}
+// function padTo2Digits(num) {
+//     return num.toString().padStart(2, '0');
+// }
 
 export interface StackedDatasets {
     label: string;
@@ -51,17 +49,23 @@ export interface StackedDatasets {
     backgroundColor: string;
 }
 interface StackedBarData {
-    labels: string[] | string[][];
+    labels: any;
     datasets: StackedDatasets[];
 }
-interface StackedDataSeries {
+export interface StackedDataSeries {
     name: string;
     values: number[];
     stack: string;
 }
+interface PieGroup {
+    name: string;
+    value: number;
+    on: boolean;
+}
 
 function TimeChart(props: TimeChartProps) {
     // console.log('TimeChartProps: ',props)
+//CONFIG
     const options = {
         responsive: true,
         plugins: {
@@ -98,91 +102,28 @@ function TimeChart(props: TimeChartProps) {
             },
         },
     };
-    let currentDate = new Date(props.date);
-    const dateRange = props.displayRange - 1;
-    currentDate.setDate(currentDate.getDate() - dateRange);
-    const filterData = props.data.filter((a) => {
-        var date = new Date(a.date);
-        return date >= currentDate && date <= props.date;
-    });
-    const tasks = filterData.map((element) => {
-        const task = props.taskData.find((t) => t.id === element.taskId);
-        const project = props.projectList.find((p) => p.id === task.projectId);
-        return {
-            taskDate: element.date,
-            taskTime: element.time,
-            // taskName: task.name,
-            // projectId: task.projectId,
-            projectName: project.name,
-        };
-    });
-    let projectList: string[] = [];
-    projectList = projectList.concat(tasks.map((item) => item.projectName));
-    const projects: any[] = [...new Set(tasks.map((item) => item.projectName))];
-
-    let dataSeries: StackedDataSeries[] = [];
-    projects.forEach((element) => {
-        const filteredProjects = tasks.filter((p) => p.projectName === element);
-        let dateCopy = new Date(props.date.getTime());
-        dateCopy.setDate(dateCopy.getDate() - dateRange);
-
-        let values: number[] = [];
-        for (let i = 0; i <= dateRange; i++) {
-            let filteredByDate = filteredProjects.filter((d) =>
-                isSameDay(d.taskDate, dateCopy)
-            );
-            values.push(
-                filteredByDate.reduce(
-                    (total, currentItem) =>
-                        (total = total + (currentItem.taskTime || 0)),
-                    0
-                )
-            );
-            dateCopy.setDate(dateCopy.getDate() + 1);
-        }
-        dataSeries.push({ name: element, values, stack: '0' });
-    });
-
-    let labels: string[][] = [];
-    for (let i = 0; i <= dateRange; i++) {
-        const labelPair: string[] = [];
-        labelPair.push(
-            new Intl.DateTimeFormat('da-DK', { weekday: 'short' }).format(
-                currentDate
-            )
-        );
-        labelPair.push(
-            currentDate.toLocaleDateString('da-DK', {
-                month: 'short',
-                day: 'numeric',
-            })
-        );
-        labels.push(labelPair);
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    // DATA
+// DATA
     const datasets: StackedDatasets[] = [];
-    for (let i = 0; i < dataSeries.length; i++) {
+    for (let i = 0; i < props.dataSeries.length; i++) {
         const dataset: StackedDatasets = {
-            label: dataSeries[i].name,
-            data: dataSeries[i].values,
-            stack: dataSeries[i].stack,
+            label: props.dataSeries[i].name,
+            data: props.dataSeries[i].values,
+            stack: props.dataSeries[i].stack,
             backgroundColor: colors.bgColors[i + props.bgColorsStart],
         };
         datasets.push(dataset);
     }
     const data: StackedBarData = {
-        labels,
+        labels: props.labels,
         datasets,
     };
-
+//ACTIONS
     const handleElementAtEvent = (element: InteractionItem[]) => {
         if (!element.length) return;
 
         const { index } = element[0];
         let prevD = new Date(props.date);
-        new Date(prevD.setDate(prevD.getDate() - (dateRange - index)));
+        new Date(prevD.setDate(prevD.getDate() - (props.dateRange - index)));
         props.onDateChanged(prevD);
     };
 
@@ -195,15 +136,56 @@ function TimeChart(props: TimeChartProps) {
         }
         handleElementAtEvent(getElementAtEvent(chart, event));
     };
+
+    // const pieGroups = dataSeries.map((item) => {
+    //     const values = item.values
+    //     const sum = values.reduce((accumulator, value) => {
+    //         return accumulator + value;
+    //       }, 0);
+    //     return {
+    //         name: item.name,
+    //         value: sum,
+    //         on: true,
+    //     }
+    // });
+
+    // setLegendData(pieGroups);
+
+    // const onLegendRowToggle = (rowIndex: number) => {
+    //     const updatedlegendData = [...legendData];
+    //     updatedlegendData[rowIndex].on = !updatedlegendData[rowIndex].on;
+    //     setLegendData(updatedlegendData);
+    //   };
+
     return (
-        <Bar
-            ref={chartRef}
-            options={options}
-            /* @ts-ignore */
-            data={data}
-            /* @ts-ignore */
-            onClick={onClick}
-        />
+        <>
+            <div className="block">
+                <Bar
+                    ref={chartRef}
+                    options={options}
+                    data={data}
+                    /* @ts-ignore */
+                    onClick={onClick}
+                />
+            </div>
+            <div className="block">
+                <div className="columns">
+                    <div className="column is-half">
+                        {/* <PiechartNoLegend
+                            data={pieGroups}
+                            visibility={pieGroups.map((item) => item.on)}
+                        /> */}
+                    </div>
+                    <div className="column is-half">
+                        {/* <LegendTable
+                headers={['Projekt', 'Tid (min)']}
+                data={legendData}
+                onRowToggle={onLegendRowToggle}
+              /> */}
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
 export default TimeChart;
