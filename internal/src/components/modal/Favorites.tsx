@@ -62,7 +62,7 @@ const Favorites = (props: FavoritesProps) => {
                 <div className="modal-background" onClick={props.onClose}></div>
                 <div className="modal-content">
                     <div className="box">
-                        <p>Vælg favoritter</p>
+                        <h1 className="title">Vælg favoritter</h1>
                         {listOfTasks}
                         <button
                             className="button is-success"
