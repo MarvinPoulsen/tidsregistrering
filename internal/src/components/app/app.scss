@@ -1,6 +1,7 @@
-.red-div {
-    background-color: red;
-}
+// div:focus, a:focus, button:focus, details:focus, input:focus, select:focus, textarea:focus {
+//     outline: 4px dashed darkorange !important;
+//   }
+
 @import "../../../node_modules/bulma/sass/utilities/mixins.sass";
 .box {
     &.is-loading {

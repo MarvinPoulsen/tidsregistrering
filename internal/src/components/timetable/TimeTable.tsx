@@ -32,12 +32,12 @@ function TimeTable(props: TimeTableProps) {
         const task = props.taskData.find((t) => t.id === element.taskId);
         return {
             col1: (
-                <a onClick={() => props.onEdit(element)}>
+                <a onClick={() => props.onEdit(element)} href="#">
                     <MdModeEdit />
                 </a>
             ),
             col2: (
-                <a onClick={() => props.onDelete(element.id)}>
+                <a onClick={() => props.onDelete(element.id)} href="#">
                     <MdDelete />
                 </a>
             ),

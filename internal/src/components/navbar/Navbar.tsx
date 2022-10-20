@@ -24,6 +24,7 @@ const Navbar: FC = (props) => {
                     <a
                         className="navbar-item"
                         onClick={() => props.editFavorites()}
+                        // href="#"
                     >
                         Mine Favoritter
                     </a>
@@ -31,13 +32,12 @@ const Navbar: FC = (props) => {
 
                 <div className="navbar-end">
                     <div className="navbar-item">
-                        <a
+                        <span
                             id="user-name"
                             className="navbar-item noHover"
-                            href=""
                         >
                             {user}
-                        </a>
+                        </span>
 
                         <span className="icon is-large">
                             <MdPerson size={30} />
