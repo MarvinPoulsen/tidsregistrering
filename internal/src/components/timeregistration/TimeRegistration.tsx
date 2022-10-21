@@ -81,6 +81,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
     setTaskId(1);
     setTime(new Date().setHours(0, timeMinuts, 0, 0));
     setNote('');
+    setError(null)
   }
 
   const options = props.data.filter(t=>t.isFavorite || t.id===taskId);
