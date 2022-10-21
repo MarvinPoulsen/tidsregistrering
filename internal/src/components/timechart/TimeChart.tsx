@@ -1,4 +1,4 @@
-import React, { MouseEvent, useRef, useState } from 'react';
+import React, { MouseEvent, useRef } from 'react';
 import type { InteractionItem } from 'chart.js';
 import { Bar, getElementAtEvent } from 'react-chartjs-2';
 import colors from '../../colors';
@@ -31,17 +31,6 @@ interface TimeChartProps {
     dataSeries: StackedDataSeries[];
 }
 
-// function toHoursAndMinutes(totalMinutes) {
-//     const minutes = totalMinutes % 60;
-//     const hours = Math.floor(totalMinutes / 60);
-
-//     return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
-// }
-
-// function padTo2Digits(num) {
-//     return num.toString().padStart(2, '0');
-// }
-
 export interface StackedDatasets {
     label: string;
     data: number[];
@@ -56,11 +45,6 @@ export interface StackedDataSeries {
     name: string;
     values: number[];
     stack: string;
-}
-interface PieGroup {
-    name: string;
-    value: number;
-    on: boolean;
 }
 
 function TimeChart(props: TimeChartProps) {
@@ -137,6 +121,13 @@ function TimeChart(props: TimeChartProps) {
         handleElementAtEvent(getElementAtEvent(chart, event));
     };
 
+    
+    // interface PieGroup {
+    //     name: string;
+    //     value: number;
+    //     on: boolean;
+    // }
+
     // const pieGroups = dataSeries.map((item) => {
     //     const values = item.values
     //     const sum = values.reduce((accumulator, value) => {
@@ -167,23 +158,6 @@ function TimeChart(props: TimeChartProps) {
                     /* @ts-ignore */
                     onClick={onClick}
                 />
-            </div>
-            <div className="block">
-                <div className="columns">
-                    <div className="column is-half">
-                        {/* <PiechartNoLegend
-                            data={pieGroups}
-                            visibility={pieGroups.map((item) => item.on)}
-                        /> */}
-                    </div>
-                    <div className="column is-half">
-                        {/* <LegendTable
-                headers={['Projekt', 'Tid (min)']}
-                data={legendData}
-                onRowToggle={onLegendRowToggle}
-              /> */}
-                    </div>
-                </div>
             </div>
         </>
     );

@@ -18,7 +18,8 @@ interface TimeRegistrationProps {
 
 const TimeRegistration: FC = (props: TimeRegistrationProps) => {
   const [taskId, setTaskId] = useState<number>(1);
-  const [note, setNote] = useState<String>('');
+  const [note, setNote] = useState<string>('');
+  const [error, setError] = useState<string|null>(null);
   const startHours = props.date.getDay() > 0 && props.date.getDay() < 6 ? 8 : 0; // change to -> if (filter for user and date tmm.registration) has time end set to highest value else 8
   const [startTime, setStartTime] = useState(
     props.date.setHours(startHours, 0, 0, 0)
@@ -45,7 +46,15 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
     setEndTime(new Date());
   };
   function handleTaskIdChange(event) {
-    setTaskId(parseInt(event.target.value));
+    const taskId = parseInt(event.target.value);
+    const task = props.data.find((t: Task)=>t.id === taskId)
+    if (task){
+      setError(null);
+    }else{
+      setError('Ukent opgaveID');
+    }
+    setTaskId(taskId);
+    
   }
   function handleNoteChange(event) {
     setNote(event.target.value);
@@ -172,7 +181,7 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
             <div className="column is-narrow">
               <div className="field is-grouped">
                 <span className="control">
-                  <button className="button is-success">Save</button>
+                  <button className="button is-success" disabled={!!error}>Save</button>
                 </span>
                 <span className="control">
                   <button
@@ -188,9 +197,12 @@ const TimeRegistration: FC = (props: TimeRegistrationProps) => {
           </div>
         </form>
       </div>
-      <article className="message is-success is-small">
+      {error && <article className="message is-danger is-small">
+        <div className="message-body">{error}</div>
+      </article>}
+      {!error && <article className="message is-info is-small">
         <div className="message-body">{description}</div>
-      </article>
+      </article>}
     </div>
     </>
   );

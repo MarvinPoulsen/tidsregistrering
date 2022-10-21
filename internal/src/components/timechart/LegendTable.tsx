@@ -3,11 +3,12 @@ import { useTable } from 'react-table';
 import './legendTable.scss'
 import colors from '../../colors';
 import { PiechartData } from './PiechartNoLegend'
+import {toHoursAndMinutes} from '../../utils'
 
 interface LegendTableProps {
   headers: string[];
   data: PiechartData[];
-  onRowToggle: (rowIndex:number) => void;
+  onRowToggle: (projectName: string) => void;
 }
 
 const createTableData = (data, headers) => {
@@ -19,12 +20,12 @@ const createTableData = (data, headers) => {
         Header: header,
         title: header, // todo 
         accessor: 'col'+(i+1).toString(),
-        Footer: i===0 ? 'I alt': data.filter(item=>item.on).reduce((sum, current) => sum + current.value, 0) 
+        Footer: i===0 ? 'I alt': toHoursAndMinutes(data.filter(item=>item.on).reduce((sum, current) => sum + current.value, 0)) 
     })
   }
   for (let i = 0; i < data.length; i++) {
     const tableRow = data[i];
-    tableData.push({ col1: tableRow.name, col2: tableRow.value });
+    tableData.push({ col1: tableRow.name, col2: toHoursAndMinutes(tableRow.value) });
   }
 
   return [tableData, tableColumns];
@@ -62,7 +63,7 @@ function LegendTable(props: LegendTableProps) {
           prepareRow(row);
           const isOff = !props.data[row.index].on          
           return (
-            <tr {...row.getRowProps()} onClick={()=> props.onRowToggle(row.index)}>
+            <tr {...row.getRowProps()} onClick={()=> props.onRowToggle(row.values.col1)}>
               {row.cells.map((cell) => {
                 return (
                   <td {...cell.getCellProps({ className: ' content' +(isOff? ' is-off':'') })}>
