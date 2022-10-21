@@ -4,7 +4,7 @@ import { Task, Project } from '../../SPS';
 interface FavoritesProps {
     isActive: boolean;
     taskList: Task[];
-    onSave: () => void;
+    onSave: (favoriteIds: number[]) => void;
     onClose: () => void;
     projectList: Project[];
 }
@@ -24,6 +24,12 @@ const Favorites = (props: FavoritesProps) => {
         task.isFavorite = on;
         setTaskListCopy(newTaskList);
     };
+
+    const onSaveButtonClicked = () =>{
+        const favoriteIds = taskListCopy.filter((item: Task) => item.isFavorite).map((item: Task)=>item.id)
+        props.onSave(favoriteIds)
+    }
+
     const listOfTasks = [];
     const projects = props.projectList
     for (const project of projects) {
@@ -66,7 +72,7 @@ const Favorites = (props: FavoritesProps) => {
                         {listOfTasks}
                         <button
                             className="button is-success"
-                            onClick={props.onSave}
+                            onClick={onSaveButtonClicked}
                         >
                             Gem
                         </button>

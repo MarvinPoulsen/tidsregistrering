@@ -52,5 +52,12 @@
     <datasource endpoint="ep_lk_tmm" name="lk_tmm_favorites">
         <table name="favorites" pkcolumn="id" schema="tmm"/>
         <sql command="read-by-user">select * from tmm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
+        <sql command="delete-by-user">delete from tmm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
+        <sql command="insert">
+            insert into tmm.favorites 
+                (user_id, task_id)
+            values 
+                ([string:getUsershortid(sessionid)], [number:taskId]);
+        </sql>
     </datasource>
 </datasources>

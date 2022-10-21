@@ -168,4 +168,11 @@ export default class SPS {
         const data = await this.executeOnDs('lk_tmm_favorites', {command: "read-by-user"});
         return data.map(r=> parseInt(r.task_id as string))
     }
+
+    async updateFavorites(favoriteIds: number[]): Promise<void> {
+        await this.executeOnDs('lk_tmm_favorites', {command: "delete-by-user"});
+        for (const favoriteId of favoriteIds) {
+            await this.executeOnDs('lk_tmm_favorites', {command: "insert", taskId: favoriteId});
+        }        
+    } 
 }
