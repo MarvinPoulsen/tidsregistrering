@@ -1,8 +1,8 @@
-import React, { MouseEvent, useRef } from 'react';
+import React, { MouseEvent, useRef, useEffect } from 'react';
 import type { InteractionItem } from 'chart.js';
 import { Bar, getElementAtEvent } from 'react-chartjs-2';
 import colors from '../../colors';
-import {toHoursAndMinutes} from '../../utils'
+import { toHoursAndMinutes } from '../../utils';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -23,12 +23,15 @@ ChartJS.register(
 );
 
 interface TimeChartProps {
+    title?: string;
     onDateChanged: (date: Date) => void;
     date: Date;
     dateRange: number;
-    bgColorsStart: number;
+    bgColorsStart?: number;
     labels: string[] | string[][];
     dataSeries: StackedDataSeries[];
+    legendPosition?: string;
+    visibility: boolean[];
 }
 
 export interface StackedDatasets {
@@ -38,7 +41,7 @@ export interface StackedDatasets {
     backgroundColor: string;
 }
 interface StackedBarData {
-    labels: any;
+    labels: string[] | string[][];
     datasets: StackedDatasets[];
 }
 export interface StackedDataSeries {
@@ -49,16 +52,25 @@ export interface StackedDataSeries {
 
 function TimeChart(props: TimeChartProps) {
     // console.log('TimeChartProps: ',props)
-//CONFIG
+
+    const chartRef = useRef<ChartJS>(null);
+    useEffect(() => {
+        for (let i = 0; i < props.visibility.length; i++) {
+            chartRef.current.setDatasetVisibility(i, props.visibility[i]);
+        }
+        chartRef.current.update();
+    }, [props.visibility]);
+    //CONFIG
     const options = {
         responsive: true,
         plugins: {
             legend: {
-                position: 'right' as const,
+                display: props.legendPosition ? true : false,
+                position: props.legendPosition as 'chartArea',
             },
             title: {
-                display: false,
-                text: 'Chart.js Bar Chart',
+                display: props.title ? true : false,
+                text: props.title,
             },
             tooltip: {
                 callbacks: {
@@ -86,7 +98,7 @@ function TimeChart(props: TimeChartProps) {
             },
         },
     };
-// DATA
+    // DATA
     const datasets: StackedDatasets[] = [];
     for (let i = 0; i < props.dataSeries.length; i++) {
         const dataset: StackedDatasets = {
@@ -101,7 +113,7 @@ function TimeChart(props: TimeChartProps) {
         labels: props.labels,
         datasets,
     };
-//ACTIONS
+    //ACTIONS
     const handleElementAtEvent = (element: InteractionItem[]) => {
         if (!element.length) return;
 
@@ -110,9 +122,6 @@ function TimeChart(props: TimeChartProps) {
         new Date(prevD.setDate(prevD.getDate() - (props.dateRange - index)));
         props.onDateChanged(prevD);
     };
-
-    const chartRef = useRef<ChartJS>(null);
-
     const onClick = (event: MouseEvent<HTMLCanvasElement>) => {
         const { current: chart } = chartRef;
         if (!chart) {
@@ -121,39 +130,13 @@ function TimeChart(props: TimeChartProps) {
         handleElementAtEvent(getElementAtEvent(chart, event));
     };
 
-    
-    // interface PieGroup {
-    //     name: string;
-    //     value: number;
-    //     on: boolean;
-    // }
-
-    // const pieGroups = dataSeries.map((item) => {
-    //     const values = item.values
-    //     const sum = values.reduce((accumulator, value) => {
-    //         return accumulator + value;
-    //       }, 0);
-    //     return {
-    //         name: item.name,
-    //         value: sum,
-    //         on: true,
-    //     }
-    // });
-
-    // setLegendData(pieGroups);
-
-    // const onLegendRowToggle = (rowIndex: number) => {
-    //     const updatedlegendData = [...legendData];
-    //     updatedlegendData[rowIndex].on = !updatedlegendData[rowIndex].on;
-    //     setLegendData(updatedlegendData);
-    //   };
-
     return (
         <>
             <div className="block">
                 <Bar
                     ref={chartRef}
                     options={options}
+                    /* @ts-ignore */
                     data={data}
                     /* @ts-ignore */
                     onClick={onClick}

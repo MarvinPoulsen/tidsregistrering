@@ -12,7 +12,7 @@ import Favorites from '../modal/Favorites';
 import Slider from '../slider/Slider';
 import PiechartNoLegend from '../timechart/PiechartNoLegend';
 import LegendTable from '../timechart/LegendTable';
-import {toHoursAndMinutes} from '../../utils'
+import { toHoursAndMinutes } from '../../utils';
 let sps: SPS;
 
 interface StackedDataSeries {
@@ -61,10 +61,6 @@ const App: FC = () => {
         ];
         setLegendData(data);
     }, []);
-    // useEffect(()=> {
-
-    // },[range, timeRegistrationData]);
-console.log(legendData)
     const onSave = async (entry: TimeEntry) => {
         // eksistensen af id afgør om det er en update eller insert
         if (entry.id) {
@@ -122,8 +118,6 @@ console.log(legendData)
         setIsFavoriteActive(true);
     };
 
-
-    //TEST
     const filteredTasks =
         timeRegistrationData &&
         timeRegistrationData.filter((te) => isSameDay(te.date, taskDate));
@@ -189,7 +183,11 @@ console.log(legendData)
                 dateCopy.setDate(dateCopy.getDate() + 1);
             }
             dataSeries.push({ name: element, values, stack: '0' });
-            pieGroups.push({ name: element, value: sum, on: legendData.find((p)=>p.name === element).on });
+            pieGroups.push({
+                name: element,
+                value: sum,
+                on: legendData.find((p) => p.name === element).on,
+            });
         });
 
     let labels: string[][] = [];
@@ -210,29 +208,13 @@ console.log(legendData)
         startDate.setDate(startDate.getDate() + 1);
     }
 
-    // const getPieGroups = (data: PieGroup[]) => {
-    //     const uniquePieGroupes = [...new Set(data.map((item) => item.name))];
-    //     uniquePieGroupes.sort((a, b) => parseInt(a) - parseInt(b));
-    //     return uniquePieGroupes.map((item) => {
-    //       return {
-    //         title: item,
-    //         on: true,
-    //       };
-    //     });
-    //   };
-
-    // useEffect( () => {
-    //     const sortedPieGroups = pieGroups.sort();
-    //     setLegendData(()=>{sortedPieGroups})
-    // }, []);
-
     const onLegendRowToggle = (projectName: string) => {
         const updatedlegendData = [...legendData];
-        const project = updatedlegendData.find((p)=>p.name === projectName)
+        const project = updatedlegendData.find((p) => p.name === projectName);
         project.on = !project.on;
         setLegendData(updatedlegendData);
     };
-    // TEST
+
     return (
         <>
             <section className="hero is-info is-small">
@@ -280,6 +262,9 @@ console.log(legendData)
                                     bgColorsStart={0}
                                     labels={labels}
                                     dataSeries={dataSeries}
+                                    visibility={pieGroups.map(
+                                        (item) => item.on
+                                    )}
                                 />
                             )}
                         </div>
