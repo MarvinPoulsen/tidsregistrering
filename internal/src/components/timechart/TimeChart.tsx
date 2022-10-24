@@ -1,5 +1,5 @@
 import React, { MouseEvent, useRef, useEffect } from 'react';
-import type { InteractionItem } from 'chart.js';
+import type { InteractionItem, InteractionMode } from 'chart.js';
 import { Bar, getElementAtEvent } from 'react-chartjs-2';
 import colors from '../../colors';
 import { toHoursAndMinutes } from '../../utils';
@@ -32,6 +32,7 @@ interface TimeChartProps {
     dataSeries: StackedDataSeries[];
     legendPosition?: string;
     visibility: boolean[];
+    omittedFromSum?: string;
 }
 
 export interface StackedDatasets {
@@ -73,14 +74,32 @@ function TimeChart(props: TimeChartProps) {
                 text: props.title,
             },
             tooltip: {
+                filter: (context) =>{
+                    if (context.raw === 0){
+                        return false;
+                    } else {
+                        return true;
+                    }
+                },
                 callbacks: {
                     label: function (context) {
                         return `${context.dataset.label} ${toHoursAndMinutes(
                             context.raw
                         )}`;
                     },
+                    footer: (items)=> {
+                      const toSum = items.filter(
+                        (row) => row.dataset.label !== props.omittedFromSum
+                      );
+                      const footerContent = `Total: ${props.omittedFromSum ? toHoursAndMinutes(toSum.reduce((a, b) => a + b.parsed.y, 0)) : toHoursAndMinutes(items.reduce((a, b) => a + b.parsed.y, 0))}`;
+                      return footerContent
+                    }
                 },
             },
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index' as InteractionMode,
         },
         scales: {
             x: {
