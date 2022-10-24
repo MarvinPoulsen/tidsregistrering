@@ -77,7 +77,7 @@ const Favorites = (props: FavoritesProps) => {
                             Gem
                         </button>
                         <button className="button" onClick={props.onClose}>
-                            Annuler
+                            Annuller
                         </button>
                     </div>
                 </div>
