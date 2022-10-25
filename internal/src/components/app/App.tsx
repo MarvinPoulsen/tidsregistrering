@@ -251,7 +251,7 @@ const App: FC = () => {
                             <Slider
                                 onRangeChange={setRange}
                                 maxValue={90}
-                                minValue={7}
+                                minValue={1}
                                 value={range}
                             />
                             {timeRegistrationData && (
