@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTable } from 'react-table';
-import { MdModeEdit, MdDelete } from 'react-icons/md';
+import Icon from '@mdi/react';
+import { mdiPencil, mdiDelete } from '@mdi/js';
 import { Task, TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
 import {toHoursAndMinutes} from '../../utils'
 
-// const editButton: string = ''
 interface TimeTableProps {
     data: TimeEntry[];
     taskData: Task[];
@@ -18,12 +18,18 @@ function TimeTable(props: TimeTableProps) {
         return {
             col1: (
                 <a onClick={() => props.onEdit(element)} href="#">
-                    <MdModeEdit />
+                    <Icon 
+                        path={mdiPencil}
+                        size={0.7}
+                    />
                 </a>
             ),
             col2: (
                 <a onClick={() => props.onDelete(element.id)} href="#">
-                    <MdDelete />
+                    <Icon 
+                        path={mdiDelete}
+                        size={0.7}
+                    />
                 </a>
             ),
             col3: task.name,

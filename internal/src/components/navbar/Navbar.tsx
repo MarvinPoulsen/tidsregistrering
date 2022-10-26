@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import { MdPerson } from 'react-icons/md';
+import Icon from '@mdi/react';
+import { mdiAccount } from '@mdi/js';
 
 const Navbar: FC = (props) => {
     const user = props.user.name;
@@ -40,7 +41,10 @@ const Navbar: FC = (props) => {
                         </span>
 
                         <span className="icon is-large">
-                            <MdPerson size={30} />
+                            <Icon 
+                                path={mdiAccount}
+                                size={1.2}
+                            />
                         </span>
                     </div>
                 </div>
