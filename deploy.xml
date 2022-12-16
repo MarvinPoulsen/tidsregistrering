@@ -1,5 +1,5 @@
 <deploy>
 	<description>Modul til tidsregistrering</description>
 	<version>0.9</version>
-    <copydir fromdir="[module:tmm.dir]/dist" todir="[cbinfo.wwwroot.dir]/modules/tmm" />
+    <copydir fromdir="[module:tmm.dir]/internal/dist" todir="[cbinfo.wwwroot.dir]/modules/tmm" />
 </deploy>
