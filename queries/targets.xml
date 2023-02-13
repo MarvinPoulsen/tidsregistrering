@@ -1,15 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<targetset maxresult="500" name="tmm">
-    <target displayname="Medarbejder" name="lk_tmm_medarbejder" presentation="[module:tmm.dir]/presentations/pres-lk_tmm_medarbejder" themecondition="theme-lk_tmm_medarbejder">
-        <datasource name="lk_tmm_medarbejder"/>
-    </target>
-    <target displayname="Domicil" name="lk_tmm_domicil" presentation="[module:tmm.dir]/presentations/pres-lk_tmm_domicil" themecondition="theme-lk_tmm_domicil">
-        <datasource name="lk_tmm_domicil"/>
-    </target>
-    <target displayname="Overblik" name="lk_tmm_medarb" presentation="[module:tmm.dir]/presentations/pres-lk_tmm_medarb" themecondition="theme-lk_tmm_medarb">
-        <datasource name="lk_tmm_medarb"/>
-    </target>
-    <target displayname="mdbjdr" name="lk_tmm_mdbjdr" presentation="[module:tmm.dir]/presentations/pres-lk_tmm_mdbjdr" themecondition="theme-lk_tmm_mdbjdr">
-        <datasource name="lk_tmm_mdbjdr"/>
-    </target>
-</targetset>
+<targetset/>
