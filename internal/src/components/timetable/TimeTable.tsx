@@ -32,9 +32,9 @@ function TimeTable(props: TimeTableProps) {
                     />
                 </a>
             ),
-            col3: task.name,
-            col4: format(element.date, 'dd-MM-yyyy'),
-            col5: toHoursAndMinutes(element.time),
+            col3: task.taskName,
+            col4: format(element.taskDate, 'dd-MM-yyyy'),
+            col5: toHoursAndMinutes(element.taskTime),
             col6: element.note,
         };
     });

@@ -25,7 +25,7 @@ const createTableData = (data, headers) => {
   }
   for (let i = 0; i < data.length; i++) {
     const tableRow = data[i];
-    tableData.push({ col1: tableRow.name, col2: toHoursAndMinutes(tableRow.value) });
+    tableData.push({ col1: tableRow.projectName, col2: toHoursAndMinutes(tableRow.value) });
   }
 
   return [tableData, tableColumns];

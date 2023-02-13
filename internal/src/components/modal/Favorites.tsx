@@ -47,7 +47,7 @@ const Favorites = (props: FavoritesProps) => {
                                     onChange={onChange}
                                     value={task.id}
                                 />
-                                {task.name}
+                                {task.taskName}
                             </label>
                         </div>
                     );
@@ -55,7 +55,7 @@ const Favorites = (props: FavoritesProps) => {
             
         listOfTasks.push(
                 <div className="field" key={project.id}>
-                    <label className="label">{project.name}</label>
+                    <label className="label">{project.projectName}</label>
                      {filteredCheckboxes}
                  </div>
         );

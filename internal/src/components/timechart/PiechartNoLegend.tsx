@@ -4,6 +4,7 @@ import { Pie } from 'react-chartjs-2';
 import colors from '../../colors';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
 export const options = {
   responsive: true,
   interaction: {
@@ -41,7 +42,7 @@ export const options = {
   },
 };
 export interface PiechartData {
-  name: string;
+  projectName: string;
   value: number;
   on: boolean;
 }
@@ -61,7 +62,7 @@ interface PieData {
   datasets: PiechartDatasets[];
 }
 export function PiechartNoLegend(props: PiechartProps) {
-  const chartRef = useRef();
+  const chartRef = useRef<ChartJS<'pie', number[], string>>();
   useEffect(()=>{
     for (let i=0; i<props.visibility.length;i++){
       if (chartRef.current.getDataVisibility(i) !== props.visibility[i]){
@@ -79,7 +80,7 @@ export function PiechartNoLegend(props: PiechartProps) {
     },
   ];
   const data: PieData = {
-    labels: props.data.map(row=>row.name),
+    labels: props.data.map(row=>row.projectName),
     datasets,
   };
   return (

@@ -46,7 +46,7 @@ interface StackedBarData {
     datasets: StackedDatasets[];
 }
 export interface StackedDataSeries {
-    name: string;
+    projectName: string;
     values: number[];
     stack: string;
 }
@@ -54,7 +54,7 @@ export interface StackedDataSeries {
 function TimeChart(props: TimeChartProps) {
     // console.log('TimeChartProps: ',props)
 
-    const chartRef = useRef<ChartJS>(null);
+    const chartRef = useRef<ChartJS<'bar', number[]>>(null);
     useEffect(() => {
         for (let i = 0; i < props.visibility.length; i++) {
             chartRef.current.setDatasetVisibility(i, props.visibility[i]);
@@ -121,7 +121,7 @@ function TimeChart(props: TimeChartProps) {
     const datasets: StackedDatasets[] = [];
     for (let i = 0; i < props.dataSeries.length; i++) {
         const dataset: StackedDatasets = {
-            label: props.dataSeries[i].name,
+            label: props.dataSeries[i].projectName,
             data: props.dataSeries[i].values,
             stack: props.dataSeries[i].stack,
             backgroundColor: colors.bgColors[i + props.bgColorsStart],
