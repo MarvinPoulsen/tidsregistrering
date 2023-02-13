@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import './slider.scss';
 
 export interface Sliderprops {
@@ -8,7 +8,7 @@ export interface Sliderprops {
     value: number;
 }
 
-const Slider: FC = (props: Sliderprops) => {
+const Slider = (props: Sliderprops) => {
     // console.log('Sliderprops: ',props)
     const handleChange = (e) => {
         props.onRangeChange(e.target.value);
