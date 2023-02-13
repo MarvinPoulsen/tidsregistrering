@@ -1,73 +1,71 @@
-import React, { FC, useEffect, useState } from 'react';
-import './app.scss';
-
-import Navbar from '../navbar/Navbar';
-import TimeRegistration from '../timeregistration/TimeRegistration';
-import TimeTable from '../timetable/TimeTable';
-import TimeChart from '../timechart/TimeChart';
-import SPS, { TimeEntry } from '../../SPS';
+import React, { useEffect, useState, useRef } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Complex from '../../pages/complex/Complex';
+import Basic from '../../pages/basic/Basic';
+import Navbar from '../../components/navbar/Navbar';
+import Favorites from '../../components/modal/Favorites';
+import EditCalendar from '../../components/modal/EditCalendar';
+import SPS, { TimeEntry, Project, User, Task } from '../../SPS';
 import format from 'date-fns/format';
-import { isSameDay } from 'date-fns';
-import Favorites from '../modal/Favorites';
-import Slider from '../slider/Slider';
-import PiechartNoLegend from '../timechart/PiechartNoLegend';
-import LegendTable from '../timechart/LegendTable';
 import { toHoursAndMinutes } from '../../utils';
-let sps: SPS;
+import './app.scss';
+import Statistics from '../../pages/statistics/Statistics';
+import Projects from '../../pages/admin/Projects';
+import Tasks from '../../pages/admin/Tasks';
+import Users from '../../pages/admin/Users';
 
-interface StackedDataSeries {
-    name: string;
-    values: number[];
-    stack: string;
-}
-interface PieGroup {
-    name: string;
-    value: number;
-    on: boolean;
-}
-
-const App: FC = () => {
-    const [user, setUser] = useState(null);
-    const [timeRegistrationData, setTimeRegistrationData] = useState(null);
-    const [taskData, setTaskData] = useState(null);
+const App = () => {
+    const [user, setUser] = useState<User>(null);
+    const [projectsData, setProjectsData] = useState<Project[]>([]); // læser i tabellen projects (returner id og name)
+    const [taskDate, setTaskDate] = useState<Date>(new Date()); // valgte dato,
+    const [taskStart, setTaskStart] = useState<Date>(null); // valgte dato,
+    const [taskEnd, setTaskEnd] = useState<Date>(null); // valgte dato,
+    const [timeRegistrationData, setTimeRegistrationData] = useState<TimeEntry[]>([]);
+    const [taskData, setTaskData] = useState<Task[]>([]);
     const [isDeletingId, setIsDeletingId] = useState<number>(null);
-    const [editEntry, setEditEntry] = useState();
+    const [editEntry, setEditEntry] = useState<TimeEntry>(null);
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
-    const [projectsData, setProjectsData] = useState(null);
-    const [legendData, setLegendData] = useState<PieGroup[]>([]);
-    const [taskDate, setTaskDate] = useState(new Date());
-    const [range, setRange] = useState(14);
-    useEffect(async () => {
-        sps = new SPS();
-        await sps.initialize();
-        const user = sps.getUser();
-        setUser(user);
+    const [isEditCalendarActive, setIsEditCalendarActive] = useState<boolean>(false);
+    const [logo, setLogo] = useState<string>('');
+    const sps = useRef<SPS>(new SPS());
+    // console.log(sps)
+    // const ses = sps.getParam()
+    // const isSuperUser =
 
-        const tasks = await sps.getTaskData();
-        setTaskData(tasks);
+    // const isSuperUser = mm.getSession().getPrincipal().hasPermission('endpoint.ep_lk_tmm_superbruger');
+    // const isLeader = lederadgang (brug dette endpoint til at hente statistikdata fra tmm)
+    // const isAdministrator = administrator (brug dette endpoint til at hente userdata fra tmm)
 
-        const projects = await sps.getProjectsData();
-        setProjectsData(projects);
-        refresh();
-        const data: any[] = [
-            ...new Set(
-                projects.map((item) => {
-                    return {
-                        name: item.name,
-                        on: true,
-                    };
-                })
-            ),
-        ];
-        setLegendData(data);
+    useEffect(() => {
+        const getDataFromSps = async () => {
+            await sps.current.initialize();
+            const user = sps.current.getUser();
+            // console.log('sps.current.getUser: ', user);
+            setUser(user);
+            const siteUrl = sps.current.getParameter('cbinfo.site.url');
+            const logoUrl = sps.current.getParameter('module.tasm.logo');
+            setLogo(siteUrl + logoUrl);
+            const tasks = await sps.current.getTaskData();
+            setTaskData(tasks);
+
+            const projects = await sps.current.getProjectsData();
+            // console.log('projects: ',projects)
+            setProjectsData(projects);
+            refresh();
+        };
+        getDataFromSps();
     }, []);
+    /**
+     * @description eksistensen af id afgør om det er en update eller insert
+     * @param entry
+     */
     const onSave = async (entry: TimeEntry) => {
         // eksistensen af id afgør om det er en update eller insert
         if (entry.id) {
-            await sps.updateTimeRegistration(entry);
+            await sps.current.updateTimeRegistration(entry);
             setEditEntry(null);
         } else {
-            await sps.insertTimeRegistration(entry);
+            await sps.current.insertTimeRegistration(entry);
         }
         refresh();
     };
@@ -75,7 +73,7 @@ const App: FC = () => {
         setIsDeletingId(id);
     };
     const confirmDelete = async () => {
-        await sps.deleteTimeRegistration(isDeletingId);
+        await sps.current.deleteTimeRegistration(isDeletingId);
         refresh();
         closeModal();
     };
@@ -83,27 +81,27 @@ const App: FC = () => {
         setEditEntry(e);
     };
     const refresh = async () => {
-        const timeRegistrationData = await sps.getTimeRegistrationData(); //user.shortId
+        const timeRegistrationData = await sps.current.getTimeRegistrationData(); //user.shortId
         setTimeRegistrationData(timeRegistrationData);
-    };
-    const closeModal = () => {
-        setIsDeletingId(null);
     };
     const getTaskDescription = (id: number): string => {
         const entry = timeRegistrationData.find((te) => te.id === id);
         const task = taskData.find((t) => t.id === entry.taskId);
         return (
-            toHoursAndMinutes(entry.time) +
+            toHoursAndMinutes(entry.taskTime) +
             ' - ' +
-            task.name +
+            task.taskName +
             ' - ' +
-            format(entry.date, 'dd-MM-yyyy') +
+            format(entry.taskDate, 'dd-MM-yyyy') +
             ', note: ' +
             entry.note
         );
     };
+    const closeModal = () => {
+        setIsDeletingId(null);
+    };
     const saveFavorites = (favoriteIds: number[]) => {
-        sps.updateFavorites(favoriteIds);
+        sps.current.updateFavorites(favoriteIds);
         const updatedTaskData = [...taskData];
         for (const task of updatedTaskData) {
             task.isFavorite = favoriteIds.includes(task.id);
@@ -117,179 +115,67 @@ const App: FC = () => {
     const editFavorites = () => {
         setIsFavoriteActive(true);
     };
-
-    const filteredTasks =
-        timeRegistrationData &&
-        timeRegistrationData.filter((te) => isSameDay(te.date, taskDate));
-
-    let endDate = new Date(taskDate);
-    endDate.setHours(0, 0, 0, 0);
-    let startDate = new Date(endDate);
-    const dateRange = range - 1;
-    startDate.setDate(startDate.getDate() - dateRange);
-    const filterData =
-        timeRegistrationData &&
-        timeRegistrationData.filter((a) => {
-            const lookupDate = new Date(a.date);
-            return lookupDate >= startDate && lookupDate <= endDate;
-        });
-
-    const tasks =
-        filterData &&
-        filterData.map((element) => {
-            const task = taskData.find((t) => t.id === element.taskId);
-            const project = projectsData.find((p) => p.id === task.projectId);
-            return {
-                taskDate: element.date,
-                taskTime: element.time,
-                // taskName: task.name,
-                // projectId: task.projectId,
-                projectName: project.name,
-            };
-        });
-
-    const projects: any[] = tasks && [
-        ...new Set(tasks.map((item) => item.projectName)),
-    ];
-
-    let dataSeries: StackedDataSeries[] = [];
-    let pieGroups: PieGroup[] = [];
-    projects &&
-        projects.forEach((element) => {
-            const filteredProjects = tasks.filter(
-                (p) => p.projectName === element
-            );
-            let dateCopy = new Date(taskDate.getTime());
-            dateCopy.setDate(dateCopy.getDate() - dateRange);
-
-            let values: number[] = [];
-            let sum: number = 0;
-            for (let i = 0; i <= dateRange; i++) {
-                let filteredByDate = filteredProjects.filter((d) =>
-                    isSameDay(d.taskDate, dateCopy)
-                );
-                values.push(
-                    filteredByDate.reduce(
-                        (total, currentItem) =>
-                            (total = total + (currentItem.taskTime || 0)),
-                        0
-                    )
-                );
-                sum += filteredByDate.reduce(
-                    (total, currentItem) =>
-                        (total = total + (currentItem.taskTime || 0)),
-                    0
-                );
-                dateCopy.setDate(dateCopy.getDate() + 1);
-            }
-            dataSeries.push({ name: element, values, stack: '0' });
-            pieGroups.push({
-                name: element,
-                value: sum,
-                on: legendData.find((p) => p.name === element).on,
-            });
-        });
-
-    let labels: string[][] = [];
-    for (let i = 0; i <= dateRange; i++) {
-        const labelPair: string[] = [];
-        labelPair.push(
-            new Intl.DateTimeFormat('da-DK', { weekday: 'short' }).format(
-                startDate
-            )
-        );
-        labelPair.push(
-            startDate.toLocaleDateString('da-DK', {
-                month: 'short',
-                day: 'numeric',
-            })
-        );
-        labels.push(labelPair);
-        startDate.setDate(startDate.getDate() + 1);
-    }
-
-    const onLegendRowToggle = (projectName: string) => {
-        const updatedlegendData = [...legendData];
-        const project = updatedlegendData.find((p) => p.name === projectName);
-        project.on = !project.on;
-        setLegendData(updatedlegendData);
+    const onDateChanged = (newTaskDate: Date) => {
+        setTaskDate(newTaskDate);
     };
-
+    const openEditCalendar = () => {
+        setIsEditCalendarActive(true);
+    };
+    const closeEditCalendar = () => {
+        setIsEditCalendarActive(false);
+    };
     return (
         <>
             <section className="hero is-info is-small">
-                {user && <Navbar user={user} editFavorites={editFavorites} />}
+                {user && <Navbar user={user} editFavorites={editFavorites} logo={logo} />}
             </section>
-            <section className="section">
-                <div className="columns">
-                    <div className="column is-full">
-                        {taskData && (
-                            <TimeRegistration
-                                onDateChanged={setTaskDate}
-                                date={taskDate}
-                                data={taskData}
-                                userId={user.shortid}
-                                onSave={onSave}
+            <Routes>
+                <Route path="/">
+                    <Route
+                        index
+                        element={
+                            <Basic
+                                timeRegistrationData={timeRegistrationData}
+                                taskDate={taskDate}
+                                projectsData={projectsData}
+                                user={user}
+                                onSave={(entry) => onSave(entry)}
                                 editEntry={editEntry}
-                            />
-                        )}
-                    </div>
-                </div>
-                <div className="columns">
-                    <div className="column is-half">
-                        {timeRegistrationData && (
-                            <TimeTable
-                                data={filteredTasks}
+                                onDelete={(id) => onDelete(id)}
+                                onEdit={(e: any) => onEdit(e)}
                                 taskData={taskData}
-                                onDelete={onDelete}
-                                onEdit={onEdit}
+                                onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
+                                taskStart={taskStart}
+                                taskEnd={taskEnd}
                             />
-                        )}
-                    </div>
-                    <div className="column">
-                        <div className="block">
-                            <Slider
-                                onRangeChange={setRange}
-                                maxValue={90}
-                                minValue={7}
-                                value={range}
+                        }
+                    />
+                    <Route
+                        path="/basic"
+                        element={
+                            <Basic
+                                timeRegistrationData={timeRegistrationData}
+                                taskDate={taskDate}
+                                projectsData={projectsData}
+                                user={user}
+                                onSave={(entry) => onSave(entry)}
+                                editEntry={editEntry}
+                                onDelete={(id) => onDelete(id)}
+                                onEdit={(e) => onEdit(e)}
+                                taskData={taskData}
+                                onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
+                                taskStart={taskStart}
+                                taskEnd={taskEnd}
                             />
-                            {timeRegistrationData && (
-                                <TimeChart
-                                    onDateChanged={setTaskDate}
-                                    date={taskDate}
-                                    dateRange={dateRange}
-                                    bgColorsStart={0}
-                                    labels={labels}
-                                    dataSeries={dataSeries}
-                                    visibility={pieGroups.map(
-                                        (item) => item.on
-                                    )}
-                                />
-                            )}
-                        </div>
-                        <div className="block">
-                            <div className="columns">
-                                <div className="column is-half">
-                                    <PiechartNoLegend
-                                        data={pieGroups}
-                                        visibility={pieGroups.map(
-                                            (item) => item.on
-                                        )}
-                                    />
-                                </div>
-                                <div className="column is-half">
-                                    <LegendTable
-                                        headers={['Projekt', 'Tid']}
-                                        data={pieGroups}
-                                        onRowToggle={onLegendRowToggle}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                        }
+                    />
+                    <Route path="/complex" element={<Complex />} />
+                    <Route path="/statistics" element={<Statistics />} />
+                    <Route path="/projects" element={<Projects />} />
+                    <Route path="/tasks" element={<Tasks />} />
+                    <Route path="/users" element={<Users />} />
+                </Route>
+            </Routes>
             {taskData && projectsData && (
                 <Favorites
                     isActive={isFavoriteActive}
@@ -309,10 +195,7 @@ const App: FC = () => {
                                 {getTaskDescription(isDeletingId)}
                             </p>
                         )}
-                        <button
-                            className="button is-danger"
-                            onClick={confirmDelete}
-                        >
+                        <button className="button is-danger" onClick={confirmDelete}>
                             Slet
                         </button>
                         <button className="button" onClick={closeModal}>
@@ -320,12 +203,17 @@ const App: FC = () => {
                         </button>
                     </div>
                 </div>
-                <button
-                    className="modal-close is-large"
-                    aria-label="close"
-                    onClick={closeModal}
-                ></button>
+                <button className="modal-close is-large" aria-label="close" onClick={closeModal}></button>
             </div>
+            <EditCalendar
+                isActive={isEditCalendarActive}
+                onSave={function (eventIds: number[]): void {
+                    throw new Error('Function not implemented.');
+                }}
+                onClose={function (): void {
+                    throw new Error('Function not implemented.');
+                }}
+            />
         </>
     );
 };
