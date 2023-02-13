@@ -114,7 +114,8 @@ export default class SPS {
     }
 
     async getTaskData(): Promise<Task[]> {
-        const data = await this.executeOnDs('lk_tasm_tasks');
+        const data = await this.executeOnDs('lk_tasm_tasks', {command: "read-current"});        
+        // console.log('lk_tasm_tasks: ', data)
         const favorites = await this.getFavoritTasks();
         const taskData: Task[] = data.map(element => {
             const id = parseInt(element.id as string);
@@ -132,7 +133,8 @@ export default class SPS {
 
         
     async getProjectsData(): Promise<any[]> {
-        const data = await this.executeOnDs('lk_tasm_projects');
+        const data = await this.executeOnDs('lk_tasm_projects', {command: "read-current"});
+        // console.log('lk_tasm_projects: ', data)
         // filter for obsolete not true only false are valid projects
         const projectData: Project[] = data.map(element => {
             const id = parseInt(element.id as string);

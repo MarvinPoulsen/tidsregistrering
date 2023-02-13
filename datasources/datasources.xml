@@ -52,9 +52,11 @@
     </datasource>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_tasks">
         <table name="tasks" pkcolumn="id" schema="tasm"/>
+        <sql command="read-current">select * from tasm.tasks where obsolete='false';</sql>
     </datasource>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_projects">
         <table name="projects" pkcolumn="id" schema="tasm"/>
+        <sql command="read-current">select * from tasm.projects where obsolete='false';</sql>
     </datasource>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_users">
         <table name="users" pkcolumn="id" schema="tasm"/>
