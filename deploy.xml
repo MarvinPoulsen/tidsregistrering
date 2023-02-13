@@ -1,5 +1,6 @@
 <deploy>
 	<description>Modul til tidsregistrering</description>
 	<version>0.9</version>
-    <copydir fromdir="[module:tmm.dir]/internal/dist" todir="[cbinfo.wwwroot.dir]/modules/tmm" />
+    <copydir fromdir="[module:tasm.dir]/internal/dist" todir="[cbinfo.wwwroot.dir]/modules/tasm" />
+	<param name="module.tasm.logo">/images/custom/Lolland9.png</param>
 </deploy>
