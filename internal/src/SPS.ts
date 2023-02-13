@@ -5,23 +5,26 @@ function isExecption(resp: SpatialServer.DSResponse): resp is SpatialServer.SPSE
 }
 
 interface Profile {
-    name: string;
+    profileName: string;
     displayName: string;
   }
 
 export interface TimeEntry {
-    date: Date;
+    taskDate: Date;
     id?: number;
     note: string;
     taskId: number;
-    time: number;
+    taskTime: number;
     userId: string;
+    taskStart: Date;
+    taskEnd: Date;
+    allDay:boolean;
 }  
 
 export interface Task {
     id: number;
     projectId: number;
-    name: string;
+    taskName: string;
     description: string;
     isFavorite: boolean;
 } 
@@ -31,12 +34,15 @@ export interface Project {
     // groupId: string;
     // horizon: Date;
     // importance: number;
-    name: string;
+    projectName: string;
     // sbsysId: number;
     // timeframe: number;
 }
 
-
+export interface User{
+    name: string;
+    shortId: string;
+}
 
 export default class SPS {
     private ses: SpatialServer.Session;
@@ -57,12 +63,16 @@ export default class SPS {
         return this.ses.getPrincipal()
     }
 
+    getParameter(paramName:string):string {
+        return this.ses.getParam(paramName)
+    }
+
     async getProfiles(): Promise<Profile[]> {
         return new Promise((resolve, _reject) => {
             this.ses.createPageRequest('profileselector_get_profiles').call(null, (profileResponse) => {
                 const availableProfiles: Profile[] = profileResponse.row[0].row.map(p => {
                     return {
-                        name: p.name,
+                        profileName: p.name,
                         displayName: p.displayname
                     };
                 });
@@ -86,22 +96,25 @@ export default class SPS {
     }
 
     async getTimeRegistrationData(): Promise<TimeEntry[]> {
-        const data = await this.executeOnDs('lk_tmm_registration', {command: "read-by-user"});
+        const data = await this.executeOnDs('lk_tasm_registration', {command: "read-by-user"});
         const timeEntries: TimeEntry[] = data.map(element => {
             return {
-                date: new Date(element.date as string),
+                taskDate: new Date(element.task_date as string),
                 id: parseInt(element.id as string),
                 note: element.note as string,
                 taskId: parseInt(element.task_id as string),
-                time: parseInt(element.time as string),
+                taskTime: parseInt(element.task_time as string),
                 userId: element.user_id as string,
+                taskStart: new Date(element.task_start as string),
+                taskEnd: new Date(element.task_end as string),
+                allDay:element.all_day as boolean,
             }
         })
         return timeEntries
     }
 
     async getTaskData(): Promise<Task[]> {
-        const data = await this.executeOnDs('lk_tmm_tasks');
+        const data = await this.executeOnDs('lk_tasm_tasks');
         const favorites = await this.getFavoritTasks();
         const taskData: Task[] = data.map(element => {
             const id = parseInt(element.id as string);
@@ -109,7 +122,7 @@ export default class SPS {
             return {
                 id,
                 projectId,
-                name: element.name as string,
+                taskName: element.task_name as string,
                 description: element.description as string,
                 isFavorite: favorites.includes(id)
             }
@@ -119,12 +132,13 @@ export default class SPS {
 
         
     async getProjectsData(): Promise<any[]> {
-        const data = await this.executeOnDs('lk_tmm_projects');
+        const data = await this.executeOnDs('lk_tasm_projects');
+        // filter for obsolete not true only false are valid projects
         const projectData: Project[] = data.map(element => {
             const id = parseInt(element.id as string);
             return {
                 id,
-                name: element.name as string,
+                projectName: element.project_name as string,
             }
         })
         return projectData
@@ -132,15 +146,21 @@ export default class SPS {
 
         
     async getUsersData(): Promise<any[]> {
-        const data = await this.executeOnDs('lk_tmm_users');
+        const data = await this.executeOnDs('lk_tasm_users');
+        console.log('UsersData: ',data)
         return data
     }
 
     async insertTimeRegistration(entry: TimeEntry): Promise<void> {
+        console.log('TimeEntry: ',entry)
+        console.log('allDay: ',typeof entry.allDay)
+
         try{
-            await this.executeOnDs('lk_tmm_registration', {command: "insert-registration", 
+            await this.executeOnDs('lk_tasm_registration', {command: "insert-registration", 
             ...entry,
-            date: format(entry.date, 'yyyy-MM-dd')
+            taskDate: format(entry.taskDate, 'yyyy-MM-dd'),
+            taskStart: format(entry.taskStart, 'yyyy-MM-dd HH:mm'),
+            taskEnd: format(entry.taskEnd, 'yyyy-MM-dd HH:mm')
          });
         }catch(e){
             console.error(e.exception.message)
@@ -149,14 +169,18 @@ export default class SPS {
     }
 
     async deleteTimeRegistration(id: number): Promise<void> {
-        this.executeOnDs('lk_tmm_registration', {command: "delete-by-id", id});
+        this.executeOnDs('lk_tasm_registration', {command: "delete-by-id", id});
     }
 
     async updateTimeRegistration(entry: TimeEntry): Promise<void> {
+        console.log('TimeEntry: ',entry)
+        console.log('allDay: ',typeof entry.allDay)
         try{
-            await this.executeOnDs('lk_tmm_registration', {command: "update-by-id", 
+            await this.executeOnDs('lk_tasm_registration', {command: "update-by-id", 
             ...entry,
-            date: format(entry.date, 'yyyy-MM-dd')
+            taskDate: format(entry.taskDate, 'yyyy-MM-dd'),
+            taskStart: format(entry.taskStart, 'yyyy-MM-dd HH:mm'),
+            taskEnd: format(entry.taskEnd, 'yyyy-MM-dd HH:mm')
          });
         }catch(e){
             console.error(e.exception.message)
@@ -165,14 +189,14 @@ export default class SPS {
     }
 
     async getFavoritTasks(): Promise<number[]> {
-        const data = await this.executeOnDs('lk_tmm_favorites', {command: "read-by-user"});
+        const data = await this.executeOnDs('lk_tasm_favorites', {command: "read-by-user"});
         return data.map(r=> parseInt(r.task_id as string))
     }
 
     async updateFavorites(favoriteIds: number[]): Promise<void> {
-        await this.executeOnDs('lk_tmm_favorites', {command: "delete-by-user"});
+        await this.executeOnDs('lk_tasm_favorites', {command: "delete-by-user"});
         for (const favoriteId of favoriteIds) {
-            await this.executeOnDs('lk_tmm_favorites', {command: "insert", taskId: favoriteId});
+            await this.executeOnDs('lk_tasm_favorites', {command: "insert", taskId: favoriteId});
         }        
     } 
 }

@@ -1,60 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
-    <endpoint endpointtype="postgis" name="ep_lk_tmm">
+    <endpoint endpointtype="postgis" name="ep_lk_tasm">
         <connect>[cbinfo.pg_endpoint.connect]</connect>
         <user>[cbinfo.pg_endpoint.usr]</user>
         <pwd>[cbinfo.pg_endpoint.pwd]</pwd>
     </endpoint>
-    <datasource endpoint="ep_lk_tmm" name="lk_tmm_registration">
-        <table name="registration" pkcolumn="id" schema="tmm"/>
-        <sql command="read-by-user">select * from tmm.registration where user_id=[string:getUsershortid(sessionid)];</sql>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_registration">
+        <debug>true</debug>
+        <table name="registration" pkcolumn="id" schema="tasm"/>
+        <sql command="read-by-user">select * from tasm.registration where user_id=[string:getUsershortid(sessionid)];</sql>
         <sql command="insert-registration">
             insert into 
-                tmm.registration(
-                    user_id, 
-                    date, 
-                    time, 
+                tasm.registration(
+                    user_id,
+                    task_date,
+                    task_time,
                     task_id,
-                    timestamp, 
-                    note
+                    last_modified,
+                    task_start,
+                    task_end,
+                    note,
+                    all_day
                 ) 
                 values (
                     [string:getUsershortid(sessionid)],
-                    [timestamp:toTimestamp(date, 'yyyy-MM-dd')],
-                    [number:time],
+                    [timestamp:toTimestamp(taskDate, 'yyyy-MM-dd')],
+                    [number:taskTime],
                     [number:taskId],
                     CURRENT_TIMESTAMP,
-                    [string:if isdefined (note) then note else NULL endif]
+                    [timestamp:toTimestamp(taskStart, 'yyyy-MM-dd HH:mm')],
+                    [timestamp:toTimestamp(taskEnd, 'yyyy-MM-dd HH:mm')],
+                    [string:if isdefined (note) then note else NULL endif],
+                    [boolean:allDay='true']
                 );
         </sql>
-        <sql command="delete-by-id">delete from tmm.registration where id=[number:id];</sql>
+        <sql command="delete-by-id">delete from tasm.registration where id=[number:id];</sql>
         <sql command="update-by-id">
-            update tmm.registration
+            update tasm.registration
             set 
-                date = [timestamp:toTimestamp(date, 'yyyy-MM-dd')], 
-                time = [number:time], 
+                task_date = [timestamp:toTimestamp(taskDate, 'yyyy-MM-dd')], 
+                task_time = [number:taskTime], 
                 task_id = [number:taskId],
-                timestamp = CURRENT_TIMESTAMP, 
-                note = [string:if isdefined (note) then note else NULL endif]
+                last_modified = CURRENT_TIMESTAMP, 
+                task_start = [timestamp:toTimestamp(taskStart, 'yyyy-MM-dd HH:mm')],
+                task_end = [timestamp:toTimestamp(taskEnd, 'yyyy-MM-dd HH:mm')],
+                note = [string:if isdefined (note) then note else NULL endif],
+                all_day = [boolean:allDay='true']
             where
                 id = [number: id];
         </sql>
     </datasource>
-    <datasource endpoint="ep_lk_tmm" name="lk_tmm_tasks">
-        <table name="tasks" pkcolumn="id" schema="tmm"/>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_tasks">
+        <table name="tasks" pkcolumn="id" schema="tasm"/>
     </datasource>
-    <datasource endpoint="ep_lk_tmm" name="lk_tmm_projects">
-        <table name="projects" pkcolumn="id" schema="tmm"/>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_projects">
+        <table name="projects" pkcolumn="id" schema="tasm"/>
     </datasource>
-    <datasource endpoint="ep_lk_tmm" name="lk_tmm_users">
-        <table name="users" pkcolumn="id" schema="tmm"/>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_users">
+        <table name="users" pkcolumn="id" schema="tasm"/>
     </datasource>
-    <datasource endpoint="ep_lk_tmm" name="lk_tmm_favorites">
-        <table name="favorites" pkcolumn="id" schema="tmm"/>
-        <sql command="read-by-user">select * from tmm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
-        <sql command="delete-by-user">delete from tmm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_favorites">
+        <table name="favorites" pkcolumn="id" schema="tasm"/>
+        <sql command="read-by-user">select * from tasm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
+        <sql command="delete-by-user">delete from tasm.favorites where user_id=[string:getUsershortid(sessionid)];</sql>
         <sql command="insert">
-            insert into tmm.favorites 
+            insert into tasm.favorites 
                 (user_id, task_id)
             values 
                 ([string:getUsershortid(sessionid)], [number:taskId]);
