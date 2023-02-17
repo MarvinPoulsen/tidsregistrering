@@ -81,10 +81,10 @@ function TimeTable(props: TimeTableProps) {
             })}
         >
             <thead>
-                {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map((column) => (
-                            <th {...column.getHeaderProps()}>
+                {headerGroups.map((headerGroup, i) => (
+                    <tr {...headerGroup.getHeaderGroupProps()} key={i}>
+                        {headerGroup.headers.map((column, i) => (
+                            <th {...column.getHeaderProps()} key={i}>
                                 {column.render('Header')}
                             </th>
                         ))}
@@ -92,13 +92,13 @@ function TimeTable(props: TimeTableProps) {
                 ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
+                {rows.map((row, i) => {
                     prepareRow(row);
                     return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map((cell) => {
+                        <tr {...row.getRowProps()} key={i}>
+                            {row.cells.map((cell, i) => {
                                 return (
-                                    <td {...cell.getCellProps()}>
+                                    <td {...cell.getCellProps()} key={i}>
                                         {cell.render('Cell')}
                                     </td>
                                 );

@@ -19,7 +19,9 @@ export const options = {
       filter: (tooltipItem) => {
         return tooltipItem.chart.getDataVisibility(tooltipItem.dataIndex)
       },
+      // eslint-disable-next-line @typescript-eslint/prefer-as-const
       yAlign:'bottom' as 'bottom',
+      // eslint-disable-next-line @typescript-eslint/prefer-as-const
       titleAlign: 'center' as 'center',
       callbacks: {
         label: (context) => {
@@ -27,7 +29,7 @@ export const options = {
           for (let i = 0;i<context.dataset.data.length;i++){				
             const on = context.chart.getDataVisibility(i);
             totalSum += (on ? context.dataset.data[i] : 0);
-          };
+          }
           const label = context.label.length > 15 ? context.label.substring(0,11) + '.. ' : context.label;
           const tooltipContent = `${label}: ${((context.parsed/totalSum)*100).toFixed(1)}%`;
           return tooltipContent;

@@ -46,10 +46,10 @@ function LegendTable(props: LegendTableProps) {
       })}
     >
       <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps()}>
+        {headerGroups.map((headerGroup, i) => (
+          <tr {...headerGroup.getHeaderGroupProps()} key={i}>
+            {headerGroup.headers.map((column, i) => (
+              <th {...column.getHeaderProps()} key={i}>
                 <abbr title={column.render('title')}>
                 {column.render('Header')}
                 </abbr>
@@ -59,14 +59,14 @@ function LegendTable(props: LegendTableProps) {
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row) => {
+        {rows.map((row, i) => {
           prepareRow(row);
           const isOff = !props.data[row.index].on          
           return (
-            <tr {...row.getRowProps()} onClick={()=> props.onRowToggle(row.values.col1)}>
-              {row.cells.map((cell) => {
+            <tr {...row.getRowProps()} onClick={()=> props.onRowToggle(row.values.col1)} key={i}>
+              {row.cells.map((cell, i) => {
                 return (
-                  <td {...cell.getCellProps({ className: ' content' +(isOff? ' is-off':'') })}>
+                  <td {...cell.getCellProps({ className: ' content' +(isOff? ' is-off':'') })} key={i}>
                     {cell.column.id === 'col1' && 
                       <span 
                         className='color-box' 
@@ -86,10 +86,10 @@ function LegendTable(props: LegendTableProps) {
         })}
       </tbody>
       <tfoot>
-        {footerGroups.map(group => (
-          <tr {...group.getFooterGroupProps()}>
-            {group.headers.map(column => (
-              <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+        {footerGroups.map((group, i) => (
+          <tr {...group.getFooterGroupProps()} key={i}>
+            {group.headers.map((column, i) => (
+              <th {...column.getFooterProps()} key={i}>{column.render('Footer')}</th>
             ))}
           </tr>
         ))}

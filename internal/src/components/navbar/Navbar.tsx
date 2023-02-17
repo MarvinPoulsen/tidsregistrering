@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiAccount } from '@mdi/js';
 import './navbar.scss';
+import { User } from '../../SPS';
 enum Tab {
     Basic,
     Complex,
@@ -12,12 +13,12 @@ enum Tab {
     Users,
 }
 interface NavbarProps  {
-    user: any;
+    user: User;
     editFavorites: () => void;
     logo:string;
   }
 const Navbar = (props: NavbarProps) => {
-    let location = useLocation();
+    const location = useLocation();
 
     const [isActiveTab, setActiveTab] = useState<Tab>(null);
     React.useEffect(() => {

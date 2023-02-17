@@ -75,7 +75,7 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
-//@ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 const DnDCalendar = withDragAndDrop(Calendar);
 
 export default Statistics;

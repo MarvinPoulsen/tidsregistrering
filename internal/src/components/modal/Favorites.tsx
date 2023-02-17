@@ -59,7 +59,7 @@ const Favorites = (props: FavoritesProps) => {
                      {filteredCheckboxes}
                  </div>
         );
-    };
+    }
 
 
     return (

@@ -8,7 +8,9 @@ interface Profile {
     profileName: string;
     displayName: string;
   }
-
+/**
+ * @description
+ */
 export interface TimeEntry {
     taskDate: Date;
     id?: number;
@@ -52,6 +54,7 @@ export default class SPS {
     }
 
     async initialize(): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise ((resolve, _reject) => {
             this.ses.asyncInit(async () => {
                 resolve();
@@ -68,6 +71,7 @@ export default class SPS {
     }
 
     async getProfiles(): Promise<Profile[]> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, _reject) => {
             this.ses.createPageRequest('profileselector_get_profiles').call(null, (profileResponse) => {
                 const availableProfiles: Profile[] = profileResponse.row[0].row.map(p => {
@@ -132,7 +136,7 @@ export default class SPS {
     }
 
         
-    async getProjectsData(): Promise<any[]> {
+    async getProjectsData(): Promise<Project[]> {
         const data = await this.executeOnDs('lk_tasm_projects', {command: "read-current"});
         // console.log('lk_tasm_projects: ', data)
         // filter for obsolete not true only false are valid projects
@@ -147,15 +151,15 @@ export default class SPS {
     }
 
         
-    async getUsersData(): Promise<any[]> {
+    async getUsersData(): Promise<unknown[]> {
         const data = await this.executeOnDs('lk_tasm_users');
-        console.log('UsersData: ',data)
+        // console.log('UsersData: ',data)
         return data
     }
 
     async insertTimeRegistration(entry: TimeEntry): Promise<void> {
-        console.log('TimeEntry: ',entry)
-        console.log('allDay: ',typeof entry.allDay)
+        // console.log('TimeEntry: ',entry)
+        // console.log('allDay: ',typeof entry.allDay)
 
         try{
             await this.executeOnDs('lk_tasm_registration', {command: "insert-registration", 
@@ -175,8 +179,8 @@ export default class SPS {
     }
 
     async updateTimeRegistration(entry: TimeEntry): Promise<void> {
-        console.log('TimeEntry: ',entry)
-        console.log('allDay: ',typeof entry.allDay)
+        // console.log('TimeEntry: ',entry)
+        // console.log('allDay: ',typeof entry.allDay)
         try{
             await this.executeOnDs('lk_tasm_registration', {command: "update-by-id", 
             ...entry,

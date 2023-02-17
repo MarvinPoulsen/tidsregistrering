@@ -14,6 +14,10 @@ export interface PieGroup {
     value: number;
     on: boolean;
 }
+export interface LegendData {
+    projectName: string;
+    on: boolean;
+}
 interface StackedDataSeries {
     projectName: string;
     values: number[];
@@ -29,41 +33,51 @@ interface BasicProps {
     onSave:(entry)=>void;
     editEntry:TimeEntry;
     onDelete:(id)=>void;
-    onEdit:(e: any)=>void
+    onEdit:(e: TimeEntry)=>void
     taskData:Task[];
     onDateChanged:(newTaskDate)=>void
 }
 const Basic = (props:BasicProps) => {
+    // console.log('props.projectsData: ',props.projectsData)
     const [range, setRange] = useState<number>(14);
-    const [legendData, setLegendData] = useState<PieGroup[]>([]);
+    const [legendData, setLegendData] = useState<LegendData[]>([]);
 
     useEffect(() => {
-        const data: any[] = [
-            ...new Set(
+        const data: LegendData[] = 
+        // [
+        //     ...new Set(
                 props.projectsData.map((item) => {
                     return {
                         projectName: item.projectName,
                         on: true,
                     };
                 })
-            ),
-        ];
+        //     ),
+        // ]
+        ;
+        console.log('data: ',data)
         setLegendData(data);
     }, [props.projectsData]);
-
+    /**
+     * 
+     */
     const filteredTasks = props.timeRegistrationData.filter((te) =>
         isSameDay(te.taskDate, props.taskDate)
     );
 
-    let endDate = new Date(props.taskDate);
+    const endDate = new Date(props.taskDate);
     endDate.setHours(0, 0, 0, 0);
-    let startDate = new Date(endDate);
+    const startDate = new Date(endDate);
     const dateRange = range - 1;
     startDate.setDate(startDate.getDate() - dateRange);
+    /**
+     * @description registreringer filtreret på dato interval
+     */
     const filterData = props.timeRegistrationData.filter((a) => {
         const lookupDate = new Date(a.taskDate);
         return lookupDate >= startDate && lookupDate <= endDate;
     });
+    // console.log('filterData: ',filterData)
 
     const tasks = filterData.map((element) => {
         // console.log('element: ',element)
@@ -78,20 +92,21 @@ const Basic = (props:BasicProps) => {
             projectName: project.projectName,
         };
     });
+    // console.log('tasks: ',tasks)
+    const projects: string[] = [...new Set(tasks.map((item) => item.projectName))];
+    // console.log('projects: ',projects)
 
-    const projects: any[] = [...new Set(tasks.map((item) => item.projectName))];
-
-    let dataSeries: StackedDataSeries[] = [];
-    let pieGroups: PieGroup[] = [];
+    const dataSeries: StackedDataSeries[] = [];
+    const pieGroups: PieGroup[] = [];
     projects.forEach((element) => {
         const filteredProjects = tasks.filter((p) => p.projectName === element);
-        let dateCopy = new Date(props.taskDate.getTime());
+        const dateCopy = new Date(props.taskDate.getTime());
         dateCopy.setDate(dateCopy.getDate() - dateRange);
 
-        let values: number[] = [];
-        let sum: number = 0;
+        const values: number[] = [];
+        let sum = 0;
         for (let i = 0; i <= dateRange; i++) {
-            let filteredByDate = filteredProjects.filter((d) =>
+            const filteredByDate = filteredProjects.filter((d) =>
                 isSameDay(d.taskDate, dateCopy)
             );
             values.push(
@@ -117,7 +132,8 @@ const Basic = (props:BasicProps) => {
             on: isOn,
         });
     });
-    let labels: string[][] = [];
+    console.log('pieGroups: ',pieGroups)
+    const labels: string[][] = [];
     for (let i = 0; i <= dateRange; i++) {
         const labelPair: string[] = [];
         labelPair.push(
@@ -134,7 +150,10 @@ const Basic = (props:BasicProps) => {
         labels.push(labelPair);
         startDate.setDate(startDate.getDate() + 1);
     }
-
+    /**
+     * Toggle the if row on table is on or off
+     * @param projectName 
+     */
     const onLegendRowToggle = (projectName: string) => {
         const updatedlegendData = [...legendData];
         const project = updatedlegendData.find((p) => p.projectName === projectName);

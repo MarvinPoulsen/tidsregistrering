@@ -66,13 +66,13 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
     function handleSubmit(event) {
         const timeZero = new Date().setHours(0, 0, 0, 0);
         event.preventDefault();
-        let minutes = (time - timeZero) / 60000;
+        const minutes = (time - timeZero) / 60000;
 
         const taskStart: Date = new Date(
             new Date(props.date).setHours(8, 0, 0, 0)
         );
         const taskEnd: Date = new Date(new Date(taskStart).setMinutes(minutes));
-        const allDay: boolean = true;
+        const allDay = true;
 
         const formData: TimeEntry = {
             taskId,

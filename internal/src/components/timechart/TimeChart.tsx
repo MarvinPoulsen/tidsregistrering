@@ -137,7 +137,7 @@ function TimeChart(props: TimeChartProps) {
         if (!element.length) return;
 
         const { index } = element[0];
-        let prevD = new Date(props.date);
+        const prevD = new Date(props.date);
         new Date(prevD.setDate(prevD.getDate() - (props.dateRange - index)));
         props.onDateChanged(prevD);
     };
@@ -155,9 +155,7 @@ function TimeChart(props: TimeChartProps) {
                 <Bar
                     ref={chartRef}
                     options={options}
-                    /* @ts-ignore */
                     data={data}
-                    /* @ts-ignore */
                     onClick={onClick}
                 />
             </div>
