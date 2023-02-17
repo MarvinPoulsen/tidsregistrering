@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Complex from '../../pages/complex/Complex';
-import Basic from '../../pages/basic/Basic';
+import { toHoursAndMinutes } from '../../utils';
+import './app.scss';
+import SPS, { TimeEntry, Project, User, Task } from '../../SPS';
 import Navbar from '../../components/navbar/Navbar';
 import Favorites from '../../components/modal/Favorites';
 import EditCalendar from '../../components/modal/EditCalendar';
-import SPS, { TimeEntry, Project, User, Task } from '../../SPS';
-import format from 'date-fns/format';
-import { toHoursAndMinutes } from '../../utils';
-import './app.scss';
+import Complex from '../../pages/complex/Complex';
+import Basic from '../../pages/basic/Basic';
 import Statistics from '../../pages/statistics/Statistics';
 import Projects from '../../pages/admin/Projects';
 import Tasks from '../../pages/admin/Tasks';
 import Users from '../../pages/admin/Users';
+import format from 'date-fns/format';
 
 const App = () => {
     const [user, setUser] = useState<User>(null);
@@ -40,16 +40,17 @@ const App = () => {
         const getDataFromSps = async () => {
             await sps.current.initialize();
             const user = sps.current.getUser();
-            // console.log('sps.current.getUser: ', user);
+            console.log('sps.current.getUser: ', user);
             setUser(user);
             const siteUrl = sps.current.getParameter('cbinfo.site.url');
             const logoUrl = sps.current.getParameter('module.tasm.logo');
             setLogo(siteUrl + logoUrl);
             const tasks = await sps.current.getTaskData();
+            // console.log('tasks: ',tasks)
             setTaskData(tasks);
 
-            const projects = await sps.current.getProjectsData();
-            // console.log('projects: ',projects)
+            const projects: Project[] = await sps.current.getProjectsData();
+            console.log('projects: ',projects)
             setProjectsData(projects);
             refresh();
         };
@@ -82,6 +83,7 @@ const App = () => {
     };
     const refresh = async () => {
         const timeRegistrationData = await sps.current.getTimeRegistrationData(); //user.shortId
+        // console.log(timeRegistrationData)
         setTimeRegistrationData(timeRegistrationData);
     };
     const getTaskDescription = (id: number): string => {
@@ -117,13 +119,14 @@ const App = () => {
     };
     const onDateChanged = (newTaskDate: Date) => {
         setTaskDate(newTaskDate);
+        // console.log(taskDate)
     };
-    const openEditCalendar = () => {
-        setIsEditCalendarActive(true);
-    };
-    const closeEditCalendar = () => {
-        setIsEditCalendarActive(false);
-    };
+    // const openEditCalendar = () => {
+    //     setIsEditCalendarActive(true);
+    // };
+    // const closeEditCalendar = () => {
+    //     setIsEditCalendarActive(false);
+    // };
     return (
         <>
             <section className="hero is-info is-small">
@@ -142,7 +145,7 @@ const App = () => {
                                 onSave={(entry) => onSave(entry)}
                                 editEntry={editEntry}
                                 onDelete={(id) => onDelete(id)}
-                                onEdit={(e: any) => onEdit(e)}
+                                onEdit={(e: TimeEntry) => onEdit(e)}
                                 taskData={taskData}
                                 onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
                                 taskStart={taskStart}
@@ -161,7 +164,7 @@ const App = () => {
                                 onSave={(entry) => onSave(entry)}
                                 editEntry={editEntry}
                                 onDelete={(id) => onDelete(id)}
-                                onEdit={(e) => onEdit(e)}
+                                onEdit={(e: TimeEntry) => onEdit(e)}
                                 taskData={taskData}
                                 onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
                                 taskStart={taskStart}
@@ -169,7 +172,17 @@ const App = () => {
                             />
                         }
                     />
-                    <Route path="/complex" element={<Complex />} />
+                    <Route 
+                        path="/complex" 
+                        element={
+                            <Complex 
+                                timeRegistrationData={timeRegistrationData}
+                                taskDate={taskDate}
+                                projectsData={projectsData}
+                                taskData={taskData}
+                            />
+                        } 
+                    />
                     <Route path="/statistics" element={<Statistics />} />
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/tasks" element={<Tasks />} />

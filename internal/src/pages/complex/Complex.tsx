@@ -6,20 +6,21 @@ import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import da from 'date-fns/locale/da'; // the locale you want
-import addHours from 'date-fns/addHours';
-import startOfHour from 'date-fns/startOfHour';
+// import addHours from 'date-fns/addHours';
+// import startOfHour from 'date-fns/startOfHour';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { getHours, getMinutes } from 'date-fns';
+// import { getHours, getMinutes } from 'date-fns';
+import { TimeEntry, Project, User, Task } from '../../SPS';
 registerLocale('da', da); // register it with the name you want
 
-interface Event {
+export interface Event {
     id: number;
     title: string;
     start: Date;
     end: Date;
     allDay?: boolean;
-    resource?: any;
+    resource?: string;
     note?: string;
 }
 
@@ -34,97 +35,131 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
-const events: Event[] = [
-    {
-        id:1,
-        title: 'Adminitrative opgaver',
-        start: new Date(2023, 0, 23, 8),
-        end: new Date(2023, 0, 23, 8, 30),
-        resource: 'Her kan stå en note',
-    },
-    {
-        id:2,
-        title: 'React calander',
-        allDay: false,
-        start: new Date(2023, 0, 23, 8, 30),
-        end: new Date(2023, 0, 23, 9, 30),
-    },
-    {
-        id:3,
-        title: 'QGIS manglende dataforsyningslag Tine',
-        start: new Date(2023, 0, 23, 9, 30),
-        end: new Date(2023, 0, 23, 9, 45),
-    },
-    {
-        id:4,
-        title: 'Teams manglende lyd ved opkald Tina',
-        start: new Date(2023, 0, 23, 9, 45),
-        end: new Date(2023, 0, 23, 10),
-    },
-    {
-        id:5,
-        title: 'React calander',
-        allDay: false,
-        start: new Date(2023, 0, 23, 10),
-        end: new Date(2023, 0, 23, 11, 30),
-    },
-    {
-        id:6,
-        title: 'Frokost',
-        allDay: false,
-        start: new Date(2023, 0, 23, 11, 30),
-        end: new Date(2023, 0, 23, 12),
-    },
-    {
-        id:7,
-        title: 'React calander',
-        allDay: false,
-        start: new Date(2023, 0, 23, 12),
-        end: new Date(2023, 0, 23, 15, 30),
-    },
-    {
-        id:8,
-        title: 'Adminitrative opgaver',
-        start: new Date(2023, 0, 24, 8),
-        end: new Date(2023, 0, 24, 8, 30),
-    },
-    {
-        id:9,
-        title: 'React calander',
-        allDay: false,
-        start: new Date(2023, 0, 24, 8, 30),
-        end: new Date(2023, 0, 24, 10),
-    },
-    {
-        id:10,
-        title: 'Webinaret',
-        start: new Date(2023, 0, 24, 10),
-        end: new Date(2023, 0, 24, 11),
-    },
-    {
-        id:11,
-        title: 'React calander',
-        allDay: false,
-        start: new Date(2023, 0, 24, 11),
-        end: new Date(2023, 0, 24, 11, 30),
-    },
-    {
-        id:12,
-        title: 'Frokost',
-        allDay: false,
-        start: new Date(2023, 0, 24, 11, 30),
-        end: new Date(2023, 0, 24, 12),
-    },
-    {
-        id:13,
-        title: 'React calander',
-        allDay: false,
-        start: new Date(2023, 0, 24, 12),
-        end: new Date(2023, 0, 24, 15, 30),
-    },
-];
-
-const Complex = () => {
+// const events: Event[] = [
+//     {
+//         id:1,
+//         title: 'Adminitrative opgaver',
+//         start: new Date(2023, 0, 23, 8),
+//         end: new Date(2023, 0, 23, 8, 30),
+//         resource: 'Her kan stå en note',
+//     },
+//     {
+//         id:2,
+//         title: 'React calander',
+//         allDay: false,
+//         start: new Date(2023, 0, 23, 8, 30),
+//         end: new Date(2023, 0, 23, 9, 30),
+//     },
+//     {
+//         id:3,
+//         title: 'QGIS manglende dataforsyningslag Tine',
+//         start: new Date(2023, 0, 23, 9, 30),
+//         end: new Date(2023, 0, 23, 9, 45),
+//     },
+//     {
+//         id:4,
+//         title: 'Teams manglende lyd ved opkald Tina',
+//         start: new Date(2023, 0, 23, 9, 45),
+//         end: new Date(2023, 0, 23, 10),
+//     },
+//     {
+//         id:5,
+//         title: 'React calander',
+//         allDay: false,
+//         start: new Date(2023, 0, 23, 10),
+//         end: new Date(2023, 0, 23, 11, 30),
+//     },
+//     {
+//         id:6,
+//         title: 'Frokost',
+//         allDay: false,
+//         start: new Date(2023, 0, 23, 11, 30),
+//         end: new Date(2023, 0, 23, 12),
+//     },
+//     {
+//         id:7,
+//         title: 'React calander',
+//         allDay: false,
+//         start: new Date(2023, 0, 23, 12),
+//         end: new Date(2023, 0, 23, 15, 30),
+//     },
+//     {
+//         id:8,
+//         title: 'Adminitrative opgaver',
+//         start: new Date(2023, 0, 24, 8),
+//         end: new Date(2023, 0, 24, 8, 30),
+//     },
+//     {
+//         id:9,
+//         title: 'React calander',
+//         allDay: false,
+//         start: new Date(2023, 0, 24, 8, 30),
+//         end: new Date(2023, 0, 24, 10),
+//     },
+//     {
+//         id:10,
+//         title: 'Webinaret',
+//         start: new Date(2023, 0, 24, 10),
+//         end: new Date(2023, 0, 24, 11),
+//     },
+//     {
+//         id:11,
+//         title: 'React calander',
+//         allDay: false,
+//         start: new Date(2023, 0, 24, 11),
+//         end: new Date(2023, 0, 24, 11, 30),
+//     },
+//     {
+//         id:12,
+//         title: 'Frokost',
+//         allDay: false,
+//         start: new Date(2023, 0, 24, 11, 30),
+//         end: new Date(2023, 0, 24, 12),
+//     },
+//     {
+//         id:13,
+//         title: 'React calander',
+//         allDay: false,
+//         start: new Date(2023, 0, 24, 12),
+//         end: new Date(2023, 0, 24, 15, 30),
+//     },
+// ];
+// console.log('eventList: ',eventList)
+// console.log('project: ',project)
+// console.log('events: ',events)
+const makeEventList = (registrationList, taskList) => {
+    const eventList = [];
+    for (const registration of registrationList){
+        const task = taskList.find((t) => t.id === registration.taskId);
+        const allDay = (registration.allDay === 'true')
+        const event = {
+            id: registration.id,
+            title: task.taskName,
+            allDay,
+            start:registration.taskStart,
+            end: registration.taskEnd,
+            resource:registration.note,
+        }
+        eventList.push(event)
+    }
+    return eventList
+}
+interface ComplexProps {
+    timeRegistrationData: TimeEntry[];    
+    taskDate:Date;
+    projectsData:Project[];
+    taskData:Task[];
+    // taskStart:Date;
+    // taskEnd:Date;
+    // user:User;
+    // onSave:(entry)=>void;
+    // editEntry:TimeEntry;
+    // onDelete:(id)=>void;
+    // onEdit:(e: any)=>void
+    // onDateChanged:(newTaskDate)=>void
+}
+const Complex = (props:ComplexProps) => {
+    const events: Event[] = makeEventList(props.timeRegistrationData, props.taskData)
     const nextId = Math.max(...events.map(o => o.id))+1
     const [newEvent, setNewEvent] = useState<Event>(null);
     const [allEvents, setAllEvents] = useState<Event[]>(events);
@@ -207,7 +242,7 @@ const Complex = () => {
                         localizer={localizer}
                         startAccessor="start"
                         endAccessor="end"
-                        style={{ height: '60vh' }}
+                        style={{ height: '80vh' }}
                         onSelectSlot={handleSelectSlot}
                         // onSelectSlot={(slotInfo) => {console.log(slotInfo);}}
                         selectable
