@@ -38,7 +38,7 @@ interface BasicProps {
     onDateChanged:(newTaskDate)=>void
 }
 const Basic = (props:BasicProps) => {
-    // console.log('props.projectsData: ',props.projectsData)
+    // console.log('BasicProps: ',props)
     const [range, setRange] = useState<number>(14);
     const [legendData, setLegendData] = useState<LegendData[]>([]);
 
@@ -55,7 +55,6 @@ const Basic = (props:BasicProps) => {
         //     ),
         // ]
         ;
-        console.log('data: ',data)
         setLegendData(data);
     }, [props.projectsData]);
     /**
@@ -132,7 +131,6 @@ const Basic = (props:BasicProps) => {
             on: isOn,
         });
     });
-    console.log('pieGroups: ',pieGroups)
     const labels: string[][] = [];
     for (let i = 0; i <= dateRange; i++) {
         const labelPair: string[] = [];
@@ -171,7 +169,7 @@ const Basic = (props:BasicProps) => {
                                 onDateChanged={props.onDateChanged}
                                 date={props.taskDate}
                                 data={props.taskData}
-                                userId={props.user.shortId}
+                                userId={props.user.shortid}
                                 onSave={props.onSave}
                                 editEntry={props.editEntry}
                                 start={props.taskStart}

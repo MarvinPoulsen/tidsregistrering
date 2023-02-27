@@ -1,7 +1,7 @@
 declare namespace SpatialServer {
     class Principal {
         name: string;
-        shortId: string;
+        shortid: string;
         isanonymous: boolean;
         hasPermission: (permission: string) => boolean;
         getTicket: () => string;

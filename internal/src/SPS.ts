@@ -43,7 +43,7 @@ export interface Project {
 
 export interface User{
     name: string;
-    shortId: string;
+    shortid: string;
 }
 
 export default class SPS {
