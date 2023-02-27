@@ -40,7 +40,6 @@ const App = () => {
         const getDataFromSps = async () => {
             await sps.current.initialize();
             const user = sps.current.getUser();
-            console.log('sps.current.getUser: ', user);
             setUser(user);
             const siteUrl = sps.current.getParameter('cbinfo.site.url');
             const logoUrl = sps.current.getParameter('module.tasm.logo');
@@ -50,7 +49,7 @@ const App = () => {
             setTaskData(tasks);
 
             const projects: Project[] = await sps.current.getProjectsData();
-            console.log('projects: ',projects)
+            // console.log('projects: ',projects)
             setProjectsData(projects);
             refresh();
         };
@@ -121,12 +120,18 @@ const App = () => {
         setTaskDate(newTaskDate);
         // console.log(taskDate)
     };
-    // const openEditCalendar = () => {
-    //     setIsEditCalendarActive(true);
-    // };
-    // const closeEditCalendar = () => {
-    //     setIsEditCalendarActive(false);
-    // };
+    const openEditCalendar = () => {
+        setIsEditCalendarActive(true);
+    };
+    const closeEditCalendar = () => {
+        setIsEditCalendarActive(false);
+    };
+    const onStartChanged = (start: Date) => {
+        setTaskStart(start);
+    };
+    const onEndChanged = (end: Date) => {
+        setTaskEnd(end);
+    };
     return (
         <>
             <section className="hero is-info is-small">
@@ -180,6 +185,12 @@ const App = () => {
                                 taskDate={taskDate}
                                 projectsData={projectsData}
                                 taskData={taskData}
+                                onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
+                                onStartChanged={(start) => onStartChanged(start)}
+                                onEndChanged={(end) => onEndChanged(end)}
+                                openEditCalendar={openEditCalendar}
+                                closeEditCalendar={closeEditCalendar}
+
                             />
                         } 
                     />
@@ -218,15 +229,18 @@ const App = () => {
                 </div>
                 <button className="modal-close is-large" aria-label="close" onClick={closeModal}></button>
             </div>
-            <EditCalendar
-                isActive={isEditCalendarActive}
-                onSave={function (eventIds: number[]): void {
-                    throw new Error('Function not implemented.');
-                }}
-                onClose={function (): void {
-                    throw new Error('Function not implemented.');
-                }}
-            />
+            {taskData && (
+                <EditCalendar
+                    isActive={isEditCalendarActive}
+                    date={taskDate}
+                    onSave={(entry) => onSave(entry)}
+                    onClose={closeEditCalendar}
+                    start={taskStart}
+                    end={taskEnd}
+                    taskList={taskData}
+                    user={user}
+                />
+            )}
         </>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import DatePicker, { registerLocale } from 'react-datepicker';
+// import DatePicker, { registerLocale } from 'react-datepicker';
+import  { registerLocale } from 'react-datepicker';
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
@@ -11,7 +12,8 @@ import da from 'date-fns/locale/da'; // the locale you want
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 // import { getHours, getMinutes } from 'date-fns';
-import { TimeEntry, Project, User, Task } from '../../SPS';
+// import { TimeEntry, Project, User, Task } from '../../SPS';
+import { TimeEntry, Project, Task } from '../../SPS';
 registerLocale('da', da); // register it with the name you want
 
 export interface Event {
@@ -35,120 +37,31 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
-// const events: Event[] = [
-//     {
-//         id:1,
-//         title: 'Adminitrative opgaver',
-//         start: new Date(2023, 0, 23, 8),
-//         end: new Date(2023, 0, 23, 8, 30),
-//         resource: 'Her kan stå en note',
-//     },
-//     {
-//         id:2,
-//         title: 'React calander',
-//         allDay: false,
-//         start: new Date(2023, 0, 23, 8, 30),
-//         end: new Date(2023, 0, 23, 9, 30),
-//     },
-//     {
-//         id:3,
-//         title: 'QGIS manglende dataforsyningslag Tine',
-//         start: new Date(2023, 0, 23, 9, 30),
-//         end: new Date(2023, 0, 23, 9, 45),
-//     },
-//     {
-//         id:4,
-//         title: 'Teams manglende lyd ved opkald Tina',
-//         start: new Date(2023, 0, 23, 9, 45),
-//         end: new Date(2023, 0, 23, 10),
-//     },
-//     {
-//         id:5,
-//         title: 'React calander',
-//         allDay: false,
-//         start: new Date(2023, 0, 23, 10),
-//         end: new Date(2023, 0, 23, 11, 30),
-//     },
-//     {
-//         id:6,
-//         title: 'Frokost',
-//         allDay: false,
-//         start: new Date(2023, 0, 23, 11, 30),
-//         end: new Date(2023, 0, 23, 12),
-//     },
-//     {
-//         id:7,
-//         title: 'React calander',
-//         allDay: false,
-//         start: new Date(2023, 0, 23, 12),
-//         end: new Date(2023, 0, 23, 15, 30),
-//     },
-//     {
-//         id:8,
-//         title: 'Adminitrative opgaver',
-//         start: new Date(2023, 0, 24, 8),
-//         end: new Date(2023, 0, 24, 8, 30),
-//     },
-//     {
-//         id:9,
-//         title: 'React calander',
-//         allDay: false,
-//         start: new Date(2023, 0, 24, 8, 30),
-//         end: new Date(2023, 0, 24, 10),
-//     },
-//     {
-//         id:10,
-//         title: 'Webinaret',
-//         start: new Date(2023, 0, 24, 10),
-//         end: new Date(2023, 0, 24, 11),
-//     },
-//     {
-//         id:11,
-//         title: 'React calander',
-//         allDay: false,
-//         start: new Date(2023, 0, 24, 11),
-//         end: new Date(2023, 0, 24, 11, 30),
-//     },
-//     {
-//         id:12,
-//         title: 'Frokost',
-//         allDay: false,
-//         start: new Date(2023, 0, 24, 11, 30),
-//         end: new Date(2023, 0, 24, 12),
-//     },
-//     {
-//         id:13,
-//         title: 'React calander',
-//         allDay: false,
-//         start: new Date(2023, 0, 24, 12),
-//         end: new Date(2023, 0, 24, 15, 30),
-//     },
-// ];
 // console.log('eventList: ',eventList)
 // console.log('project: ',project)
 // console.log('events: ',events)
 const makeEventList = (registrationList, taskList) => {
     const eventList = [];
-    for (const registration of registrationList){
+    for (const registration of registrationList) {
         const task = taskList.find((t) => t.id === registration.taskId);
-        const allDay = (registration.allDay === 'true')
+        const allDay = registration.allDay === 'true';
         const event = {
             id: registration.id,
             title: task.taskName,
             allDay,
-            start:registration.taskStart,
+            start: registration.taskStart,
             end: registration.taskEnd,
-            resource:registration.note,
-        }
-        eventList.push(event)
+            resource: registration.note,
+        };
+        eventList.push(event);
     }
-    return eventList
-}
+    return eventList;
+};
 interface ComplexProps {
-    timeRegistrationData: TimeEntry[];    
-    taskDate:Date;
-    projectsData:Project[];
-    taskData:Task[];
+    timeRegistrationData: TimeEntry[];
+    taskDate: Date;
+    projectsData: Project[];
+    taskData: Task[];
     // taskStart:Date;
     // taskEnd:Date;
     // user:User;
@@ -156,48 +69,74 @@ interface ComplexProps {
     // editEntry:TimeEntry;
     // onDelete:(id)=>void;
     // onEdit:(e: any)=>void
-    // onDateChanged:(newTaskDate)=>void
+    onStartChanged:(start)=>void;
+    onEndChanged:(end)=>void;
+    onDateChanged:(newTaskDate)=>void;
+    openEditCalendar: () => void;
+    closeEditCalendar: () => void;
 }
-const Complex = (props:ComplexProps) => {
-    const events: Event[] = makeEventList(props.timeRegistrationData, props.taskData)
-    const nextId = Math.max(...events.map(o => o.id))+1
-    const [newEvent, setNewEvent] = useState<Event>(null);
-    const [allEvents, setAllEvents] = useState<Event[]>(events);
+const Complex = (props: ComplexProps) => {
+    // console.log('ComplexProps: ', props);
+    const [allEvents, setAllEvents] = useState<Event[]>([]);
+
+    // const events: Event[] = props.timeRegistrationData && makeEventList(props.timeRegistrationData, props.taskData);
+    // const nextId = Math.max(...events.map((o) => o.id)) + 1;
+    // const [newEvent, setNewEvent] = useState<Event>(null);
+
     useEffect(() => {
-        if (newEvent) {
-            setAllEvents([...allEvents, newEvent]);
-        }
-      }, [newEvent]);
+        const data: Event[] = makeEventList(props.timeRegistrationData, props.taskData);
+        setAllEvents(data);
+    }, [props.timeRegistrationData, props.taskData]);
+    // useEffect(() => {
+    //     if (newEvent) {
+    //         setAllEvents([...allEvents, newEvent]);
+    //     }
+    // }, [newEvent]);
     const handleSelectSlot = ({ start, end }) => {
-        const id = nextId;
-        const title = window.prompt('New Event name');
-          if (title) {
-            setNewEvent({      
-                id,
-                title,
-                start,
-                end
-          })
-        }
+        // const newTaskDate = format(start, 'dd-MM-yyyy')
+        props.onDateChanged(start)
+        props.onStartChanged(start)
+        props.onEndChanged(end)
+        props.openEditCalendar()
+        // const id = nextId;
+        // const 
+        // const title = window.prompt('New Event name');
+        // if (title) {
+        //     const newEvent: TimeEntry = {
+                
+    // taskDate: Date;
+    // id?: number;
+    // note: string;
+    // taskId: number;
+    // taskTime: number;
+    // userId: string;
+    // taskStart: Date;
+    // taskEnd: Date;
+    // allDay:boolean;
+        //         id,
+        //         title,
+        //         start,
+        //         end,
+        //     };
+        //     setAllEvents([...allEvents, newEvent])
+        // }
     };
 
+    // console.log('allEvents: ', allEvents);
     const { defaultDate, formats, scrollToTime } = useMemo(
         () => ({
             defaultDate: new Date(),
             formats: {
-                weekdayFormat: (date, culture, localizer) =>
-                    localizer.format(date, 'dddd', culture),
+                weekdayFormat: (date, culture, localizer) => localizer.format(date, 'dddd', culture),
             },
             scrollToTime: new Date(1970, 1, 1, 8),
         }),
         []
     );
-    const handleSelectEvent = useCallback(
-        (event) => {window.alert(event.title)
-        },
-        []
-      )
-      
+    const handleSelectEvent = useCallback((event) => {
+        window.alert(event.title);
+    }, []);
+
     return (
         <>
             <section className="section">
