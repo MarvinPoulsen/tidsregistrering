@@ -14,7 +14,7 @@ enum Tab {
 }
 interface NavbarProps  {
     user: User;
-    editFavorites: () => void;
+    setIsFavoriteActive: (isOn:boolean) => void;
     logo:string;
   }
 const Navbar = (props: NavbarProps) => {
@@ -69,7 +69,7 @@ const Navbar = (props: NavbarProps) => {
                 <div className="navbar-start">
                     <a
                         className="navbar-item"
-                        onClick={() => props.editFavorites()}
+                        onClick={() => props.setIsFavoriteActive(true)}
                     >
                         Mine Favoritter
                     </a>

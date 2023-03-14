@@ -24,7 +24,7 @@ ChartJS.register(
 
 interface TimeChartProps {
     title?: string;
-    onDateChanged: (date: Date) => void;
+    setTaskDate: (date: Date) => void;
     date: Date;
     dateRange: number;
     bgColorsStart?: number;
@@ -139,7 +139,7 @@ function TimeChart(props: TimeChartProps) {
         const { index } = element[0];
         const prevD = new Date(props.date);
         new Date(prevD.setDate(prevD.getDate() - (props.dateRange - index)));
-        props.onDateChanged(prevD);
+        props.setTaskDate(prevD);
     };
     const onClick = (event: MouseEvent<HTMLCanvasElement>) => {
         const { current: chart } = chartRef;
