@@ -4,22 +4,23 @@ function isExecption(resp: SpatialServer.DSResponse): resp is SpatialServer.SPSE
     return !!(resp as SpatialServer.SPSError).exception
 }
 
+/**
+ * @description
+ */
 interface Profile {
     profileName: string;
     displayName: string;
   }
-/**
- * @description
- */
+
 export interface TimeEntry {
-    taskDate: Date;
     id?: number;
-    note: string;
-    taskId: number;
-    taskTime: number;
     userId: string;
+    taskDate: Date;
+    taskTime: number;
+    taskId: number;
     taskStart: Date;
     taskEnd: Date;
+    note: string;
     allDay:boolean;
 }  
 
