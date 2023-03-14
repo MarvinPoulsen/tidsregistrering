@@ -5,7 +5,7 @@ interface FavoritesProps {
     isActive: boolean;
     taskList: Task[];
     onSave: (favoriteIds: number[]) => void;
-    onClose: () => void;
+    setIsFavoriteActive: (isOn:boolean) => void;
     projectList: Project[];
 }
 
@@ -16,7 +16,7 @@ const Favorites = (props: FavoritesProps) => {
     }, [props.taskList]);
 
 
-    const onChange = (e) => {
+    const onChangeFavorites = (e) => {
         const id = parseInt(e.target.value);
         const on = e.target.checked;
         const newTaskList = [...taskListCopy];
@@ -29,7 +29,9 @@ const Favorites = (props: FavoritesProps) => {
         const favoriteIds = taskListCopy.filter((item: Task) => item.isFavorite).map((item: Task)=>item.id)
         props.onSave(favoriteIds)
     }
-
+    const onCloseFavorites = ()=>{
+        props.setIsFavoriteActive(false)
+    }
     const listOfTasks = [];
     const projects = props.projectList
     for (const project of projects) {
@@ -44,7 +46,7 @@ const Favorites = (props: FavoritesProps) => {
                                 <input
                                     type="checkbox"
                                     checked={task.isFavorite}
-                                    onChange={onChange}
+                                    onChange={onChangeFavorites}
                                     value={task.id}
                                 />
                                 {task.taskName}
@@ -61,11 +63,10 @@ const Favorites = (props: FavoritesProps) => {
         );
     }
 
-
     return (
         <>
             <div className={'modal' + (props.isActive ? ' is-active' : '')}>
-                <div className="modal-background" onClick={props.onClose}></div>
+                <div className="modal-background" onClick={onCloseFavorites}></div>
                 <div className="modal-content">
                     <div className="box">
                         <h1 className="title">Vælg favoritter</h1>
@@ -76,7 +77,7 @@ const Favorites = (props: FavoritesProps) => {
                         >
                             Gem
                         </button>
-                        <button className="button" onClick={props.onClose}>
+                        <button className="button" onClick={onCloseFavorites}>
                             Annuller
                         </button>
                     </div>
@@ -84,7 +85,7 @@ const Favorites = (props: FavoritesProps) => {
                 <button
                     className="modal-close is-large"
                     aria-label="close"
-                    onClick={props.onClose}
+                    onClick={onCloseFavorites}
                 ></button>
             </div>
         </>

@@ -1,81 +1,62 @@
 // import React, { useState, useEffect } from 'react';
 import React, { useState } from 'react';
 // import { Task } from '../../SPS';
-import { Task, TimeEntry, User } from '../../SPS';
+import { Task, User } from '../../SPS';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import da from 'date-fns/locale/da'; // the locale you want
-import differenceInMinutes from 'date-fns/differenceInMinutes';
 registerLocale('da', da); // register it with the name you want
 
 interface EditCalendarProps {
     isActive: boolean;
-    onSave: (entry: TimeEntry) => void;
-    onClose: () => void;
+    onSave: () => void;
+    setIsEditCalendarActive: (isOn:boolean)=>void;
     start: Date;
     end: Date;
     date: Date;
     taskList: Task[];
     user: User;
+    editEntry?: number;
+    note: string;
+    setNote: (newNote) => void;
+    resetForm: ()=>void;
+    taskId: number;
+    setTaskId:(newTaskId)=>void;
+    setAllDay: (isAllDay:boolean)=>void;
+    allDay:boolean;
 }
 
 const EditCalendar = (props: EditCalendarProps) => {
-    // console.log('EditCalendarProps: ',props)
-    // console.log('EditCalendarProps.date: ', typeof props.date, props.date);
-    const [taskId, setTaskId] = useState<number>(1);
-    const [note, setNote] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (event) => {
         // window.alert(event.target.value);
-        const allDay = false;
         event.preventDefault();
-        const minutes = differenceInMinutes(new Date(props.end), new Date(props.start));
-        const formData: TimeEntry = {
-            taskDate: props.date,
-            note,
-            taskId,
-            taskTime: minutes,
-            userId: props.user.shortid,
-            taskStart: props.start,
-            taskEnd: props.end,
-            allDay,
-        };
-        // console.log(formData);
-
-        // if (props.editEntry && props.editEntry.id) {
-        //     formData.id = props.editEntry.id;
-        // }
-        props.onSave(formData);
-        resetForm();
-        props.onClose();
+        props.onSave();
+        props.resetForm();
+        props.setIsEditCalendarActive(false);
     };
     const handleTaskIdChange = (event) => {
-        const taskId = parseInt(event.target.value);
-        const task = props.taskList.find((t: Task) => t.id === taskId);
+        const newTaskId = parseInt(event.target.value);
+        const task = props.taskList.find((t: Task) => t.id === newTaskId);
         if (task) {
             setError(null);
         } else {
             setError('Ukent opgaveID');
         }
-        setTaskId(taskId);
+        props.setTaskId(newTaskId);
     };
     const handleNoteChange = (event) => {
-        setNote(event.target.value);
+        props.setNote(event.target.value);
     };
 
     const handleClose = () => {
-        resetForm();
-        props.onClose();
+        props.resetForm();
+        props.setIsEditCalendarActive(false);
     };
 
-    const resetForm = () => {
-        setTaskId(1);
-        setNote('');
-        setError(null);
-    };
-    const options = props.taskList.filter((t) => t.isFavorite || t.id === taskId);
-    const selectedOption = options.find((item) => item.id === taskId);
+    const options = props.taskList.filter((t) => t.isFavorite || t.id === props.taskId);
+    const selectedOption = options.find((item) => item.id === props.taskId);
     const description =
         selectedOption && selectedOption.description !== ''
             ? selectedOption.description
@@ -97,13 +78,13 @@ const EditCalendar = (props: EditCalendarProps) => {
                                         placeholder=""
                                         onChange={handleTaskIdChange}
                                         name="taskId"
-                                        value={taskId}
+                                        value={props.taskId}
                                     />
                                 </div>
                                 <div className="column">
                                     <label className="label">Vælg opgave</label>
                                     <div className="select is-fullwidth">
-                                        <select onChange={handleTaskIdChange} name="taskId" value={taskId}>
+                                        <select onChange={handleTaskIdChange} name="taskId" value={props.taskId}>
                                             {options.map((option) => (
                                                 <option key={option.id} value={option.id}>
                                                     {option.taskName}
@@ -182,7 +163,7 @@ const EditCalendar = (props: EditCalendarProps) => {
                                         rows={2}
                                         onChange={handleNoteChange}
                                         name="note"
-                                        value={note}
+                                        value={props.note}
                                     />
                                 </div>
                             </div>
@@ -193,6 +174,13 @@ const EditCalendar = (props: EditCalendarProps) => {
                                     </button>
                                     <button className="button" type="button" onClick={handleClose}>
                                         Annuller
+                                    </button>
+                                    <button
+                                        className="button"
+                                        type="button"
+                                        onClick={()=>console.log('EditCalendarProps: ',props)}
+                                    >
+                                        Test
                                     </button>
                                 </div>
                             </div>

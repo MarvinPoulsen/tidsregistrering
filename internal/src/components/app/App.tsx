@@ -16,19 +16,26 @@ import format from 'date-fns/format';
 
 const App = () => {
     const [user, setUser] = useState<User>(null);
-    const [projectsData, setProjectsData] = useState<Project[]>([]); // læser i tabellen projects (returner id og name)
+    const [logo, setLogo] = useState<string>('');
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]); // læser i tabellen projects (returner id og name)
+    const [registrations, setRegistrations] = useState<TimeEntry[]>([]);
     const [taskDate, setTaskDate] = useState<Date>(new Date()); // valgte dato,
-    const [taskStart, setTaskStart] = useState<Date>(null); // valgte dato,
-    const [taskEnd, setTaskEnd] = useState<Date>(null); // valgte dato,
-    const [timeRegistrationData, setTimeRegistrationData] = useState<TimeEntry[]>([]);
-    const [taskData, setTaskData] = useState<Task[]>([]);
+    const [taskTime, setTaskTime] = useState<number>(30)
+    const [taskStart, setTaskStart] = useState<Date>(new Date(new Date().setHours(8, 0, 0, 0))); // valgte dato,
+    const [taskEnd, setTaskEnd] = useState<Date>(new Date(new Date().setHours(8, 30, 0, 0))); // valgte dato,
+    const [note, setNote] = useState<string>('');
+    const [taskId, setTaskId] = useState<number>(1);
+    const [allDay, setAllDay] = useState<boolean>(true)
+
+    const [editEntry, setEditEntry] = useState<number>(null); // indeholder id 
+    
+    const [error, setError] = useState<string | null>(null);
     const [isDeletingId, setIsDeletingId] = useState<number>(null);
-    const [editEntry, setEditEntry] = useState<TimeEntry>(null);
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
     const [isEditCalendarActive, setIsEditCalendarActive] = useState<boolean>(false);
-    const [logo, setLogo] = useState<string>('');
     const sps = useRef<SPS>(new SPS());
-    // console.log(sps)
+    if (error){console.log(error)}
     // const ses = sps.getParam()
     // const isSuperUser =
 
@@ -44,31 +51,46 @@ const App = () => {
             const siteUrl = sps.current.getParameter('cbinfo.site.url');
             const logoUrl = sps.current.getParameter('module.tasm.logo');
             setLogo(siteUrl + logoUrl);
-            const tasks = await sps.current.getTaskData();
-            // console.log('tasks: ',tasks)
-            setTaskData(tasks);
+            const taskList = await sps.current.getTaskData();
+            setTasks(taskList);
 
-            const projects: Project[] = await sps.current.getProjectsData();
-            // console.log('projects: ',projects)
-            setProjectsData(projects);
+            const projectList: Project[] = await sps.current.getProjectsData();
+            setProjects(projectList);
             refresh();
         };
         getDataFromSps();
     }, []);
+    const refresh = async () => {
+        const registrationData = await sps.current.getTimeRegistrationData(); //user.shortId
+        setRegistrations(registrationData);
+    };
+
     /**
-     * @description eksistensen af id afgør om det er en update eller insert
-     * @param entry
+     * @description eksistensen af editEntry afgør om det er en update eller insert
+     * - editEntry {number|null} - id'et fra registrations tabellen
      */
-    const onSave = async (entry: TimeEntry) => {
-        // eksistensen af id afgør om det er en update eller insert
-        if (entry.id) {
+    const onSave = async () => {
+        const entry: TimeEntry ={
+            userId: user.shortid,
+            taskDate,
+            taskTime,
+            taskId,
+            taskStart,
+            taskEnd,
+            note,
+            allDay
+        }
+        // eksistensen af editEntry afgør om det er en update eller insert
+        if (editEntry) {
+            entry.id = editEntry;
             await sps.current.updateTimeRegistration(entry);
             setEditEntry(null);
-        } else {
+        }else {
             await sps.current.insertTimeRegistration(entry);
         }
         refresh();
     };
+
     const onDelete = (id: number) => {
         setIsDeletingId(id);
     };
@@ -77,17 +99,9 @@ const App = () => {
         refresh();
         closeModal();
     };
-    const onEdit = (e: TimeEntry) => {
-        setEditEntry(e);
-    };
-    const refresh = async () => {
-        const timeRegistrationData = await sps.current.getTimeRegistrationData(); //user.shortId
-        // console.log(timeRegistrationData)
-        setTimeRegistrationData(timeRegistrationData);
-    };
     const getTaskDescription = (id: number): string => {
-        const entry = timeRegistrationData.find((te) => te.id === id);
-        const task = taskData.find((t) => t.id === entry.taskId);
+        const entry = registrations.find((te) => te.id === id);
+        const task = tasks.find((t) => t.id === entry.taskId);
         return (
             toHoursAndMinutes(entry.taskTime) +
             ' - ' +
@@ -103,39 +117,29 @@ const App = () => {
     };
     const saveFavorites = (favoriteIds: number[]) => {
         sps.current.updateFavorites(favoriteIds);
-        const updatedTaskData = [...taskData];
-        for (const task of updatedTaskData) {
+        const updatedTasks = [...tasks];
+        for (const task of updatedTasks) {
             task.isFavorite = favoriteIds.includes(task.id);
         }
-        setTaskData(updatedTaskData);
-        closeFavorites();
-    };
-    const closeFavorites = () => {
+        setTasks(updatedTasks);
         setIsFavoriteActive(false);
     };
-    const editFavorites = () => {
-        setIsFavoriteActive(true);
-    };
-    const onDateChanged = (newTaskDate: Date) => {
-        setTaskDate(newTaskDate);
-        // console.log(taskDate)
-    };
-    const openEditCalendar = () => {
-        setIsEditCalendarActive(true);
-    };
-    const closeEditCalendar = () => {
-        setIsEditCalendarActive(false);
-    };
-    const onStartChanged = (start: Date) => {
-        setTaskStart(start);
-    };
-    const onEndChanged = (end: Date) => {
-        setTaskEnd(end);
-    };
+    
+    const resetForm = ()=> {
+        setEditEntry(null);
+        setTaskTime(30);
+        setTaskId(1);
+        setTaskStart(new Date(taskDate.setHours(8, 0, 0, 0)));
+        setTaskEnd(new Date(taskDate.setHours(8, 30, 0, 0)));
+        setNote('');
+        setAllDay(true)
+        setError(null);
+    }
+
     return (
         <>
             <section className="hero is-info is-small">
-                {user && <Navbar user={user} editFavorites={editFavorites} logo={logo} />}
+                {user && <Navbar user={user} setIsFavoriteActive={setIsFavoriteActive} logo={logo} />}
             </section>
             <Routes>
                 <Route path="/">
@@ -143,18 +147,26 @@ const App = () => {
                         index
                         element={
                             <Basic
-                                timeRegistrationData={timeRegistrationData}
+                                registrations={registrations}
                                 taskDate={taskDate}
-                                projectsData={projectsData}
+                                projects={projects}
                                 user={user}
-                                onSave={(entry) => onSave(entry)}
+                                onSave={onSave}
                                 editEntry={editEntry}
+                                setEditEntry={setEditEntry}
                                 onDelete={(id) => onDelete(id)}
-                                onEdit={(e: TimeEntry) => onEdit(e)}
-                                taskData={taskData}
-                                onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
+                                tasks={tasks}
+                                setTaskDate={setTaskDate}
                                 taskStart={taskStart}
                                 taskEnd={taskEnd}
+                                taskTime={taskTime}
+                                setTaskTime={setTaskTime}
+                                note={note}
+                                setNote={setNote}
+                                taskId={taskId}
+                                setTaskId={setTaskId}
+                                setAllDay={setAllDay}
+                                resetForm={resetForm}
                             />
                         }
                     />
@@ -162,18 +174,26 @@ const App = () => {
                         path="/basic"
                         element={
                             <Basic
-                                timeRegistrationData={timeRegistrationData}
+                                registrations={registrations}
                                 taskDate={taskDate}
-                                projectsData={projectsData}
+                                projects={projects}
                                 user={user}
-                                onSave={(entry) => onSave(entry)}
+                                onSave={onSave}
                                 editEntry={editEntry}
+                                setEditEntry={setEditEntry}
                                 onDelete={(id) => onDelete(id)}
-                                onEdit={(e: TimeEntry) => onEdit(e)}
-                                taskData={taskData}
-                                onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
+                                tasks={tasks}
+                                setTaskDate={setTaskDate}
                                 taskStart={taskStart}
                                 taskEnd={taskEnd}
+                                taskTime={taskTime}
+                                setTaskTime={setTaskTime}
+                                note={note}
+                                setNote={setNote}
+                                resetForm={resetForm}
+                                taskId={taskId}
+                                setTaskId={setTaskId}
+                                setAllDay={setAllDay}
                             />
                         }
                     />
@@ -181,16 +201,23 @@ const App = () => {
                         path="/complex" 
                         element={
                             <Complex 
-                                timeRegistrationData={timeRegistrationData}
+                                registrations={registrations}
                                 taskDate={taskDate}
-                                projectsData={projectsData}
-                                taskData={taskData}
-                                onDateChanged={(newTaskDate) => onDateChanged(newTaskDate)}
-                                onStartChanged={(start) => onStartChanged(start)}
-                                onEndChanged={(end) => onEndChanged(end)}
-                                openEditCalendar={openEditCalendar}
-                                closeEditCalendar={closeEditCalendar}
-
+                                projects={projects}
+                                tasks={tasks}
+                                setEditEntry={setEditEntry}
+                                setTaskDate={setTaskDate}
+                                setTaskStart={setTaskStart}
+                                setTaskEnd={setTaskEnd}
+                                setIsEditCalendarActive={setIsEditCalendarActive}
+                                taskTime={taskTime}
+                                setTaskTime={setTaskTime}
+                                note={note}
+                                setNote={setNote}
+                                resetForm={resetForm}
+                                taskId={taskId}
+                                setTaskId={setTaskId}
+                                setAllDay={setAllDay}
                             />
                         } 
                     />
@@ -200,13 +227,13 @@ const App = () => {
                     <Route path="/users" element={<Users />} />
                 </Route>
             </Routes>
-            {taskData && projectsData && (
+            {tasks && projects && (
                 <Favorites
                     isActive={isFavoriteActive}
-                    taskList={taskData}
+                    taskList={tasks}
                     onSave={saveFavorites}
-                    onClose={closeFavorites}
-                    projectList={projectsData}
+                    setIsFavoriteActive={setIsFavoriteActive}
+                    projectList={projects}
                 />
             )}
             <div className={'modal' + (isDeletingId ? ' is-active' : '')}>
@@ -229,16 +256,24 @@ const App = () => {
                 </div>
                 <button className="modal-close is-large" aria-label="close" onClick={closeModal}></button>
             </div>
-            {taskData && (
+            {tasks && (
                 <EditCalendar
                     isActive={isEditCalendarActive}
                     date={taskDate}
-                    onSave={(entry) => onSave(entry)}
-                    onClose={closeEditCalendar}
+                    onSave={onSave}
+                    setIsEditCalendarActive={setIsEditCalendarActive}
                     start={taskStart}
                     end={taskEnd}
-                    taskList={taskData}
+                    taskList={tasks}
                     user={user}
+                    editEntry={editEntry}
+                    note={note}
+                    setNote={setNote}
+                    resetForm={resetForm}
+                    taskId={taskId}
+                    setTaskId={setTaskId}
+                    allDay={allDay}
+                    setAllDay={setAllDay}
                 />
             )}
         </>

@@ -1,106 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import da from 'date-fns/locale/da'; // the locale you want
-import { Task, TimeEntry } from '../../SPS';
+import { Task } from '../../SPS';
 import './timeRegistration.scss';
+import { differenceInMinutes } from 'date-fns';
 registerLocale('da', da); // register it with the name you want
 
 interface TimeRegistrationProps {
-    onDateChanged: (date: Date) => void;
+    setTaskDate: (date: Date) => void;
     date: Date;
     data: Task[];
     userId: string;
-    onSave: (entry: TimeEntry) => void;
-    editEntry?: TimeEntry;
-    start: Date;
-    end: Date;
+    onSave: () => void;
+    editEntry?: number;
+    note: string;
+    setNote: (newNote) => void;
+    resetForm: ()=>void;
+    taskId: number;
+    setTaskId:(newTaskId)=>void;
+    taskTime:number;
+    setTaskTime:(minutes)=>void;
 }
 
 const TimeRegistration = (props: TimeRegistrationProps) => {
-    const [taskId, setTaskId] = useState<number>(1);
-    const [note, setNote] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
-    // const startHours = props.date.getDay() > 0 && props.date.getDay() < 6 ? 8 : 0; // change to -> if (filter for user and date tmm.registration) has time end set to highest value else 8
-
-    // const [startTime, setStartTime] = useState<Date>(
-    //   props.date.setHours(startHours, 0, 0, 0)
-    // );
-    // const endMinuts = 15;
-    // const [endTime, setEndTime] = useState(
-    //   props.date.setHours(startHours, endMinuts, 0, 0)
-    // );
-
-    const timeMinuts = 30;
-    const [time, setTime] = useState(new Date().setHours(0, timeMinuts, 0, 0));
-
-    useEffect(() => {
-        if (props.editEntry) {
-            setTaskId(props.editEntry.taskId);
-            setTime(new Date().setHours(0, props.editEntry.taskTime, 0, 0));
-            setNote(props.editEntry.note);
-        }
-    }, [props.editEntry]);
-
-    // const handleStartTime = () => {
-    //   setStartTime(new Date());
-    // };
-    // const handleEndTime = () => {
-    //   setEndTime(new Date());
-    // };
-    function handleTaskIdChange(event) {
-        const taskId = parseInt(event.target.value);
-        const task = props.data.find((t: Task) => t.id === taskId);
+    const handleTaskIdChange = (event)=> {
+        const newTaskId = parseInt(event.target.value);
+        const task = props.data.find((t: Task) => t.id === newTaskId);
         if (task) {
             setError(null);
         } else {
             setError('Ukent opgaveID');
         }
-        setTaskId(taskId);
+        props.setTaskId(newTaskId);
     }
-    function handleNoteChange(event) {
-        setNote(event.target.value);
+
+    const handleTimeChange = (newTime)=> {
+        const minutes = differenceInMinutes(new Date(newTime.getTime()), new Date(newTime.setHours(0, 0, 0, 0)));
+        props.setTaskTime(minutes)
     }
-    function handleSubmit(event) {
-        const timeZero = new Date().setHours(0, 0, 0, 0);
+
+    const handleNoteChange = (event)=> {
+        props.setNote(event.target.value);
+    }
+
+    const handleSubmit = (event)=> {
         event.preventDefault();
-        const minutes = (time - timeZero) / 60000;
-
-        const taskStart: Date = new Date(
-            new Date(props.date).setHours(8, 0, 0, 0)
-        );
-        const taskEnd: Date = new Date(new Date(taskStart).setMinutes(minutes));
-        const allDay = true;
-
-        const formData: TimeEntry = {
-            taskId,
-            taskDate: props.date,
-            taskTime: minutes,
-            note,
-            userId: props.userId,
-            taskStart,
-            taskEnd,
-            allDay,
-        };
-
-        // hvis editEntry har et id skal vi laver update istedet for insert
-        if (props.editEntry && props.editEntry.id) {
-            formData.id = props.editEntry.id;
-        }
-        props.onSave(formData);
-        resetForm();
-    }
-    function resetForm() {
-        setTaskId(1);
-        setTime(new Date().setHours(0, timeMinuts, 0, 0));
-        setNote('');
-        setError(null);
+        props.onSave();
+        props.resetForm();
     }
 
-    const options = props.data.filter((t) => t.isFavorite || t.id === taskId);
-    const selectedOption = options.find((item) => item.id === taskId);
+    const options = props.data.filter((t) => t.isFavorite || t.id === props.taskId);
+    const selectedOption = options.find((item) => item.id === props.taskId);
     const description =
         selectedOption && selectedOption.description !== ''
             ? selectedOption.description
@@ -121,7 +75,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                         placeholder=""
                                         onChange={handleTaskIdChange}
                                         name="taskId"
-                                        value={taskId}
+                                        value={props.taskId}
                                     />
                                 </div>
                             </div>
@@ -132,7 +86,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                         <select
                                             onChange={handleTaskIdChange}
                                             name="taskId"
-                                            value={taskId}
+                                            value={props.taskId}
                                         >
                                             {options.map((option) => (
                                                 <option
@@ -150,7 +104,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                 <DatePicker
                                     todayButton="Dags dato"
                                     selected={props.date}
-                                    onChange={props.onDateChanged}
+                                    onChange={props.setTaskDate}
                                     locale="da"
                                     showWeekNumbers
                                     className="input"
@@ -168,12 +122,8 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                         <div className="field">
                                             <span className="control">
                                                 <DatePicker
-                                                    selected={time}
-                                                    onChange={(newTime) =>
-                                                        setTime(
-                                                            newTime.getTime()
-                                                        )
-                                                    }
+                                                    selected={new Date().setHours(0, props.taskTime, 0, 0)}
+                                                    onChange={handleTimeChange}
                                                     timeFormat="HH:mm"
                                                     showTimeSelect
                                                     showTimeSelectOnly
@@ -182,7 +132,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                                     dateFormat="HH:mm"
                                                     className="input"
                                                     name="time"
-                                                    value={time}
+                                                    value={new Date().setHours(0, props.taskTime, 0, 0)}
                                                 />
                                             </span>
                                         </div>
@@ -197,7 +147,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                         rows={2}
                                         onChange={handleNoteChange}
                                         name="note"
-                                        value={note}
+                                        value={props.note}
                                     />
                                 </div>
                             </div>
@@ -215,9 +165,18 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                         <button
                                             className="button"
                                             type="button"
-                                            onClick={resetForm}
+                                            onClick={props.resetForm}
                                         >
                                             Cancel
+                                        </button>
+                                    </span>
+                                    <span className="control">
+                                        <button
+                                            className="button"
+                                            type="button"
+                                            onClick={()=>console.log('TimeRegistrationProps: ',props)}
+                                        >
+                                            Test
                                         </button>
                                     </span>
                                 </div>

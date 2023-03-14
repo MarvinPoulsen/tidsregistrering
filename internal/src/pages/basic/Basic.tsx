@@ -24,43 +24,46 @@ interface StackedDataSeries {
     stack: string;
 }
 interface BasicProps {
-    timeRegistrationData: TimeEntry[];    
+    registrations: TimeEntry[];    
     taskDate:Date;
     taskStart:Date;
     taskEnd:Date;
-    projectsData:Project[];
+    projects:Project[];
     user:User;
-    onSave:(entry)=>void;
-    editEntry:TimeEntry;
+    onSave:()=>void;
+    editEntry:number;
+    setEditEntry:(id)=>void;
     onDelete:(id)=>void;
-    onEdit:(e: TimeEntry)=>void
-    taskData:Task[];
-    onDateChanged:(newTaskDate)=>void
+    tasks:Task[];
+    setTaskDate:(newTaskDate)=>void;
+    taskTime:number;
+    setTaskTime:(minutes)=>void;
+    note: string;
+    setNote: (newNote) => void;
+    resetForm: ()=>void;
+    taskId: number;
+    setTaskId:(newTaskId)=>void;
+    setAllDay:(isAllDay:boolean)=>void;
 }
 const Basic = (props:BasicProps) => {
-    // console.log('BasicProps: ',props)
     const [range, setRange] = useState<number>(14);
     const [legendData, setLegendData] = useState<LegendData[]>([]);
 
     useEffect(() => {
         const data: LegendData[] = 
-        // [
-        //     ...new Set(
-                props.projectsData.map((item) => {
+                props.projects.map((item) => {
                     return {
                         projectName: item.projectName,
                         on: true,
                     };
                 })
-        //     ),
-        // ]
         ;
         setLegendData(data);
-    }, [props.projectsData]);
+    }, [props.projects]);
     /**
      * 
      */
-    const filteredTasks = props.timeRegistrationData.filter((te) =>
+    const filteredTasks = props.registrations.filter((te) =>
         isSameDay(te.taskDate, props.taskDate)
     );
 
@@ -72,33 +75,27 @@ const Basic = (props:BasicProps) => {
     /**
      * @description registreringer filtreret på dato interval
      */
-    const filterData = props.timeRegistrationData.filter((a) => {
+    const filterData = props.registrations.filter((a) => {
         const lookupDate = new Date(a.taskDate);
         return lookupDate >= startDate && lookupDate <= endDate;
     });
-    // console.log('filterData: ',filterData)
 
-    const tasks = filterData.map((element) => {
-        // console.log('element: ',element)
-        const task = props.taskData.find((t) => t.id === element.taskId);
-        const project = props.projectsData.find((p) => p.id === task.projectId);
+    const taskList = filterData.map((element) => {
+        const task = props.tasks.find((t) => t.id === element.taskId);
+        const project = props.projects.find((p) => p.id === task.projectId);
         
         return {
             taskDate: element.taskDate,
             taskTime: element.taskTime,
-            // taskName: task.taskName,
-            // projectId: task.projectId,
             projectName: project.projectName,
         };
     });
-    // console.log('tasks: ',tasks)
-    const projects: string[] = [...new Set(tasks.map((item) => item.projectName))];
-    // console.log('projects: ',projects)
+    const projectList: string[] = [...new Set(taskList.map((item) => item.projectName))];
 
     const dataSeries: StackedDataSeries[] = [];
     const pieGroups: PieGroup[] = [];
-    projects.forEach((element) => {
-        const filteredProjects = tasks.filter((p) => p.projectName === element);
+    projectList.forEach((element) => {
+        const filteredProjects = taskList.filter((p) => p.projectName === element);
         const dateCopy = new Date(props.taskDate.getTime());
         dateCopy.setDate(dateCopy.getDate() - dateRange);
 
@@ -149,7 +146,7 @@ const Basic = (props:BasicProps) => {
         startDate.setDate(startDate.getDate() + 1);
     }
     /**
-     * Toggle the if row on table is on or off
+     * Toggle if the row on table is on or off
      * @param projectName 
      */
     const onLegendRowToggle = (projectName: string) => {
@@ -166,14 +163,20 @@ const Basic = (props:BasicProps) => {
                     <div className="column is-full">
                         {props.user && (
                             <TimeRegistration
-                                onDateChanged={props.onDateChanged}
+                                setTaskDate={props.setTaskDate}
                                 date={props.taskDate}
-                                data={props.taskData}
+                                data={props.tasks}
                                 userId={props.user.shortid}
                                 onSave={props.onSave}
                                 editEntry={props.editEntry}
-                                start={props.taskStart}
-                                end={props.taskEnd}
+                                note={props.note}
+                                setNote={props.setNote}
+                                resetForm={props.resetForm}
+                                taskId={props.taskId}
+                                setTaskId={props.setTaskId}
+                                taskTime={props.taskTime}
+                                setTaskTime={props.setTaskTime}
+                                
                             />
                         )}
                     </div>
@@ -182,9 +185,14 @@ const Basic = (props:BasicProps) => {
                     <div className="column is-half">
                         <TimeTable
                             data={filteredTasks}
-                            taskData={props.taskData}
-                            onDelete={props.onDelete}
-                            onEdit={props.onEdit}
+                            tasks={props.tasks}
+                            onDelete={props.onDelete}            
+                            setEditEntry={props.setEditEntry}
+                            setTaskDate={props.setTaskDate}
+                            setNote={props.setNote}
+                            setTaskId={props.setTaskId}
+                            setAllDay={props.setAllDay}
+                            setTaskTime={props.setTaskTime}
                         />
                     </div>
                     <div className="column">
@@ -195,9 +203,9 @@ const Basic = (props:BasicProps) => {
                                 minValue={7}
                                 value={range}
                             />
-                            {props.timeRegistrationData && (
+                            {props.registrations && (
                                 <TimeChart
-                                    onDateChanged={props.onDateChanged}
+                                    setTaskDate={props.setTaskDate}
                                     date={props.taskDate}
                                     dateRange={dateRange}
                                     bgColorsStart={0}

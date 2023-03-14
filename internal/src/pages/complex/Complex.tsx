@@ -14,16 +14,24 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 // import { getHours, getMinutes } from 'date-fns';
 // import { TimeEntry, Project, User, Task } from '../../SPS';
 import { TimeEntry, Project, Task } from '../../SPS';
+import { differenceInMinutes } from 'date-fns';
 registerLocale('da', da); // register it with the name you want
 
-export interface Event {
+// export interface Event {
+//     title: string;
+//     start: Date;
+//     end: Date;
+//     allDay?: boolean;
+//     resource?: Any;
+// }
+
+interface Resource {
     id: number;
-    title: string;
-    start: Date;
-    end: Date;
-    allDay?: boolean;
-    resource?: string;
     note?: string;
+    taskDate: Date;
+    taskId: number;
+    taskTime: number;
+    userId: string;
 }
 
 const locales = {
@@ -37,95 +45,75 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
-// console.log('eventList: ',eventList)
-// console.log('project: ',project)
-// console.log('events: ',events)
+
+
 const makeEventList = (registrationList, taskList) => {
     const eventList = [];
     for (const registration of registrationList) {
         const task = taskList.find((t) => t.id === registration.taskId);
-        const allDay = registration.allDay === 'true';
-        const event = {
+        const minutes = differenceInMinutes(new Date(registration.taskEnd), new Date(registration.taskStart));
+        
+        const resource: Resource = {
             id: registration.id,
+            note: registration.note,
+            taskDate: registration.taskDate,
+            taskId: task.id,
+            taskTime: minutes,
+            userId: registration.userId,
+
+        };
+        const event = {
             title: task.taskName,
-            allDay,
+            allDay:registration.allDay === 'true',
             start: registration.taskStart,
             end: registration.taskEnd,
-            resource: registration.note,
+            resource, 
         };
         eventList.push(event);
     }
     return eventList;
 };
 interface ComplexProps {
-    timeRegistrationData: TimeEntry[];
+    registrations: TimeEntry[];
     taskDate: Date;
-    projectsData: Project[];
-    taskData: Task[];
-    // taskStart:Date;
-    // taskEnd:Date;
-    // user:User;
-    // onSave:(entry)=>void;
-    // editEntry:TimeEntry;
-    // onDelete:(id)=>void;
-    // onEdit:(e: any)=>void
-    onStartChanged:(start)=>void;
-    onEndChanged:(end)=>void;
-    onDateChanged:(newTaskDate)=>void;
-    openEditCalendar: () => void;
-    closeEditCalendar: () => void;
+    projects: Project[];
+    tasks: Task[];
+    setEditEntry:(id)=>void;
+    setTaskStart:(start)=>void;
+    setTaskEnd:(end)=>void;
+    setTaskDate:(newTaskDate)=>void;
+    setIsEditCalendarActive: (isOn:boolean) => void;
+    taskTime:number;
+    setTaskTime:(minutes)=>void;
+    note: string;
+    setNote: (newNote) => void;
+    resetForm: ()=>void;
+    taskId: number;
+    setTaskId:(newTaskId)=>void;
+    setAllDay:(isAllDay:boolean)=>void;
 }
 const Complex = (props: ComplexProps) => {
     // console.log('ComplexProps: ', props);
     const [allEvents, setAllEvents] = useState<Event[]>([]);
 
-    // const events: Event[] = props.timeRegistrationData && makeEventList(props.timeRegistrationData, props.taskData);
-    // const nextId = Math.max(...events.map((o) => o.id)) + 1;
-    // const [newEvent, setNewEvent] = useState<Event>(null);
-
     useEffect(() => {
-        const data: Event[] = makeEventList(props.timeRegistrationData, props.taskData);
+        const data: Event[] = makeEventList(props.registrations, props.tasks);
         setAllEvents(data);
-    }, [props.timeRegistrationData, props.taskData]);
-    // useEffect(() => {
-    //     if (newEvent) {
-    //         setAllEvents([...allEvents, newEvent]);
-    //     }
-    // }, [newEvent]);
+    }, [props.registrations, props.tasks]);
+
     const handleSelectSlot = ({ start, end }) => {
-        // const newTaskDate = format(start, 'dd-MM-yyyy')
-        props.onDateChanged(start)
-        props.onStartChanged(start)
-        props.onEndChanged(end)
-        props.openEditCalendar()
-        // const id = nextId;
-        // const 
-        // const title = window.prompt('New Event name');
-        // if (title) {
-        //     const newEvent: TimeEntry = {
-                
-    // taskDate: Date;
-    // id?: number;
-    // note: string;
-    // taskId: number;
-    // taskTime: number;
-    // userId: string;
-    // taskStart: Date;
-    // taskEnd: Date;
-    // allDay:boolean;
-        //         id,
-        //         title,
-        //         start,
-        //         end,
-        //     };
-        //     setAllEvents([...allEvents, newEvent])
-        // }
+        props.setTaskDate(start)
+        props.setTaskStart(start)
+        props.setTaskEnd(end)
+        props.setAllDay(false);
+        props.setIsEditCalendarActive(true)        
+        const minutes = differenceInMinutes(new Date(end), new Date(start));
+        props.setTaskTime(minutes)
     };
 
-    // console.log('allEvents: ', allEvents);
     const { defaultDate, formats, scrollToTime } = useMemo(
         () => ({
-            defaultDate: new Date(),
+            defaultDate: props.taskDate,
             formats: {
                 weekdayFormat: (date, culture, localizer) => localizer.format(date, 'dddd', culture),
             },
@@ -133,28 +121,23 @@ const Complex = (props: ComplexProps) => {
         }),
         []
     );
-    const handleSelectEvent = useCallback((event) => {
-        window.alert(event.title);
+    const handleSelectEvent = useCallback((element) => {
+        props.setNote(element.resource.note)
+        props.setTaskId(element.resource.taskId)
+        props.setTaskTime(element.resource.taskTime)
+        props.setEditEntry(element.resource.id)        
+        props.setAllDay(element.allDay)
+        props.setTaskDate(element.resource.taskDate)
+        props.setTaskStart(element.start)
+        props.setTaskEnd(element.end)
+        props.setIsEditCalendarActive(true)
     }, []);
 
     return (
         <>
             <section className="section">
                 <div className="container">
-                    {/* <h1 className="title">Kalender</h1>
-                    <p className="subtitle">Tilføj ny opgave</p>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Tilføj titel"
-                            value={newEvent.title}
-                            onChange={(e) =>
-                                setNewEvent({
-                                    ...newEvent,
-                                    title: e.target.value,
-                                })
-                            }
-                        />
+                    {/* 
                         <DatePicker
                             placeholderText="Start"
                             selected={newEvent.start}
@@ -171,10 +154,7 @@ const Complex = (props: ComplexProps) => {
                             }
                             locale="da"
                         />
-                        <button className="button" onClick={handleAddEvent}>
-                            Gem
-                        </button>
-                    </div> */}
+                         */}
                     <Calendar
                         defaultView="week"
                         events={allEvents}

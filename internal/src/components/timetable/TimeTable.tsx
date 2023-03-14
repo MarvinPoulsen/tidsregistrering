@@ -8,16 +8,32 @@ import {toHoursAndMinutes} from '../../utils'
 
 interface TimeTableProps {
     data: TimeEntry[];
-    taskData: Task[];
+    tasks: Task[];
     onDelete: (id: number) => void;
-    onEdit: (entry: TimeEntry) => void;
+    setEditEntry:(id)=>void;
+    setNote: (newNote) => void;
+    setTaskDate:(newTaskDate)=>void;
+    setTaskId:(newTaskId)=>void;
+    setTaskTime:(minutes)=>void;
+    setAllDay:(isAllDay:boolean)=>void;
 }
 function TimeTable(props: TimeTableProps) {
+    
+    // console.log('TimeTableProps: ',props)
+    const handleOnEdit = (element)=>{
+        props.setNote(element.note)
+        props.setTaskDate(element.taskDate)
+        props.setTaskId(element.taskId)
+        props.setTaskTime(element.taskTime)
+        props.setAllDay(element.allDay)
+        props.setEditEntry(element.id)
+    }
     const tasks = props.data.map((element) => {
-        const task = props.taskData.find((t) => t.id === element.taskId);
+        
+        const task = props.tasks.find((t) => t.id === element.taskId);
         return {
             col1: (
-                <a onClick={() => props.onEdit(element)} href="#">
+                <a onClick={() => handleOnEdit(element)} href="#">
                     <Icon 
                         path={mdiPencil}
                         size={0.7}
