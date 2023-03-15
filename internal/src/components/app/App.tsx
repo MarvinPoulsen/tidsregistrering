@@ -221,7 +221,17 @@ const App = () => {
                             />
                         } 
                     />
-                    <Route path="/statistics" element={<Statistics />} />
+                    <Route 
+                        path="/statistics" 
+                        element={
+                            <Statistics 
+                                registrations={registrations}
+                                projects={projects}
+                                tasks={tasks}
+                                user={user}
+                            />
+                        }
+                    />
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/users" element={<Users />} />

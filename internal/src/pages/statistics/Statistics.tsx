@@ -1,81 +1,43 @@
 import React, { useState } from 'react';
-import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
-import withDragAndDrop, {
-    withDragAndDropProps,
-} from 'react-big-calendar/lib/addons/dragAndDrop';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
-import enUS from 'date-fns/locale/en-US';
-import addHours from 'date-fns/addHours';
-import startOfHour from 'date-fns/startOfHour';
+import { TimeEntry, Project, User, Task } from '../../SPS';
+import { isSameYear } from 'date-fns';
+import da from 'date-fns/locale/da'; // the locale you want
 
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+interface StatisticsProps {
+    registrations: TimeEntry[];
+    projects: Project[];
+    tasks: Task[];
+    user: User;
+}
+const Statistics = (props: StatisticsProps) => {
+    console.log('StatisticsProps: ', props);
+    const [year, setYear] = useState(new Date());
+    
+    const regList: JSX.Element[] = [];
+    console.log('Year: ', year);
 
-
-// console.log('startOfWeek: ',startOfWeek)
-// console.log('startOfWeek: ',startOfWeek)
-
-const Statistics = () => {
-    const [events, setEvents] = useState<Event[]>([
-        {
-            title: 'Learn cool stuff',
-            start,
-            end,
-        },
-    ]);
-
-    const onEventResize: withDragAndDropProps['onEventResize'] = (data) => {
-        const { start, end } = data;
-
-        setEvents((currentEvents) => {
-            const firstEvent = {
-                start: new Date(start),
-                end: new Date(end),
-            };
-            return [...currentEvents, firstEvent];
-        });
-    };
-
-    const onEventDrop: withDragAndDropProps['onEventDrop'] = (data) => {
-        // console.log(data);
-    };
-// console.log('events: ',events)
+    const registrationsByYear = props.registrations.filter((te) => isSameYear(te.taskDate, year));
+    console.log('registratioByYear: ', registrationsByYear);
+    for (const regByYear of registrationsByYear){
+        // console.log()
+    regList.push(
+        <p className="panel-block" key={regByYear.id}>
+            {regByYear.taskId}
+        </p>
+    )}
     return (
         <>
             <section className="section">
-                <DnDCalendar
-                    defaultView="week"
-                    events={events}
-                    localizer={localizer}
-                    onEventDrop={onEventDrop}
-                    onEventResize={onEventResize}
-                    resizable
-                    style={{ height: '100vh' }}
-                />{' '}
+                <div className="columns">
+                    <div className="column is-3"></div>
+                    <div className="column">
+                        {regList}
+                    </div>
+                </div>
             </section>
         </>
     );
 };
-
-const locales = {
-    'en-US': enUS,
-};
-const endOfHour = (date: Date): Date => addHours(startOfHour(date), 1);
-const now = new Date();
-const start = endOfHour(now);
-const end = addHours(start, 2);
-// The types here are `object`. Strongly consider making them better as removing `locales` caused a fatal error
-const localizer = dateFnsLocalizer({
-    format,
-    parse,
-    startOfWeek,
-    getDay,
-    locales,
-});
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-const DnDCalendar = withDragAndDrop(Calendar);
-
 export default Statistics;
