@@ -21,21 +21,23 @@ const App = () => {
     const [projects, setProjects] = useState<Project[]>([]); // læser i tabellen projects (returner id og name)
     const [registrations, setRegistrations] = useState<TimeEntry[]>([]);
     const [taskDate, setTaskDate] = useState<Date>(new Date()); // valgte dato,
-    const [taskTime, setTaskTime] = useState<number>(30)
+    const [taskTime, setTaskTime] = useState<number>(30);
     const [taskStart, setTaskStart] = useState<Date>(new Date(new Date().setHours(8, 0, 0, 0))); // valgte dato,
     const [taskEnd, setTaskEnd] = useState<Date>(new Date(new Date().setHours(8, 30, 0, 0))); // valgte dato,
     const [note, setNote] = useState<string>('');
     const [taskId, setTaskId] = useState<number>(1);
-    const [allDay, setAllDay] = useState<boolean>(true)
+    const [allDay, setAllDay] = useState<boolean>(true);
 
-    const [editEntry, setEditEntry] = useState<number>(null); // indeholder id 
-    
+    const [editEntry, setEditEntry] = useState<number>(null); // indeholder id
+
     const [error, setError] = useState<string | null>(null);
     const [isDeletingId, setIsDeletingId] = useState<number>(null);
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
     const [isEditCalendarActive, setIsEditCalendarActive] = useState<boolean>(false);
     const sps = useRef<SPS>(new SPS());
-    if (error){console.log(error)}
+    if (error) {
+        console.log(error);
+    }
     // const ses = sps.getParam()
     // const isSuperUser =
 
@@ -70,7 +72,7 @@ const App = () => {
      * - editEntry {number|null} - id'et fra registrations tabellen
      */
     const onSave = async () => {
-        const entry: TimeEntry ={
+        const entry: TimeEntry = {
             userId: user.shortid,
             taskDate,
             taskTime,
@@ -78,14 +80,14 @@ const App = () => {
             taskStart,
             taskEnd,
             note,
-            allDay
-        }
+            allDay,
+        };
         // eksistensen af editEntry afgør om det er en update eller insert
         if (editEntry) {
             entry.id = editEntry;
             await sps.current.updateTimeRegistration(entry);
             setEditEntry(null);
-        }else {
+        } else {
             await sps.current.insertTimeRegistration(entry);
         }
         refresh();
@@ -124,22 +126,30 @@ const App = () => {
         setTasks(updatedTasks);
         setIsFavoriteActive(false);
     };
-    
-    const resetForm = ()=> {
+
+    const resetForm = () => {
         setEditEntry(null);
         setTaskTime(30);
         setTaskId(1);
         setTaskStart(new Date(taskDate.setHours(8, 0, 0, 0)));
         setTaskEnd(new Date(taskDate.setHours(8, 30, 0, 0)));
         setNote('');
-        setAllDay(true)
+        setAllDay(true);
         setError(null);
-    }
+    };
 
     return (
         <>
             <section className="hero is-info is-small">
-                {user && <Navbar user={user} setIsFavoriteActive={setIsFavoriteActive} logo={logo} />}
+                {user && (
+                    <Navbar
+                        user={user}
+                        setIsFavoriteActive={setIsFavoriteActive}
+                        logo={logo}
+                        setNote={setNote}
+                        setTaskId={setTaskId}
+                    />
+                )}
             </section>
             <Routes>
                 <Route path="/">
@@ -197,10 +207,10 @@ const App = () => {
                             />
                         }
                     />
-                    <Route 
-                        path="/complex" 
+                    <Route
+                        path="/complex"
                         element={
-                            <Complex 
+                            <Complex
                                 registrations={registrations}
                                 taskDate={taskDate}
                                 projects={projects}
@@ -219,18 +229,11 @@ const App = () => {
                                 setTaskId={setTaskId}
                                 setAllDay={setAllDay}
                             />
-                        } 
-                    />
-                    <Route 
-                        path="/statistics" 
-                        element={
-                            <Statistics 
-                                registrations={registrations}
-                                projects={projects}
-                                tasks={tasks}
-                                user={user}
-                            />
                         }
+                    />
+                    <Route
+                        path="/statistics"
+                        element={<Statistics registrations={registrations} projects={projects} tasks={tasks} user={user} />}
                     />
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/tasks" element={<Tasks />} />

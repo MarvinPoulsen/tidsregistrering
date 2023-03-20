@@ -24,48 +24,44 @@ interface StackedDataSeries {
     stack: string;
 }
 interface BasicProps {
-    registrations: TimeEntry[];    
-    taskDate:Date;
-    taskStart:Date;
-    taskEnd:Date;
-    projects:Project[];
-    user:User;
-    onSave:()=>void;
-    editEntry:number;
-    setEditEntry:(id)=>void;
-    onDelete:(id)=>void;
-    tasks:Task[];
-    setTaskDate:(newTaskDate)=>void;
-    taskTime:number;
-    setTaskTime:(minutes)=>void;
+    registrations: TimeEntry[];
+    taskDate: Date;
+    taskStart: Date;
+    taskEnd: Date;
+    projects: Project[];
+    user: User;
+    onSave: () => void;
+    editEntry: number;
+    setEditEntry: (id) => void;
+    onDelete: (id) => void;
+    tasks: Task[];
+    setTaskDate: (newTaskDate) => void;
+    taskTime: number;
+    setTaskTime: (minutes) => void;
     note: string;
     setNote: (newNote) => void;
-    resetForm: ()=>void;
+    resetForm: () => void;
     taskId: number;
-    setTaskId:(newTaskId)=>void;
-    setAllDay:(isAllDay:boolean)=>void;
+    setTaskId: (newTaskId) => void;
+    setAllDay: (isAllDay: boolean) => void;
 }
-const Basic = (props:BasicProps) => {
+const Basic = (props: BasicProps) => {
     const [range, setRange] = useState<number>(14);
     const [legendData, setLegendData] = useState<LegendData[]>([]);
 
     useEffect(() => {
-        const data: LegendData[] = 
-                props.projects.map((item) => {
-                    return {
-                        projectName: item.projectName,
-                        on: true,
-                    };
-                })
-        ;
+        const data: LegendData[] = props.projects.map((item) => {
+            return {
+                projectName: item.projectName,
+                on: true,
+            };
+        });
         setLegendData(data);
     }, [props.projects]);
     /**
-     * 
+     *
      */
-    const filteredTasks = props.registrations.filter((te) =>
-        isSameDay(te.taskDate, props.taskDate)
-    );
+    const filteredTasks = props.registrations.filter((te) => isSameDay(te.taskDate, props.taskDate));
 
     const endDate = new Date(props.taskDate);
     endDate.setHours(0, 0, 0, 0);
@@ -83,7 +79,7 @@ const Basic = (props:BasicProps) => {
     const taskList = filterData.map((element) => {
         const task = props.tasks.find((t) => t.id === element.taskId);
         const project = props.projects.find((p) => p.id === task.projectId);
-        
+
         return {
             taskDate: element.taskDate,
             taskTime: element.taskTime,
@@ -102,21 +98,9 @@ const Basic = (props:BasicProps) => {
         const values: number[] = [];
         let sum = 0;
         for (let i = 0; i <= dateRange; i++) {
-            const filteredByDate = filteredProjects.filter((d) =>
-                isSameDay(d.taskDate, dateCopy)
-            );
-            values.push(
-                filteredByDate.reduce(
-                    (total, currentItem) =>
-                        (total = total + (currentItem.taskTime || 0)),
-                    0
-                )
-            );
-            sum += filteredByDate.reduce(
-                (total, currentItem) =>
-                    (total = total + (currentItem.taskTime || 0)),
-                0
-            );
+            const filteredByDate = filteredProjects.filter((d) => isSameDay(d.taskDate, dateCopy));
+            values.push(filteredByDate.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0));
+            sum += filteredByDate.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0);
             dateCopy.setDate(dateCopy.getDate() + 1);
         }
         dataSeries.push({ projectName: element, values, stack: '0' });
@@ -131,11 +115,7 @@ const Basic = (props:BasicProps) => {
     const labels: string[][] = [];
     for (let i = 0; i <= dateRange; i++) {
         const labelPair: string[] = [];
-        labelPair.push(
-            new Intl.DateTimeFormat('da-DK', { weekday: 'short' }).format(
-                startDate
-            )
-        );
+        labelPair.push(new Intl.DateTimeFormat('da-DK', { weekday: 'short' }).format(startDate));
         labelPair.push(
             startDate.toLocaleDateString('da-DK', {
                 month: 'short',
@@ -147,7 +127,7 @@ const Basic = (props:BasicProps) => {
     }
     /**
      * Toggle if the row on table is on or off
-     * @param projectName 
+     * @param projectName
      */
     const onLegendRowToggle = (projectName: string) => {
         const updatedlegendData = [...legendData];
@@ -176,7 +156,6 @@ const Basic = (props:BasicProps) => {
                                 setTaskId={props.setTaskId}
                                 taskTime={props.taskTime}
                                 setTaskTime={props.setTaskTime}
-                                
                             />
                         )}
                     </div>
@@ -186,7 +165,7 @@ const Basic = (props:BasicProps) => {
                         <TimeTable
                             data={filteredTasks}
                             tasks={props.tasks}
-                            onDelete={props.onDelete}            
+                            onDelete={props.onDelete}
                             setEditEntry={props.setEditEntry}
                             setTaskDate={props.setTaskDate}
                             setNote={props.setNote}
@@ -197,12 +176,7 @@ const Basic = (props:BasicProps) => {
                     </div>
                     <div className="column">
                         <div className="block">
-                            <Slider
-                                onRangeChange={setRange}
-                                maxValue={90}
-                                minValue={7}
-                                value={range}
-                            />
+                            <Slider onRangeChange={setRange} maxValue={90} minValue={7} value={range} />
                             {props.registrations && (
                                 <TimeChart
                                     setTaskDate={props.setTaskDate}
@@ -211,21 +185,14 @@ const Basic = (props:BasicProps) => {
                                     bgColorsStart={0}
                                     labels={labels}
                                     dataSeries={dataSeries}
-                                    visibility={pieGroups.map(
-                                        (item) => item.on
-                                    )}
+                                    visibility={pieGroups.map((item) => item.on)}
                                 />
                             )}
                         </div>
                         <div className="block">
                             <div className="columns">
                                 <div className="column is-half">
-                                    <PiechartNoLegend
-                                        data={pieGroups}
-                                        visibility={pieGroups.map(
-                                            (item) => item.on
-                                        )}
-                                    />
+                                    <PiechartNoLegend data={pieGroups} visibility={pieGroups.map((item) => item.on)} />
                                 </div>
                                 <div className="column is-half">
                                     <LegendTable

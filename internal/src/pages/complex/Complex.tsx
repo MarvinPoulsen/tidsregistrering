@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 // import DatePicker, { registerLocale } from 'react-datepicker';
-import  { registerLocale } from 'react-datepicker';
+import { registerLocale } from 'react-datepicker';
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
@@ -46,13 +46,12 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-
 const makeEventList = (registrationList, taskList) => {
     const eventList = [];
     for (const registration of registrationList) {
         const task = taskList.find((t) => t.id === registration.taskId);
         const minutes = differenceInMinutes(new Date(registration.taskEnd), new Date(registration.taskStart));
-        
+
         const resource: Resource = {
             id: registration.id,
             note: registration.note,
@@ -60,14 +59,13 @@ const makeEventList = (registrationList, taskList) => {
             taskId: task.id,
             taskTime: minutes,
             userId: registration.userId,
-
         };
         const event = {
             title: task.taskName,
-            allDay:registration.allDay === 'true',
+            allDay: registration.allDay === 'true',
             start: registration.taskStart,
             end: registration.taskEnd,
-            resource, 
+            resource,
         };
         eventList.push(event);
     }
@@ -78,19 +76,19 @@ interface ComplexProps {
     taskDate: Date;
     projects: Project[];
     tasks: Task[];
-    setEditEntry:(id)=>void;
-    setTaskStart:(start)=>void;
-    setTaskEnd:(end)=>void;
-    setTaskDate:(newTaskDate)=>void;
-    setIsEditCalendarActive: (isOn:boolean) => void;
-    taskTime:number;
-    setTaskTime:(minutes)=>void;
+    setEditEntry: (id) => void;
+    setTaskStart: (start) => void;
+    setTaskEnd: (end) => void;
+    setTaskDate: (newTaskDate) => void;
+    setIsEditCalendarActive: (isOn: boolean) => void;
+    taskTime: number;
+    setTaskTime: (minutes) => void;
     note: string;
     setNote: (newNote) => void;
-    resetForm: ()=>void;
+    resetForm: () => void;
     taskId: number;
-    setTaskId:(newTaskId)=>void;
-    setAllDay:(isAllDay:boolean)=>void;
+    setTaskId: (newTaskId) => void;
+    setAllDay: (isAllDay: boolean) => void;
 }
 const Complex = (props: ComplexProps) => {
     // console.log('ComplexProps: ', props);
@@ -102,13 +100,13 @@ const Complex = (props: ComplexProps) => {
     }, [props.registrations, props.tasks]);
 
     const handleSelectSlot = ({ start, end }) => {
-        props.setTaskDate(start)
-        props.setTaskStart(start)
-        props.setTaskEnd(end)
+        props.setTaskDate(start);
+        props.setTaskStart(start);
+        props.setTaskEnd(end);
         props.setAllDay(false);
-        props.setIsEditCalendarActive(true)        
+        props.setIsEditCalendarActive(true);
         const minutes = differenceInMinutes(new Date(end), new Date(start));
-        props.setTaskTime(minutes)
+        props.setTaskTime(minutes);
     };
 
     const { defaultDate, formats, scrollToTime } = useMemo(
@@ -122,15 +120,15 @@ const Complex = (props: ComplexProps) => {
         []
     );
     const handleSelectEvent = useCallback((element) => {
-        props.setNote(element.resource.note)
-        props.setTaskId(element.resource.taskId)
-        props.setTaskTime(element.resource.taskTime)
-        props.setEditEntry(element.resource.id)        
-        props.setAllDay(element.allDay)
-        props.setTaskDate(element.resource.taskDate)
-        props.setTaskStart(element.start)
-        props.setTaskEnd(element.end)
-        props.setIsEditCalendarActive(true)
+        props.setNote(element.resource.note);
+        props.setTaskId(element.resource.taskId);
+        props.setTaskTime(element.resource.taskTime);
+        props.setEditEntry(element.resource.id);
+        props.setAllDay(element.allDay);
+        props.setTaskDate(element.resource.taskDate);
+        props.setTaskStart(element.start);
+        props.setTaskEnd(element.end);
+        props.setIsEditCalendarActive(true);
     }, []);
 
     return (
