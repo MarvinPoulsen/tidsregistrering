@@ -6,7 +6,7 @@
         <pwd>[cbinfo.pg_endpoint.pwd]</pwd>
     </endpoint>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_registration">
-        <debug>true</debug>
+        <!-- <debug>true</debug> -->
         <table name="registration" pkcolumn="id" schema="tasm"/>
         <sql command="read-by-user">select * from tasm.registration where user_id=[string:getUsershortid(sessionid)];</sql>
         <sql command="insert-registration">
