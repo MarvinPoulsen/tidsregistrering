@@ -18,12 +18,9 @@ interface NavbarProps {
     logo: string;
     setNote: (newNote) => void;
     setTaskId: (newTaskId) => void;
+    resetForm: () => void;
 }
 const Navbar = (props: NavbarProps) => {
-    const clearTask = () => {
-        props.setNote('');
-        props.setTaskId(1);
-    };
     const location = useLocation();
 
     const [isActiveTab, setActiveTab] = useState<Tab>(null);
@@ -31,11 +28,11 @@ const Navbar = (props: NavbarProps) => {
         switch (location.pathname) {
             case '/':
             case '/basic':
-                clearTask();
+                props.resetForm();
                 setActiveTab(Tab.Basic);
                 break;
             case '/complex':
-                clearTask();
+                props.resetForm();
                 setActiveTab(Tab.Complex);
                 break;
             case '/statistics':

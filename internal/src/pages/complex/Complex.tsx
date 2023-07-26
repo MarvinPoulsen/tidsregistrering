@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-// import DatePicker, { registerLocale } from 'react-datepicker';
 import { registerLocale } from 'react-datepicker';
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
 import format from 'date-fns/format';
@@ -7,12 +6,8 @@ import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import da from 'date-fns/locale/da'; // the locale you want
-// import addHours from 'date-fns/addHours';
-// import startOfHour from 'date-fns/startOfHour';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-// import { getHours, getMinutes } from 'date-fns';
-// import { TimeEntry, Project, User, Task } from '../../SPS';
 import { TimeEntry, Project, Task } from '../../SPS';
 import { differenceInMinutes } from 'date-fns';
 registerLocale('da', da); // register it with the name you want
@@ -100,7 +95,8 @@ const Complex = (props: ComplexProps) => {
     }, [props.registrations, props.tasks]);
 
     const handleSelectSlot = ({ start, end }) => {
-        props.setTaskDate(start);
+        const taskDate = start.toDateString()
+        props.setTaskDate(new Date(taskDate));
         props.setTaskStart(start);
         props.setTaskEnd(end);
         props.setAllDay(false);
@@ -125,7 +121,7 @@ const Complex = (props: ComplexProps) => {
         props.setTaskTime(element.resource.taskTime);
         props.setEditEntry(element.resource.id);
         props.setAllDay(element.allDay);
-        props.setTaskDate(element.resource.taskDate);
+        props.setTaskDate(new Date(element.resource.taskDate.setHours(0, 0, 0, 0)));
         props.setTaskStart(element.start);
         props.setTaskEnd(element.end);
         props.setIsEditCalendarActive(true);

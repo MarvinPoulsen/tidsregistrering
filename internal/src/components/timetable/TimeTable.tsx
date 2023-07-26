@@ -22,7 +22,7 @@ function TimeTable(props: TimeTableProps) {
     // console.log('TimeTableProps: ',props)
     const handleOnEdit = (element)=>{
         props.setNote(element.note)
-        props.setTaskDate(element.taskDate)
+        props.setTaskDate(new Date(element.taskDate.setHours(0, 0, 0, 0)))
         props.setTaskId(element.taskId)
         props.setTaskTime(element.taskTime)
         props.setAllDay(element.allDay)

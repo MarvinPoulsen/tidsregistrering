@@ -12,7 +12,8 @@ import Statistics from '../../pages/statistics/Statistics';
 import Projects from '../../pages/admin/Projects';
 import Tasks from '../../pages/admin/Tasks';
 import Users from '../../pages/admin/Users';
-import format from 'date-fns/format';
+// import format from 'date-fns/format';
+import { differenceInMinutes, format, add } from 'date-fns';
 
 const App = () => {
     const [user, setUser] = useState<User>(null);
@@ -20,10 +21,10 @@ const App = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [projects, setProjects] = useState<Project[]>([]); // læser i tabellen projects (returner id og name)
     const [registrations, setRegistrations] = useState<TimeEntry[]>([]);
-    const [taskDate, setTaskDate] = useState<Date>(new Date()); // valgte dato,
+    const [taskDate, setTaskDate] = useState<Date>(new Date(new Date().setHours(0, 0, 0, 0))); // valgte dato,
     const [taskTime, setTaskTime] = useState<number>(30);
-    const [taskStart, setTaskStart] = useState<Date>(new Date(new Date().setHours(8, 0, 0, 0))); // valgte dato,
-    const [taskEnd, setTaskEnd] = useState<Date>(new Date(new Date().setHours(8, 30, 0, 0))); // valgte dato,
+    const [taskEnd, setTaskEnd] = useState<Date>(new Date(new Date().setHours(0, 30, 0, 0))); // valgte dato,
+    const [taskStart, setTaskStart] = useState<Date>(new Date(new Date().setHours(0, 0, 0, 0))); // valgte dato,
     const [note, setNote] = useState<string>('');
     const [taskId, setTaskId] = useState<number>(1);
     const [allDay, setAllDay] = useState<boolean>(true);
@@ -131,13 +132,28 @@ const App = () => {
         setEditEntry(null);
         setTaskTime(30);
         setTaskId(1);
-        setTaskStart(new Date(taskDate.setHours(8, 0, 0, 0)));
-        setTaskEnd(new Date(taskDate.setHours(8, 30, 0, 0)));
+        setTaskEnd(new Date(taskDate.setHours(0, 30, 0, 0)));
+        setTaskStart(new Date(taskDate.setHours(0, 0, 0, 0)));
         setNote('');
         setAllDay(true);
         setError(null);
     };
 
+    const handleDateChange = (newDate) => {
+        const startH = taskStart.getHours();
+        const startM = taskStart.getMinutes();
+        const endH = taskEnd.getHours();
+        const endM = taskEnd.getMinutes();
+        setTaskDate(new Date(newDate.setHours(0, 0, 0, 0)));
+        setTaskStart(new Date(newDate.setHours(startH, startM, 0, 0)));
+        setTaskEnd(new Date(newDate.setHours(endH, endM, 0, 0)));
+    }
+    const handleTimeChange = (newTime) => {
+        const minutes = differenceInMinutes(taskEnd, taskStart);
+        const newEnd = add(taskEnd,{minutes: newTime-minutes})
+        setTaskTime(newTime)
+        setTaskEnd(newEnd)
+    }
     return (
         <>
             <section className="hero is-info is-small">
@@ -148,6 +164,7 @@ const App = () => {
                         logo={logo}
                         setNote={setNote}
                         setTaskId={setTaskId}
+                        resetForm={resetForm}
                     />
                 )}
             </section>
@@ -166,11 +183,11 @@ const App = () => {
                                 setEditEntry={setEditEntry}
                                 onDelete={(id) => onDelete(id)}
                                 tasks={tasks}
-                                setTaskDate={setTaskDate}
+                                setTaskDate={handleDateChange}
                                 taskStart={taskStart}
                                 taskEnd={taskEnd}
                                 taskTime={taskTime}
-                                setTaskTime={setTaskTime}
+                                setTaskTime={handleTimeChange}
                                 note={note}
                                 setNote={setNote}
                                 taskId={taskId}
@@ -193,7 +210,7 @@ const App = () => {
                                 setEditEntry={setEditEntry}
                                 onDelete={(id) => onDelete(id)}
                                 tasks={tasks}
-                                setTaskDate={setTaskDate}
+                                setTaskDate={handleDateChange}
                                 taskStart={taskStart}
                                 taskEnd={taskEnd}
                                 taskTime={taskTime}
@@ -287,6 +304,10 @@ const App = () => {
                     setTaskId={setTaskId}
                     allDay={allDay}
                     setAllDay={setAllDay}
+                    handleDateChange={handleDateChange}
+                    setTaskStart={setTaskStart}
+                    setTaskEnd={setTaskEnd}
+                    setTaskTime={setTaskTime}
                 />
             )}
         </>

@@ -104,7 +104,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                 <DatePicker
                                     todayButton="Dags dato"
                                     selected={props.date}
-                                    onChange={props.setTaskDate}
+                                    onChange={props.setTaskDate} // setTaskDate bliver sat uden tid
                                     locale="da"
                                     showWeekNumbers
                                     className="input"
@@ -168,15 +168,6 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                             onClick={props.resetForm}
                                         >
                                             Cancel
-                                        </button>
-                                    </span>
-                                    <span className="control">
-                                        <button
-                                            className="button"
-                                            type="button"
-                                            onClick={()=>console.log('TimeRegistrationProps: ',props)}
-                                        >
-                                            Test
                                         </button>
                                     </span>
                                 </div>
