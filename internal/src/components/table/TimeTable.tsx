@@ -19,7 +19,7 @@ interface TimeTableProps {
 }
 function TimeTable(props: TimeTableProps) {
     
-    // console.log('TimeTableProps: ',props)
+    console.log('TimeTableProps: ',props)
     const handleOnEdit = (element)=>{
         props.setNote(element.note)
         props.setTaskDate(new Date(element.taskDate.setHours(0, 0, 0, 0)))

@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
 import { TimeEntry, Project, User, Task } from '../../SPS';
 import { isSameYear } from 'date-fns';
-import da from 'date-fns/locale/da'; // the locale you want
 import TaskBarchart from '../../components/taskstats/TaskBarchart';
 
 interface StatisticsProps {
@@ -61,35 +58,6 @@ const Statistics = (props: StatisticsProps) => {
                                     <a>Customers</a>
                                 </li>
                             </ul>
-                            {/* <p className="menu-label">Team</p>
-                            <ul className="menu-list">
-                                <li>
-                                    <a>Team Settings</a>
-                                </li>
-                                <li>
-                                    <a className="is-active">Manage Your Team</a>
-                                    <ul>
-                                        <li>
-                                            <a>Members</a>
-                                        </li>
-                                        <li>
-                                            <a>Plugins</a>
-                                        </li>
-                                        <li>
-                                            <a>Add a member</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a>Invitations</a>
-                                </li>
-                                <li>
-                                    <a>Cloud Storage Environment Settings</a>
-                                </li>
-                                <li>
-                                    <a>Authentication</a>
-                                </li>
-                            </ul> */}
                             <p className="menu-label">Projekt</p>
                             <ul className="menu-list">
                                 <li>

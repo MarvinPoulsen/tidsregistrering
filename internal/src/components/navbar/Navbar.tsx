@@ -52,7 +52,7 @@ const Navbar = (props: NavbarProps) => {
         }
     }, [location]);
 
-    const user = props.user.name;
+    const userName = props.user.name;
     return (
         <>
             <nav className="navbar" role="navigation" aria-label="main navigation">
@@ -87,6 +87,7 @@ const Navbar = (props: NavbarProps) => {
                             </span> */}
                         <span className="navigation-text">Statistics</span>
                     </Link>
+                    {props.user.hasPermission('endpoint.ep_lk_tasm_admin') && (
                     <div className="navbar-item has-dropdown is-hoverable" key={isActiveTab}>
                         <a className="navbar-link">
                             <span
@@ -110,10 +111,10 @@ const Navbar = (props: NavbarProps) => {
                                 <span className="navigation-text">Users</span>
                             </Link>
                         </div>
-                    </div>
+                    </div>)}
                     <div className="navbar-item">
                         <span id="user-name" className="navbar-item noHover">
-                            {user}
+                            {userName}
                         </span>
                         <span className="icon is-large">
                             <Icon path={mdiAccount} size={1.2} />

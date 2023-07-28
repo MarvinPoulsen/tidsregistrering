@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import TimeRegistration from '../../components/timeregistration/TimeRegistration';
-import TimeTable from '../../components/timetable/TimeTable';
+import TimeTable from '../../components/table/TimeTable';
 import TimeChart from '../../components/timechart/TimeChart';
 import { isSameDay } from 'date-fns';
 import Slider from '../../components/slider/Slider';
