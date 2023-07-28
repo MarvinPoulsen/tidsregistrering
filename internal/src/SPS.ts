@@ -33,18 +33,20 @@ export interface Task {
 } 
 
 export interface Project {
-    id: number;
-    // groupId: string;
-    // horizon: Date;
-    // importance: number;
+    id?: number;
+    groupId: string;
+    horizon: Date;
+    importance: number;
     projectName: string;
-    // sbsysId: number;
-    // timeframe: number;
+    sbsysId: number;
+    timeframe: number;
+    obsolete: boolean;
 }
 
 export interface User{
     name: string;
     shortid: string;
+    hasPermission: (permission: string) => boolean;
 }
 
 export default class SPS {
@@ -145,7 +147,14 @@ export default class SPS {
             const id = parseInt(element.id as string);
             return {
                 id,
+                groupId: element.groupId as string,
                 projectName: element.project_name as string,
+                horizon: new Date(element.horizon as string),
+                importance: parseInt(element.importance as string),
+                sbsysId: parseInt(element.sbsysId as string),
+                timeframe: parseInt(element.timeframe as string),
+                obsolete: element.obsolete === 'true',
+                
             }
         })
         return projectData
@@ -206,4 +215,53 @@ export default class SPS {
             await this.executeOnDs('lk_tasm_favorites', {command: "insert", taskId: favoriteId});
         }        
     } 
+            
+    async getAdminProjectsData(): Promise<Project[]> {
+        const data = await this.executeOnDs('lk_tasm_admin_projects');
+        // console.log('AdminProjectsData: ',data)
+        const projectData: Project[] = data.map(element => {
+            const id = parseInt(element.id as string);
+            return {
+                id,
+                groupId: element.groupId as string,
+                projectName: element.project_name as string,
+                horizon: new Date(element.horizon as string),
+                importance: parseInt(element.importance as string),
+                timeframe: parseInt(element.timeframe as string),
+                sbsysId: parseInt(element.sbsysId as string),
+                obsolete: element.obsolete === 'true',
+            }
+        })
+        return projectData
+    }
+
+    
+    async insertProject(entry: Project): Promise<void> {
+        // console.log('Project: ',entry)
+        // console.log('allDay: ',typeof entry.allDay)
+
+        try{
+            await this.executeOnDs('lk_tasm_admin_projects', {command: "insert-project", 
+            ...entry,
+            horizon: format(entry.horizon, 'yyyy-MM-dd')
+         });
+        }catch(e){
+            console.error(e.exception.message)
+            throw new Error('Projekt oprettelse fejlede');
+        }        
+    }
+
+    async updateProject(entry: Project): Promise<void> {
+        // console.log('Project: ',entry)
+        // console.log('allDay: ',typeof entry.allDay)
+        try{
+            await this.executeOnDs('lk_tasm_admin_projects', {command: "update-project-by-id", 
+            ...entry,
+            horizon: format(entry.horizon, 'yyyy-MM-dd')
+         });
+        }catch(e){
+            console.error(e.exception.message)
+            throw new Error('Opdatering af projektet fejlede');
+        }        
+    }
 }

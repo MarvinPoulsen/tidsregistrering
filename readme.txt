@@ -23,6 +23,7 @@ Date		Version		Ini		Description
 2023-02-13  1.1.0       MARPO       Renamed Module (Task And Scheduling Management)
 2023-03-15	1.2.0		MARPO		Advanced reporting site added
 2023-07-26  1.2.1       MARPO       Possibility to change the reported time
+2023-07-26  1.3.0       MARPO       Administrator with the possibility of creating new projects
 
 --------------------
 TODO

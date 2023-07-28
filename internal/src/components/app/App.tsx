@@ -12,7 +12,6 @@ import Statistics from '../../pages/statistics/Statistics';
 import Projects from '../../pages/admin/Projects';
 import Tasks from '../../pages/admin/Tasks';
 import Users from '../../pages/admin/Users';
-// import format from 'date-fns/format';
 import { differenceInMinutes, format, add } from 'date-fns';
 
 const App = () => {
@@ -35,6 +34,7 @@ const App = () => {
     const [isDeletingId, setIsDeletingId] = useState<number>(null);
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
     const [isEditCalendarActive, setIsEditCalendarActive] = useState<boolean>(false);
+
     const sps = useRef<SPS>(new SPS());
     if (error) {
         console.log(error);
@@ -59,6 +59,7 @@ const App = () => {
 
             const projectList: Project[] = await sps.current.getProjectsData();
             setProjects(projectList);
+
             refresh();
         };
         getDataFromSps();
@@ -252,7 +253,15 @@ const App = () => {
                         path="/statistics"
                         element={<Statistics registrations={registrations} projects={projects} tasks={tasks} user={user} />}
                     />
-                    <Route path="/projects" element={<Projects />} />
+                    <Route 
+                        path="/projects" 
+                        element={
+                            <Projects
+                                // projects={projects}
+                                sps={sps.current}
+                            />
+                        } 
+                    />
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/users" element={<Users />} />
                 </Route>
