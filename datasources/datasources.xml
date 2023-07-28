@@ -72,4 +72,49 @@
                 ([string:getUsershortid(sessionid)], [number:taskId]);
         </sql>
     </datasource>
+    <!-- ADMINISTRATOR -->
+    <!-- <endpoint endpointtype="postgis" name="ep_lk_tasm_admin" permissionlevel="authorized"> -->
+    <endpoint endpointtype="postgis" name="ep_lk_tasm_admin">
+        <connect>[cbinfo.pg_endpoint.connect]</connect>
+        <user>[cbinfo.pg_endpoint.usr]</user>
+        <pwd>[cbinfo.pg_endpoint.pwd]</pwd>
+    </endpoint>
+    <datasource endpoint="ep_lk_tasm_admin" name="lk_tasm_admin_projects">
+        <table name="projects" pkcolumn="id" schema="tasm"/>
+        <sql command="insert-project">
+            insert into 
+                tasm.projects(
+                    group_id,
+                    project_name,
+                    horizon,
+                    importance,
+                    timeframe,
+                    sbsys_id,
+                    obsolete
+                ) 
+                values (
+                    [string:if isdefined (groupId) then groupId else NULL endif],
+                    [string:if isdefined (projectName) then projectName else NULL endif],
+                    [timestamp:toTimestamp(horizon, 'yyyy-MM-dd')],
+                    [number:importance],
+                    [number:timeframe],
+                    [number:sbsysId],
+                    [boolean:obsolete='true']
+                );
+        </sql>
+        <sql command="update-project-by-id">
+            update tasm.projects
+            set 
+                group_id = [string:if isdefined (groupId) then groupId else NULL endif],
+                project_name = [string:if isdefined (projectName) then projectName else NULL endif],
+                horizon = [timestamp:toTimestamp(horizon, 'yyyy-MM-dd')],
+                importance = [number:importance],
+                timeframe = [number:timeframe],
+                sbsys_id = [number:sbsysId],
+                obsolete = [boolean:obsolete='true']
+            where
+                id = [number: id];
+        </sql>
+    </datasource>
+
 </datasources>
