@@ -1,5 +1,6 @@
 declare namespace SpatialServer {
     class Principal {
+        id: string;
         name: string;
         shortid: string;
         isanonymous: boolean;
