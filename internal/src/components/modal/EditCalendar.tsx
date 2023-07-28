@@ -59,7 +59,7 @@ const EditCalendar = (props: EditCalendarProps) => {
     };
 
     const onChangeAllDay = (event) => {
-        const on = event.target.checked;
+        const on: boolean = event.target.checked;
         props.setAllDay(on)
     }
 
