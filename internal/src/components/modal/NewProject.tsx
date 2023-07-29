@@ -26,10 +26,11 @@ interface NewProjectProps {
 }
 
 const NewProject = (props: NewProjectProps) => {
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>('Projektnavn skal være på mindst 3 karakterer'); //Change name to validate for and make it a object instead?
     const handleClose = () => {
         props.resetForm();
         props.setIsNewProjectActive(false);
+        setError('Projektnavn skal være på mindst 3 karakterer');
     };
     const handleSubmit = (event) => {
         // window.alert(event.target.value);
@@ -37,6 +38,7 @@ const NewProject = (props: NewProjectProps) => {
         props.onSave();
         props.resetForm();
         props.setIsNewProjectActive(false);
+        setError('Projektnavn skal være på mindst 3 karakterer');
     };
     const handleProjectNameChange = (event) => {
         const newProject = event.target.value;
