@@ -25,6 +25,17 @@ export interface TimeEntry {
 }  
 
 export interface Task {
+    id?: number;
+    projectId: number;
+    taskName: string;
+    milestone: Date;
+    importance: number;
+    timeframe: number;
+    description: string;
+    obsolete: boolean;
+} 
+
+export interface FavoritTask {
     id: number;
     projectId: number;
     taskName: string;
@@ -120,11 +131,11 @@ export default class SPS {
         return timeEntries
     }
 
-    async getTaskData(): Promise<Task[]> {
+    async getTaskData(): Promise<FavoritTask[]> {
         const data = await this.executeOnDs('lk_tasm_tasks', {command: "read-current"});        
         // console.log('lk_tasm_tasks: ', data)
         const favorites = await this.getFavoritTasks();
-        const taskData: Task[] = data.map(element => {
+        const taskData: FavoritTask[] = data.map(element => {
             const id = parseInt(element.id as string);
             const projectId = parseInt(element.project_id as string);
             return {
@@ -147,11 +158,11 @@ export default class SPS {
             const id = parseInt(element.id as string);
             return {
                 id,
-                groupId: element.groupId as string,
+                groupId: element.group_id as string,
                 projectName: element.project_name as string,
                 horizon: new Date(element.horizon as string),
                 importance: parseInt(element.importance as string),
-                sbsysId: parseInt(element.sbsysId as string),
+                sbsysId: parseInt(element.group_id as string),
                 timeframe: parseInt(element.timeframe as string),
                 obsolete: element.obsolete === 'true',
                 
@@ -214,21 +225,21 @@ export default class SPS {
         for (const favoriteId of favoriteIds) {
             await this.executeOnDs('lk_tasm_favorites', {command: "insert", taskId: favoriteId});
         }        
-    } 
+    }
             
     async getAdminProjectsData(): Promise<Project[]> {
         const data = await this.executeOnDs('lk_tasm_admin_projects');
-        // console.log('AdminProjectsData: ',data)
+        console.log('AdminProjectsData: ',data)
         const projectData: Project[] = data.map(element => {
             const id = parseInt(element.id as string);
             return {
                 id,
-                groupId: element.groupId as string,
+                groupId: element.group_id as string,
                 projectName: element.project_name as string,
                 horizon: new Date(element.horizon as string),
                 importance: parseInt(element.importance as string),
                 timeframe: parseInt(element.timeframe as string),
-                sbsysId: parseInt(element.sbsysId as string),
+                sbsysId: parseInt(element.sbsys_id as string),
                 obsolete: element.obsolete === 'true',
             }
         })
@@ -238,7 +249,6 @@ export default class SPS {
     
     async insertProject(entry: Project): Promise<void> {
         // console.log('Project: ',entry)
-        // console.log('allDay: ',typeof entry.allDay)
 
         try{
             await this.executeOnDs('lk_tasm_admin_projects', {command: "insert-project", 
@@ -253,11 +263,56 @@ export default class SPS {
 
     async updateProject(entry: Project): Promise<void> {
         // console.log('Project: ',entry)
-        // console.log('allDay: ',typeof entry.allDay)
         try{
             await this.executeOnDs('lk_tasm_admin_projects', {command: "update-project-by-id", 
             ...entry,
             horizon: format(entry.horizon, 'yyyy-MM-dd')
+         });
+        }catch(e){
+            console.error(e.exception.message)
+            throw new Error('Opdatering af projektet fejlede');
+        }        
+    }
+            
+    async getAdminTasksData(): Promise<Task[]> {
+        const data = await this.executeOnDs('lk_tasm_admin_tasks');
+        // console.log('AdminTasksData: ',data)
+        const taskData: Task[] = data.map(element => {
+            const id = parseInt(element.id as string);
+            return {
+                id,
+                projectId: parseInt(element.project_id as string),
+                taskName: element.task_name as string,
+                milestone: new Date(element.milestone as string),
+                importance: parseInt(element.importance as string),
+                timeframe: parseInt(element.timeframe as string),
+                description: element.description as string,
+                obsolete: element.obsolete === 'true',
+            }
+        })
+        return taskData
+    }
+
+    async insertTask(entry: Task): Promise<void> {
+        // console.log('Task: ',entry)
+
+        try{
+            await this.executeOnDs('lk_tasm_admin_tasks', {command: "insert-task", 
+            ...entry,
+            milestone: format(entry.milestone, 'yyyy-MM-dd')
+         });
+        }catch(e){
+            console.error(e.exception.message)
+            throw new Error('Projekt oprettelse fejlede');
+        }        
+    }
+
+    async updateTask(entry: Task): Promise<void> {
+        // console.log('Task: ',entry)
+        try{
+            await this.executeOnDs('lk_tasm_admin_tasks', {command: "update-task-by-id", 
+            ...entry,
+            milestone: format(entry.milestone, 'yyyy-MM-dd')
          });
         }catch(e){
             console.error(e.exception.message)

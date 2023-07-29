@@ -116,5 +116,42 @@
                 id = [number: id];
         </sql>
     </datasource>
+    <datasource endpoint="ep_lk_tasm_admin" name="lk_tasm_admin_tasks">
+        <table name="tasks" pkcolumn="id" schema="tasm"/>
+        <sql command="insert-task">
+            insert into 
+                tasm.tasks(
+                    project_id,
+                    task_name,
+                    milestone,
+                    importance,
+                    timeframe,
+                    description,
+                    obsolete
+                ) 
+                values (
+                    [number:projectId],
+                    [string:if isdefined (taskName) then taskName else NULL endif],
+                    [timestamp:toTimestamp(milestone, 'yyyy-MM-dd')],
+                    [number:importance],
+                    [number:timeframe],
+                    [string:if isdefined (description) then description else NULL endif],
+                    [boolean:obsolete='true']
+                );
+        </sql>
+        <sql command="update-task-by-id">
+            update tasm.tasks
+            set 
+                project_id = [number:projectId],
+                task_name = [string:if isdefined (taskName) then taskName else NULL endif],
+                milestone = [timestamp:toTimestamp(milestone, 'yyyy-MM-dd')],
+                importance = [number:importance],
+                timeframe = [number:timeframe],
+                description = [string:if isdefined (description) then description else NULL endif],
+                obsolete = [boolean:obsolete='true']
+            where
+                id = [number: id];
+        </sql>
+    </datasource>
 
 </datasources>
