@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Task, User } from '../../SPS';
+import { FavoritTask, User } from '../../SPS';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import da from 'date-fns/locale/da'; // the locale you want
@@ -13,7 +13,7 @@ interface EditCalendarProps {
     start: Date;
     end: Date;
     date: Date;
-    taskList: Task[];
+    taskList: FavoritTask[];
     user: User;
     editEntry?: number;
     note: string;
@@ -41,7 +41,7 @@ const EditCalendar = (props: EditCalendarProps) => {
     };
     const handleTaskIdChange = (event) => {
         const newTaskId = parseInt(event.target.value);
-        const task = props.taskList.find((t: Task) => t.id === newTaskId);
+        const task = props.taskList.find((t: FavoritTask) => t.id === newTaskId);
         if (task) {
             setError(null);
         } else {

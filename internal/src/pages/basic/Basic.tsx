@@ -7,7 +7,7 @@ import { isSameDay } from 'date-fns';
 import Slider from '../../components/slider/Slider';
 import PiechartNoLegend from '../../components/timechart/PiechartNoLegend';
 import LegendTable from '../../components/timechart/LegendTable';
-import { TimeEntry, Project, User, Task } from '../../SPS';
+import { TimeEntry, Project, User, FavoritTask } from '../../SPS';
 
 export interface PieGroup {
     projectName: string;
@@ -34,7 +34,7 @@ interface BasicProps {
     editEntry: number;
     setEditEntry: (id) => void;
     onDelete: (id) => void;
-    tasks: Task[];
+    tasks: FavoritTask[];
     setTaskDate: (newTaskDate) => void;
     taskTime: number;
     setTaskTime: (minutes) => void;

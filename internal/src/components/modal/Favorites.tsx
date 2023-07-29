@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Task, Project } from '../../SPS';
+import { FavoritTask, Project } from '../../SPS';
 
 interface FavoritesProps {
     isActive: boolean;
-    taskList: Task[];
+    taskList: FavoritTask[];
     onSave: (favoriteIds: number[]) => void;
     setIsFavoriteActive: (isOn:boolean) => void;
     projectList: Project[];
 }
 
 const Favorites = (props: FavoritesProps) => {
-    const [taskListCopy, setTaskListCopy] = useState<Task[]>([]);
+    const [taskListCopy, setTaskListCopy] = useState<FavoritTask[]>([]);
     useEffect(() => {
         setTaskListCopy(props.taskList);
     }, [props.taskList]);
@@ -26,7 +26,7 @@ const Favorites = (props: FavoritesProps) => {
     };
 
     const onSaveButtonClicked = () =>{
-        const favoriteIds = taskListCopy.filter((item: Task) => item.isFavorite).map((item: Task)=>item.id)
+        const favoriteIds = taskListCopy.filter((item: FavoritTask) => item.isFavorite).map((item: FavoritTask)=>item.id)
         props.onSave(favoriteIds)
     }
     const onCloseFavorites = ()=>{

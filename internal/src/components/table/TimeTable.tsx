@@ -2,13 +2,13 @@ import React from 'react';
 import { useTable } from 'react-table';
 import Icon from '@mdi/react';
 import { mdiPencil, mdiDelete } from '@mdi/js';
-import { Task, TimeEntry } from '../../SPS';
+import { FavoritTask, TimeEntry } from '../../SPS';
 import format from 'date-fns/format';
 import {toHoursAndMinutes} from '../../utils'
 
 interface TimeTableProps {
     data: TimeEntry[];
-    tasks: Task[];
+    tasks: FavoritTask[];
     onDelete: (id: number) => void;
     setEditEntry:(id)=>void;
     setNote: (newNote) => void;

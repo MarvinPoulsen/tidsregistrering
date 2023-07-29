@@ -8,7 +8,7 @@ import getDay from 'date-fns/getDay';
 import da from 'date-fns/locale/da'; // the locale you want
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { TimeEntry, Project, Task } from '../../SPS';
+import { TimeEntry, Project, FavoritTask } from '../../SPS';
 import { differenceInMinutes } from 'date-fns';
 registerLocale('da', da); // register it with the name you want
 
@@ -70,7 +70,7 @@ interface ComplexProps {
     registrations: TimeEntry[];
     taskDate: Date;
     projects: Project[];
-    tasks: Task[];
+    tasks: FavoritTask[];
     setEditEntry: (id) => void;
     setTaskStart: (start) => void;
     setTaskEnd: (end) => void;

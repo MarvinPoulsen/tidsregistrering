@@ -9,7 +9,7 @@ import format from 'date-fns/format';
 interface ProjectTableProps {
     projects: Project[];
     // data: TimeEntry[];
-    // tasks: Task[];
+    // tasks: FavoritTask[];
     // onDelete: (id: number) => void;
     // setEditEntry:(id)=>void;
     // setNote: (newNote) => void;

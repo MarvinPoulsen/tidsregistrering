@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { TimeEntry, Project, User, Task } from '../../SPS';
+import { TimeEntry, Project, User, FavoritTask } from '../../SPS';
 import { isSameYear } from 'date-fns';
 import TaskBarchart from '../../components/taskstats/TaskBarchart';
 
 interface StatisticsProps {
     registrations: TimeEntry[];
     projects: Project[];
-    tasks: Task[];
+    tasks: FavoritTask[];
     user: User;
 }
 const Statistics = (props: StatisticsProps) => {

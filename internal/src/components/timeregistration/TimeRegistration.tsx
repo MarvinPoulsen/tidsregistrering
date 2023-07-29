@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import da from 'date-fns/locale/da'; // the locale you want
-import { Task } from '../../SPS';
+import { FavoritTask } from '../../SPS';
 import './timeRegistration.scss';
 import { differenceInMinutes } from 'date-fns';
 registerLocale('da', da); // register it with the name you want
@@ -11,7 +11,7 @@ registerLocale('da', da); // register it with the name you want
 interface TimeRegistrationProps {
     setTaskDate: (date: Date) => void;
     date: Date;
-    data: Task[];
+    data: FavoritTask[];
     userId: string;
     onSave: () => void;
     editEntry?: number;
@@ -29,7 +29,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
 
     const handleTaskIdChange = (event)=> {
         const newTaskId = parseInt(event.target.value);
-        const task = props.data.find((t: Task) => t.id === newTaskId);
+        const task = props.data.find((t: FavoritTask) => t.id === newTaskId);
         if (task) {
             setError(null);
         } else {
