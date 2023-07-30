@@ -10,14 +10,14 @@ interface StatisticsProps {
     user: User;
 }
 const Statistics = (props: StatisticsProps) => {
-    console.log('StatisticsProps: ', props);
+    // console.log('StatisticsProps: ', props);
     const [year, setYear] = useState(new Date());
 
     const regList: JSX.Element[] = [];
-    console.log('Year: ', year);
+    // console.log('Year: ', year);
 
     const registrationsByYear = props.registrations.filter((te) => isSameYear(te.taskDate, year));
-    console.log('registratioByYear: ', registrationsByYear);
+    // console.log('registratioByYear: ', registrationsByYear);
     const taskBarData:unknown[] = []
     for (const task of props.tasks) {
         const filteredByTask = registrationsByYear.filter((t) => t.taskId === task.id);

@@ -17,9 +17,9 @@ interface TimeTableProps {
     setTaskTime:(minutes)=>void;
     setAllDay:(isAllDay:boolean)=>void;
 }
-function TimeTable(props: TimeTableProps) {
-    
-    console.log('TimeTableProps: ',props)
+function TimeTable(props: TimeTableProps) {    
+    // console.log('TimeTableProps: ',props)
+
     const handleOnEdit = (element)=>{
         props.setNote(element.note)
         props.setTaskDate(new Date(element.taskDate.setHours(0, 0, 0, 0)))

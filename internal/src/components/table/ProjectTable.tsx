@@ -4,31 +4,15 @@ import Icon from '@mdi/react';
 import { mdiPencil, mdiDelete } from '@mdi/js';
 import { Project } from '../../SPS';
 import format from 'date-fns/format';
-// import {toHoursAndMinutes} from '../../utils'
 
 interface ProjectTableProps {
     projects: Project[];
-    // data: TimeEntry[];
-    // tasks: FavoritTask[];
-    // onDelete: (id: number) => void;
-    // setEditEntry:(id)=>void;
-    // setNote: (newNote) => void;
-    // setTaskDate:(newTaskDate)=>void;
-    // setTaskId:(newTaskId)=>void;
-    // setTaskTime:(minutes)=>void;
-    // setAllDay:(isAllDay:boolean)=>void;
 }
 function ProjectTable(props: ProjectTableProps) {
     
     // console.log('ProjectTableProps: ',props)
     const handleOnEdit = (element)=>{
         console.log('element: ',element)
-    //     props.setNote(element.note)
-    //     props.setTaskDate(new Date(element.taskDate.setHours(0, 0, 0, 0)))
-    //     props.setTaskId(element.taskId)
-    //     props.setTaskTime(element.taskTime)
-    //     props.setAllDay(element.allDay)
-    //     props.setEditEntry(element.id)
     }
     const onDelete = (e)=>{
         console.log('e: ',e)
@@ -36,7 +20,6 @@ function ProjectTable(props: ProjectTableProps) {
     const projects = props.projects.map((element) => {
         const horizon = format(element.horizon, "dd-MM-yyyy")
 
-    //     const task = props.tasks.find((t) => t.id === element.taskId);
         return {
             col1: (
                 <a onClick={() => handleOnEdit(element)}>
