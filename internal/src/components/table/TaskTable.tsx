@@ -2,33 +2,18 @@ import React from 'react';
 import { useTable } from 'react-table';
 import Icon from '@mdi/react';
 import { mdiPencil, mdiDelete } from '@mdi/js';
-import { Task } from '../../SPS';
+import { Task, Project } from '../../SPS';
 import format from 'date-fns/format';
 // import {toHoursAndMinutes} from '../../utils'
 
 interface TaskTableProps {
     tasks: Task[];
-    // data: TimeEntry[];
-    // tasks: FavoritTask[];
-    // onDelete: (id: number) => void;
-    // setEditEntry:(id)=>void;
-    // setNote: (newNote) => void;
-    // setTaskDate:(newTaskDate)=>void;
-    // setTaskId:(newTaskId)=>void;
-    // setTaskTime:(minutes)=>void;
-    // setAllDay:(isAllDay:boolean)=>void;
+    projects: Project[]
 }
-function TaskTable(props: TaskTableProps) {
-    
-    // console.log('ProjectTableProps: ',props)
+function TaskTable(props: TaskTableProps) {    
+    // console.log('TaskTableProps: ',props)
     const handleOnEdit = (element)=>{
         console.log('element: ',element)
-    //     props.setNote(element.note)
-    //     props.setTaskDate(new Date(element.taskDate.setHours(0, 0, 0, 0)))
-    //     props.setTaskId(element.taskId)
-    //     props.setTaskTime(element.taskTime)
-    //     props.setAllDay(element.allDay)
-    //     props.setEditEntry(element.id)
     }
     const onDelete = (e)=>{
         console.log('e: ',e)
@@ -36,7 +21,7 @@ function TaskTable(props: TaskTableProps) {
     const tasks = props.tasks.map((element) => {
         const milestone = format(element.milestone, "dd-MM-yyyy")
 
-    //     const task = props.tasks.find((t) => t.id === element.taskId);
+    const project = props.projects.find((p) => p.id === element.projectId);
         return {
             col1: (
                 <a onClick={() => handleOnEdit(element)}>
@@ -54,9 +39,10 @@ function TaskTable(props: TaskTableProps) {
                     />
                 </a>
             ),
-            col3: element.taskName,
-            col4: element.timeframe,
-            col5: milestone,
+            col3: project.projectName,
+            col4: element.taskName,
+            col5: element.timeframe,
+            col6: milestone,
         };
     });
     const data = React.useMemo(() => tasks, [props.tasks]);
@@ -72,16 +58,20 @@ function TaskTable(props: TaskTableProps) {
                 accessor: 'col2',
             },
             {
-                Header: 'Navn',
+                Header: 'Projekt',
                 accessor: 'col3',
             },
             {
-                Header: 'Tidsforbrug',
+                Header: 'Navn',
                 accessor: 'col4',
             },
             {
-                Header: 'Deadline',
+                Header: 'Tidsforbrug',
                 accessor: 'col5',
+            },
+            {
+                Header: 'Deadline',
+                accessor: 'col6',
             },
         ],
         []
