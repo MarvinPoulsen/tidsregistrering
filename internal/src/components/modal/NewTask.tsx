@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import da from 'date-fns/locale/da'; // the locale you want
 registerLocale('da', da); // register it with the name you want
+import Select from 'react-select';
 
 interface NewTaskProps {
     isNewTaskActive: boolean;
@@ -28,7 +29,7 @@ interface NewTaskProps {
 }
 
 const NewTask = (props: NewTaskProps) => {
-    console.log('NewTaskProps: ', props);
+    // console.log('NewTaskProps: ', props);
     const [error, setError] = useState<string | null>('Opgavenavn skal være på mindst 3 karakterer'); //Change name to validate for and make it a object instead?
     const handleClose = () => {
         props.resetForm();
@@ -68,20 +69,19 @@ const NewTask = (props: NewTaskProps) => {
     //     props.setObsolete(event.target.value);
     // };
 
-    const handleProjectIdChange = (event) => {
-        const newProjectId = parseInt(event.target.value);
-        const project = props.projectList.find((p: Project) => p.id === newProjectId);
-        if (project) {
-            setError(null);
-        } else {
-            setError('Ukent opgaveID');
+
+    const options = props.projectList.filter((p) => p.id !== 1).map((element) => {
+        const value= element.id
+        const label= element.projectName
+        return {           
+         value,
+          label,
         }
-        props.setProjectId(newProjectId);
-    };
-
-    const options = props.projectList.filter((p) => p.id !== 1);
-    console.log('options: ',options)
-
+    })
+    const handleProjectFilter = (event) => {
+        const project = event ? event.value : undefined;
+        props.setProjectId(project)
+    }
     return (
         <>
             <div className={'modal' + (props.isNewTaskActive ? ' is-active' : '')}>
@@ -90,25 +90,25 @@ const NewTask = (props: NewTaskProps) => {
                     <div className="box">
                         <h1 className="title">Tilføj ny opgave</h1>
                         <form onSubmit={handleSubmit}>
-                            <div className="column">
-                                <div className="control">
+                            <div className="column">                                
+                            <div className="control is-expanded">
                                     <label className="label">Vælg projekt</label>
-                                    <div className="select is-fullwidth">
-                                        <select onChange={handleProjectIdChange} name="projectId" value={props.projectId}>
-                                            {options.map((option) => (
-                                                <option key={option.id} value={option.id}>
-                                                    {option.projectName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <p className="help is-danger">This field is required</p>
-                                </div>
+                                <Select
+                                    name="project"
+                                    options={options}
+                                    className="basic-single"
+                                    classNamePrefix="select"
+                                    isClearable={true}
+                                    isSearchable={true}
+                                    onChange={handleProjectFilter}
+                                />
+                                <p className="help is-danger">This field is required</p>
+                            </div>
                             </div>
 
                             <div className="column">
                                 <div className="control">
-                                    <label className="label">Projekt navn</label>
+                                    <label className="label">Opgave navn</label>
                                     <input
                                         className="input"
                                         type="text"
@@ -119,20 +119,6 @@ const NewTask = (props: NewTaskProps) => {
                                     />
                                 </div>
                                 <p className="help is-danger">This field is required</p>
-                            </div>
-
-                            <div className="column">
-                                <div className="control">
-                                    <label className="label">Gruppe/team</label>
-                                    <input
-                                        className="input"
-                                        type="text"
-                                        placeholder="Gruppe projektet tilhører"
-                                        onChange={handleProjectIdChange}
-                                        name="taskName"
-                                        value={props.projectId}
-                                    />
-                                </div>
                             </div>
 
                             <div className="field is-grouped">
@@ -152,7 +138,7 @@ const NewTask = (props: NewTaskProps) => {
                                     />
                                 </div>
                                 <div className="column">
-                                    <label className="label">Tidsramme (timer)</label>
+                                    <label className="label">Tidsestimat (timer)</label>
                                     <input
                                         className="input"
                                         type="number"
@@ -178,7 +164,7 @@ const NewTask = (props: NewTaskProps) => {
                             </div>
                             <div className="column">
                                 <div className="control">
-                                    <label className="label">SBSYS ID</label>
+                                    <label className="label">Beskrivelse af opgave</label>
                                     <input
                                         className="input"
                                         type="text"
