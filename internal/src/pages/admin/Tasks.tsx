@@ -13,7 +13,7 @@ interface TaskProps {
     projects: Project[];
 }
 const Tasks = (props: TaskProps) => {
-    console.log('TaskProps: ',props)
+    // console.log('TaskProps: ',props)
     const [tasks, setTasks] = useState<Task[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [obsolete, setObsolete] = useState<boolean>(true);
@@ -118,11 +118,11 @@ const Tasks = (props: TaskProps) => {
                                     <Icon path={mdiTablePlus} size={1} />
                                 </button>
                             </p>
-                            <div className="control">
+                            <div className="control is-expanded">
                                 <Select
                                     name="project"
                                     options={options}
-                                    className="basic-single is-expanded"
+                                    className="basic-single"
                                     classNamePrefix="select"
                                     isClearable={true}
                                     isSearchable={true}
