@@ -19,3 +19,17 @@
         }
     }
 }
+.radio-list {
+    .radio {
+      display: block;
+  
+      & + .radio {
+        margin-left: 0 !important;
+        margin-top: .5em !important;
+      }
+    }
+  }
+input
+{
+    margin-right: 0.5em !important;
+}
