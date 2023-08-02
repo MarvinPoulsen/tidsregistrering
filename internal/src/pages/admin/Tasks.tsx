@@ -107,6 +107,11 @@ const Tasks = (props: TaskProps) => {
           label,
         }
     })
+
+    const handleNewTask = ()=>{
+        setObsolete(false)
+        setIsNewTaskActive(true)
+    }
     return (
         <>
             <section className="section">
@@ -114,7 +119,7 @@ const Tasks = (props: TaskProps) => {
                     <div className="column is-full">
                         <div className="field is-grouped">
                             <p className="control">
-                                <button className="button is-info" onClick={() => setIsNewTaskActive(true)}>
+                                <button className="button is-info" onClick={handleNewTask}>
                                     <Icon path={mdiTablePlus} size={1} />
                                 </button>
                             </p>
@@ -127,6 +132,7 @@ const Tasks = (props: TaskProps) => {
                                     isClearable={true}
                                     isSearchable={true}
                                     onChange={handleProjectFilter}
+                                    placeholder='Filtrer på projekt'
                                 />
                             </div>
                             <div className="field has-addons has-addons-right control is-expanded">
