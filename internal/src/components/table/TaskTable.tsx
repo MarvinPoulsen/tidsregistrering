@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTable } from 'react-table';
 import Icon from '@mdi/react';
-import { mdiPencil, mdiDelete } from '@mdi/js';
+import { mdiPencil, mdiDelete, mdiNumeric1Circle, mdiNumeric2CircleOutline, mdiNumeric3 } from '@mdi/js';
 import { Task, Project } from '../../SPS';
 import format from 'date-fns/format';
 // import {toHoursAndMinutes} from '../../utils'
@@ -20,6 +20,13 @@ function TaskTable(props: TaskTableProps) {
     }
     const tasks = props.tasks.map((element) => {
         const milestone = format(element.milestone, "dd-MM-yyyy")
+        const importance = element.importance < 1 ? '' :
+            // <Icon path={mdiNull} size={1} color="blue"/> :
+            element.importance < 2 ?
+                <Icon path={mdiNumeric1Circle} size={1} color="red"/> :
+                element.importance < 3 ?
+                    <Icon path={mdiNumeric2CircleOutline} size={1} color="orange"/> :
+                    <Icon path={mdiNumeric3} size={1} color="green"/> ;
 
     const project = props.projects.find((p) => p.id === element.projectId);
         return {
@@ -41,8 +48,10 @@ function TaskTable(props: TaskTableProps) {
             ),
             col3: project.projectName,
             col4: element.taskName,
-            col5: element.timeframe,
-            col6: milestone,
+            col5: element.description,
+            col6: element.timeframe,
+            col7: milestone,
+            col8: importance,
         };
     });
     const data = React.useMemo(() => tasks, [props.tasks]);
@@ -66,12 +75,20 @@ function TaskTable(props: TaskTableProps) {
                 accessor: 'col4',
             },
             {
-                Header: 'Tidsforbrug',
+                Header: 'Beskrivelse',
                 accessor: 'col5',
             },
             {
-                Header: 'Deadline',
+                Header: 'Tidsforbrug',
                 accessor: 'col6',
+            },
+            {
+                Header: 'Deadline',
+                accessor: 'col7',
+            },
+            {
+                Header: '',
+                accessor: 'col8',
             },
         ],
         []
