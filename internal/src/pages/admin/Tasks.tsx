@@ -16,27 +16,33 @@ const Tasks = (props: TaskProps) => {
     // console.log('TaskProps: ',props)
     const [tasks, setTasks] = useState<Task[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [obsolete, setObsolete] = useState<boolean>(true);
+    const [hideObsolete, setHideObsolete] = useState<boolean>(true);
+    const [obsolete, setObsolete] = useState<boolean>(false);
     const [searchVal, setSearchVal] = useState('');
     const [isNewTaskActive, setIsNewTaskActive] = useState<boolean>(false);
     const [editEntry, setEditEntry] = useState<number>(null); // indeholder id
     const [projectId, setProjectId] = useState<number>(1);
-    const [taskName, setTaskName] = useState<string>(undefined);
+    const [taskName, setTaskName] = useState<string>('');
     const [milestone, setMilestone] = useState<Date>(endOfYear(new Date())); // valgte dato,
     const [importance, setImportance] = useState<number>(0);
     const [timeframe, setTimeframe] = useState<number>(0);
-    const [description, setDescription] = useState<string>(undefined);
+    const [description, setDescription] = useState<string>('');
     const [projectFilter, setProjectFilter] = useState<number>(undefined); // indeholder id
+    const [reload, setReload] = useState<boolean>(false);
 
+    const refresh = ()=>{
+        const toggleReload = !reload
+        setReload(toggleReload)
+    }
     const resetForm = () => {
         setEditEntry(null);
         setProjectId(1);
-        setTaskName(undefined);
+        setTaskName('');
         setMilestone(endOfYear(new Date()));
         setImportance(0);
         setTimeframe(0);
-        setDescription(undefined);
-        setObsolete(true);
+        setDescription('');
+        setObsolete(false);
         setError(null);
     };
 
@@ -49,7 +55,7 @@ const Tasks = (props: TaskProps) => {
             await sps.current.initialize(); // kan evt. erstattes med props.sps
             const tasksGross: Task[] = await sps.current.getAdminTasksData(); // kan evt. erstattes med props.sps
             // const tasksGross: Task[] = await props.sps.getAdminProjectsData();
-            const tasksObsolete = obsolete ? tasksGross.filter((o) => o.obsolete === false) : tasksGross;
+            const tasksObsolete = hideObsolete ? tasksGross.filter((o) => o.obsolete === false) : tasksGross;
 
             const filterByProject = projectFilter ? tasksObsolete.filter((p) => p.projectId === projectFilter) : tasksObsolete;
 
@@ -59,7 +65,7 @@ const Tasks = (props: TaskProps) => {
             setTasks(filterBySearch);
         };
         getDataFromSps();
-    }, [obsolete, searchVal, projectFilter]);
+    }, [hideObsolete, searchVal, projectFilter, reload]);
 
     const onSave = async () => {
         const entry: Task = {
@@ -79,7 +85,7 @@ const Tasks = (props: TaskProps) => {
         } else {
             await sps.current.insertTask(entry);
         }
-        // refresh();
+        refresh();
     };
     const onInput = (e) => setSearchVal(e.target.value);
 
@@ -88,11 +94,11 @@ const Tasks = (props: TaskProps) => {
     };
 
     const toggleObsolete = () => {
-        setObsolete(!obsolete);
+        setHideObsolete(!hideObsolete);
     };
 
-    const obsoleteIcon = obsolete ? <Icon path={mdiEye} size={1} /> : <Icon path={mdiEyeOff} size={1} />;
-    const obsoleteStyle = obsolete ? 'is-outlined' : '';
+    const obsoleteIcon = hideObsolete ? <Icon path={mdiEye} size={1} /> : <Icon path={mdiEyeOff} size={1} />;
+    const obsoleteStyle = hideObsolete ? 'is-outlined' : '';
 
     const handleProjectFilter = (event) => {
         const project = event ? event.value : undefined;
@@ -109,7 +115,6 @@ const Tasks = (props: TaskProps) => {
     })
 
     const handleNewTask = ()=>{
-        setObsolete(false)
         setIsNewTaskActive(true)
     }
     return (
@@ -165,6 +170,24 @@ const Tasks = (props: TaskProps) => {
                         <TaskTable 
                             tasks={tasks} 
                             projects={props.projects} 
+                            projectId={projectId}
+                            taskName={taskName}
+                            milestone={milestone}
+                            importance={importance}
+                            timeframe={timeframe}
+                            description={description}
+                            obsolete={obsolete}
+                            setProjectId={setProjectId}
+                            setTaskName={setTaskName}
+                            setMilestone={setMilestone}
+                            setImportance={setImportance}
+                            setTimeframe={setTimeframe}
+                            setDescription={setDescription}
+                            setObsolete={setObsolete}
+                            onSave={onSave}
+                            setEditEntry={setEditEntry}
+                            resetForm={resetForm}
+                            setIsNewTaskActive={setIsNewTaskActive}
                         />)}
                     </div>
                 </div>
