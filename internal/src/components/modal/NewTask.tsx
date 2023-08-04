@@ -160,7 +160,7 @@ const NewTask = (props: NewTaskProps) => {
                                         type="number"
                                         placeholder="Indsæt projektnavn"
                                         onChange={handleTimeframeChange}
-                                        name="taskName"
+                                        name="timeframe"
                                         value={props.timeframe}
                                     />
                                 </div>
