@@ -27,6 +27,8 @@ interface TaskTableProps {
     setEditEntry: (id) => void;
     resetForm: () => void;
     setIsNewTaskActive: (isOn: boolean) => void;
+    error: string;
+    setError: (errorDescription) => void;
 }
 function TaskTable(props: TaskTableProps) {
     // console.log('TaskTableProps: ',props)
@@ -52,8 +54,8 @@ function TaskTable(props: TaskTableProps) {
         closeModal();
     };
     const handleOnEdit = (element) => {
-        console.log('obsolete: ',props.obsolete)
-        console.log('element: ', element);
+        // console.log('obsolete: ',props.obsolete)
+        // console.log('element: ', element);
         props.setEditEntry(element.id);
         props.setProjectId(element.projectId);
         props.setTaskName(element.taskName);
@@ -63,9 +65,10 @@ function TaskTable(props: TaskTableProps) {
         props.setDescription(element.description);
         props.setObsolete(element.obsolete);
         props.setIsNewTaskActive(true)
+        props.setError(null)
     };
     const onObsolete = (element) => {
-        console.log('element: ', element);
+        // console.log('element: ', element);
         props.setEditEntry(element.id);
         props.setProjectId(element.projectId);
         props.setTaskName(element.taskName);

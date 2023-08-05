@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Project } from '../../SPS';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -26,15 +26,17 @@ interface NewTaskProps {
     resetForm: () => void;
     setIsNewTaskActive: (isOn: boolean) => void;
     projectList: Project[];
+    error: string;
+    setError: (errorDescription) => void;
 }
 
 const NewTask = (props: NewTaskProps) => {
     // console.log('NewTaskProps: ', props);
-    const [error, setError] = useState<string | null>('Opgavenavn skal være på mindst 3 karakterer'); //Change name to validate for and make it a object instead?
+    // const [error, setError] = useState<string | null>('Opgavenavn skal være på mindst 3 karakterer'); //Change name to validate for and make it a object instead?
     const handleClose = () => {
         props.resetForm();
         props.setIsNewTaskActive(false);
-        setError('Opgavenavn skal være på mindst 3 karakterer');
+        props.setError('Opgavenavn skal være på mindst 3 karakterer');
     };
     const handleSubmit = (event) => {
         // window.alert(event.target.value);
@@ -42,14 +44,14 @@ const NewTask = (props: NewTaskProps) => {
         props.onSave();
         props.resetForm();
         props.setIsNewTaskActive(false);
-        setError('opgavenavn skal være på mindst 3 karakterer');
+        props.setError('opgavenavn skal være på mindst 3 karakterer');
     };
     const handleTaskNameChange = (event) => {
         const newTask = event.target.value;
         if (newTask.length > 2) {
-            setError(null);
+            props.setError(null);
         } else {
-            setError('Opgavenavn skal være på mindst 3 karakterer');
+            props.setError('Opgavenavn skal være på mindst 3 karakterer');
         }
         props.setTaskName(newTask);
     };
@@ -83,6 +85,10 @@ const NewTask = (props: NewTaskProps) => {
         const project = event ? event.value : undefined;
         props.setProjectId(project);
     };
+
+    const mandatoryProject = props.error ? <p className="help is-danger">This field is required</p> : '';
+    const mandatoryTaskName = props.error ? <p className="help is-danger">This field is required</p> : '';
+
     return (
         <>
             <div className={'modal' + (props.isNewTaskActive ? ' is-active' : '')}>
@@ -103,8 +109,9 @@ const NewTask = (props: NewTaskProps) => {
                                         isSearchable={true}
                                         onChange={handleProjectFilter}
                                         placeholder="Vælg projekt..."
+                                        value={options[options.findIndex((o) => o.value === props.projectId)]}
                                     />
-                                    <p className="help is-danger">This field is required</p>
+                                    {mandatoryProject}
                                 </div>
                             </div>
 
@@ -120,7 +127,7 @@ const NewTask = (props: NewTaskProps) => {
                                         value={props.taskName}
                                     />
                                 </div>
-                                <p className="help is-danger">This field is required</p>
+                                {mandatoryTaskName}
                             </div>
 
                             <div className="column">
@@ -218,7 +225,7 @@ const NewTask = (props: NewTaskProps) => {
 
                             <div className="column is-narrow">
                                 <div className="field is-grouped">
-                                    <button className="button is-success" disabled={!!error}>
+                                    <button className="button is-success" disabled={!!props.error}>
                                         Gem
                                     </button>
                                     <button className="button" type="button" onClick={handleClose}>

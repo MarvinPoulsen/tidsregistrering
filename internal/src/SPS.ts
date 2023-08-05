@@ -229,7 +229,7 @@ export default class SPS {
             
     async getAdminProjectsData(): Promise<Project[]> {
         const data = await this.executeOnDs('lk_tasm_admin_projects');
-        console.log('AdminProjectsData: ',data)
+        // console.log('AdminProjectsData: ',data)
         const projectData: Project[] = data.map(element => {
             const id = parseInt(element.id as string);
             return {

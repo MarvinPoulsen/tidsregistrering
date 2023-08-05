@@ -47,9 +47,7 @@ const Tasks = (props: TaskProps) => {
     };
 
     const sps = useRef<SPS>(new SPS()); // kan evt. erstattes med props.sps
-    if (error) {
-        console.log(error);
-    }
+
     useEffect(() => {
         const getDataFromSps = async () => {
             await sps.current.initialize(); // kan evt. erstattes med props.sps
@@ -116,6 +114,7 @@ const Tasks = (props: TaskProps) => {
 
     const handleNewTask = ()=>{
         setIsNewTaskActive(true)
+        setError('Opgavenavn skal være på mindst 3 karakterer')
     }
     return (
         <>
@@ -188,6 +187,8 @@ const Tasks = (props: TaskProps) => {
                             setEditEntry={setEditEntry}
                             resetForm={resetForm}
                             setIsNewTaskActive={setIsNewTaskActive}
+                            error={error}
+                            setError={setError}
                         />)}
                     </div>
                 </div>
@@ -212,6 +213,8 @@ const Tasks = (props: TaskProps) => {
                     resetForm={resetForm}
                     setIsNewTaskActive={setIsNewTaskActive}
                     projectList={props.projects}
+                    error={error}
+                    setError={setError}
                 />
         </>
     );
