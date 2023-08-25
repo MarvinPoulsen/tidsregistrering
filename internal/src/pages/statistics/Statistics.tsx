@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TimeEntry, Project, User, FavoritTask } from '../../SPS';
 import { isSameYear } from 'date-fns';
 import TaskBarchart from '../../components/taskstats/TaskBarchart';
@@ -11,7 +11,8 @@ interface StatisticsProps {
 }
 const Statistics = (props: StatisticsProps) => {
     // console.log('StatisticsProps: ', props);
-    const [year, setYear] = useState(new Date());
+    // const [year, setYear] = useState(new Date());
+    const year = new Date();
 
     const regList: JSX.Element[] = [];
     // console.log('Year: ', year);
@@ -24,10 +25,10 @@ const Statistics = (props: StatisticsProps) => {
         const time = filteredByTask.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0);
         if (time !== 0){
             if(task.id === 1){
-                console.log('Ny opgave: ', time)
+                // console.log('Ny opgave: ', time)
                 taskBarData.push({'Ny opgave': time})
             } else {
-                console.log(task.taskName,': ', time)
+                // console.log(task.taskName,': ', time)
                 taskBarData.push({[task.taskName]: time})
             }
         }
