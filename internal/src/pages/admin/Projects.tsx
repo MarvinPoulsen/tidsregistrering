@@ -22,7 +22,7 @@ const Projects = (props: ProjectProps) => {
     
 
     const [editEntry, setEditEntry] = useState<number>(null); // indeholder id
-    const [groupId, setGroupId] = useState<string>(undefined);
+    const [teamId, setTeamId] = useState<number>(0);
     const [horizon, setHorizon] = useState<Date>(endOfYear(new Date())); // valgte dato,
     const [importance, setImportance] = useState<number>(0);
     const [projectName, setProjectName] = useState<string>('');
@@ -32,7 +32,7 @@ const Projects = (props: ProjectProps) => {
 
     const resetForm = () => {
         setEditEntry(null);
-        setGroupId(undefined);
+        setTeamId(0);
         setHorizon(endOfYear(new Date()));
         setImportance(0);
         setProjectName('');
@@ -66,7 +66,7 @@ const Projects = (props: ProjectProps) => {
 
     const onSave = async () => {
         const entry: Project = {
-            groupId,
+            teamId,
             projectName,
             horizon,
             importance,
@@ -141,7 +141,28 @@ const Projects = (props: ProjectProps) => {
                                 </button>
                             </p>
                         </div>
-                        <ProjectTable projects={projects} />
+                        <ProjectTable 
+                            projects={projects}
+                            teamId={teamId}
+                            setTeamId={setTeamId}
+                            projectName={projectName}
+                            setProjectName={setProjectName}
+                            horizon={horizon}
+                            setHorizon={setHorizon}
+                            importance={importance}
+                            setImportance={setImportance}
+                            timeframe={timeframe}
+                            setTimeframe={setTimeframe}
+                            sbsysId={sbsysId}
+                            setSbsysId={setSbsysId}
+                            obsolete={obsolete}
+                            setObsolete={setObsolete}
+                            setEditEntry={setEditEntry}
+                            resetForm={resetForm}
+                            setIsNewProjectActive={setIsNewProjectActive}
+                            error={error}
+                            setError={setError}
+                        />
                     </div>
                 </div>
             </section>
@@ -149,7 +170,7 @@ const Projects = (props: ProjectProps) => {
                 <NewProject
                     isNewProjectActive={isNewProjectActive}
                     projectName={projectName}
-                    groupId={groupId}
+                    teamId={teamId}
                     horizon={horizon}
                     importance={importance}
                     timeframe={timeframe}
@@ -157,7 +178,7 @@ const Projects = (props: ProjectProps) => {
                     obsolete={obsolete}
 
 
-                    setGroupId={setGroupId}
+                    setTeamId={setTeamId}
                     setHorizon={setHorizon}
                     setImportance={setImportance}
                     setProjectName={setProjectName}
@@ -167,6 +188,8 @@ const Projects = (props: ProjectProps) => {
                     onSave={onSave}
                     resetForm={resetForm}
                     setIsNewProjectActive={setIsNewProjectActive}
+                    error={error}
+                    setError={setError}
                     
                 />
             )}

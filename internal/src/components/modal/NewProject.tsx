@@ -8,8 +8,8 @@ interface NewProjectProps {
     isNewProjectActive: boolean;
     projectName: string;
     setProjectName: (projectName) => void;
-    groupId: string;
-    setGroupId: (groupId) => void;
+    teamId: number;
+    setTeamId: (teamId) => void;
     horizon: Date;
     setHorizon: (horizon) => void;
     importance: number;
@@ -23,6 +23,8 @@ interface NewProjectProps {
     onSave: () => void;
     resetForm: () => void;
     setIsNewProjectActive: (isOn: boolean) => void;
+    error: string;
+    setError: (errorDescription) => void;
 }
 
 const NewProject = (props: NewProjectProps) => {
@@ -51,8 +53,8 @@ const NewProject = (props: NewProjectProps) => {
         props.setProjectName(newProject);
         
     };
-    const handleGroupIdChange = (event) => {
-        props.setGroupId(event.target.value);
+    const handleTeamIdChange = (event) => {
+        props.setTeamId(event.target.value);
     };
     const handleHorizonChange = (newDate) => {
         props.setHorizon(new Date(newDate.setHours(0, 0, 0, 0)));
@@ -69,6 +71,9 @@ const NewProject = (props: NewProjectProps) => {
     // const handleObsoleteChange = (event) => {
     //     props.setObsolete(event.target.value);
     // };
+
+    const mandatoryProjectName = props.error ? <p className="help is-danger">This field is required</p> : '';
+
     return (
         <>
             <div className={'modal' + (props.isNewProjectActive ? ' is-active' : '')}>
@@ -89,7 +94,7 @@ const NewProject = (props: NewProjectProps) => {
                                         value={props.projectName}
                                     />
                                 </div>
-                                <p className="help is-danger">This field is required</p>
+                                {mandatoryProjectName}
                             </div>
 
                             <div className="column">
@@ -99,9 +104,9 @@ const NewProject = (props: NewProjectProps) => {
                                         className="input"
                                         type="text"
                                         placeholder="Gruppe projektet tilhører"
-                                        onChange={handleGroupIdChange}
+                                        onChange={handleTeamIdChange}
                                         name="projectName"
-                                        value={props.groupId}
+                                        value={props.teamId}
                                     />
                                 </div>
                             </div>

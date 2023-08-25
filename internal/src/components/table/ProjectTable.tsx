@@ -7,12 +7,41 @@ import format from 'date-fns/format';
 
 interface ProjectTableProps {
     projects: Project[];
+            teamId: number;
+            setTeamId: (teamId) => void;
+            projectName: string;
+            setProjectName: (projectName: string) => void;
+            horizon: Date;
+            setHorizon: (horizon: Date) => void;
+            importance: number;
+            setImportance: (importance: number) => void;
+            timeframe: number;
+            setTimeframe: (timeframe: number) => void;
+            sbsysId: number;
+            setSbsysId: (sbsysId: number) => void;
+            obsolete: boolean;
+            setObsolete: (isObsolete: boolean) => void;
+            setEditEntry: (id) => void;
+            resetForm: () => void;
+            setIsNewProjectActive: (isOn: boolean) => void;
+            error: string;
+            setError: (errorDescription) => void;
 }
 function ProjectTable(props: ProjectTableProps) {
     
     // console.log('ProjectTableProps: ',props)
     const handleOnEdit = (element)=>{
         console.log('element: ',element)
+            props.setEditEntry(element.id);
+            props.setTeamId(element.teamId);
+            props.setProjectName(element.projectName);
+            props.setHorizon(new Date(element.horizon));
+            props.setImportance(element.importance);
+            props.setTimeframe(element.timeframe);
+            props.setSbsysId(element.sbsysId);
+            props.setObsolete(element.obsolete);
+            props.setIsNewProjectActive(true)
+            props.setError(null)
     }
     const onDelete = (e)=>{
         console.log('e: ',e)
