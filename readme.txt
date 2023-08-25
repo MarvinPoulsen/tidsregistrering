@@ -30,4 +30,3 @@ TODO
 --------------------
 Tilføj adminside til editering af projekter, opgaver, osv. Herunder årshjul
 Tilføj statistik side.
-Tilføj advanceret indberetningsside. Så man kan vælge mellem simpel og advanceret version.
