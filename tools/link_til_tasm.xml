@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool>
+    <displayname><![CDATA[TASM]]></displayname>
+    <tooltip><![CDATA[Tidsregistrering]]></tooltip>
+
+    <onclick>tasm();</onclick>
+	
+	<img>#skin#/images/modules/tasm/calendar-task16.png</img>
+	
+    <jssrc><![CDATA[
+        function tasm()
+        {
+           window.open ('/modules/tasm', 'Task and Schedule Manager');
+        }
+	]]></jssrc>
+</tool>
