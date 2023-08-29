@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { toHoursAndMinutes } from '../../utils';
 import './app.scss';
-import SPS, { TimeEntry, Project, User, FavoritTask } from '../../SPS';
+import SPS, { TimeEntry, Project, SpsUser, FavoritTask } from '../../SPS';
 import Navbar from '../../components/navbar/Navbar';
 import Favorites from '../../components/modal/Favorites';
 import EditCalendar from '../../components/modal/EditCalendar';
@@ -15,7 +15,7 @@ import Users from '../../pages/admin/Users';
 import { differenceInMinutes, format, add } from 'date-fns';
 
 const App = () => {
-    const [user, setUser] = useState<User>(null);
+    const [user, setUser] = useState<SpsUser>(null);
     const [logo, setLogo] = useState<string>('');
     const [tasks, setTasks] = useState<FavoritTask[]>([]);
     const [projects, setProjects] = useState<Project[]>([]); // læser i tabellen projects (returner id og name)
@@ -270,7 +270,14 @@ const App = () => {
                             />
                         } 
                     />
-                    <Route path="/users" element={<Users />} />
+                    <Route 
+                        path="/users" 
+                        element={
+                            <Users
+                                user={user} 
+                            />
+                        } 
+                    />
                 </Route>
             </Routes>
             {tasks && projects && (

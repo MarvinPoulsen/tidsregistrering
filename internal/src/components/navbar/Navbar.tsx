@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiAccount } from '@mdi/js';
 import './navbar.scss';
-import { User } from '../../SPS';
+import { SpsUser } from '../../SPS';
 enum Tab {
     Basic,
     Complex,
@@ -13,7 +13,7 @@ enum Tab {
     Users,
 }
 interface NavbarProps {
-    user: User;
+    user: SpsUser;
     setIsFavoriteActive: (isOn: boolean) => void;
     logo: string;
     setNote: (newNote) => void;

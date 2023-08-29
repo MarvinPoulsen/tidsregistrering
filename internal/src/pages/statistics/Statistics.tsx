@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimeEntry, Project, User, FavoritTask } from '../../SPS';
+import { TimeEntry, Project, SpsUser, FavoritTask } from '../../SPS';
 import { isSameYear } from 'date-fns';
 import TaskBarchart from '../../components/taskstats/TaskBarchart';
 
@@ -7,7 +7,7 @@ interface StatisticsProps {
     registrations: TimeEntry[];
     projects: Project[];
     tasks: FavoritTask[];
-    user: User;
+    user: SpsUser;
 }
 const Statistics = (props: StatisticsProps) => {
     // console.log('StatisticsProps: ', props);

@@ -60,6 +60,7 @@
     </datasource>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_users">
         <table name="users" pkcolumn="id" schema="tasm"/>
+        <sql command="read-own-user">select * from tasm.users where abbreviation=[string:getUsershortid(sessionid)];</sql>
     </datasource>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_favorites">
         <table name="favorites" pkcolumn="id" schema="tasm"/>
@@ -84,7 +85,7 @@
         <sql command="insert-project">
             insert into 
                 tasm.projects(
-                    group_id,
+                    team_id,
                     project_name,
                     horizon,
                     importance,
@@ -93,7 +94,7 @@
                     obsolete
                 ) 
                 values (
-                    [string:if isdefined (groupId) then groupId else NULL endif],
+                    [number:teamId],
                     [string:if isdefined (projectName) then projectName else NULL endif],
                     [timestamp:toTimestamp(horizon, 'yyyy-MM-dd')],
                     [number:importance],
@@ -105,7 +106,7 @@
         <sql command="update-project-by-id">
             update tasm.projects
             set 
-                group_id = [string:if isdefined (groupId) then groupId else NULL endif],
+                team_id = [number:teamId],
                 project_name = [string:if isdefined (projectName) then projectName else NULL endif],
                 horizon = [timestamp:toTimestamp(horizon, 'yyyy-MM-dd')],
                 importance = [number:importance],
@@ -152,6 +153,10 @@
             where
                 id = [number: id];
         </sql>
+    </datasource>
+    <datasource endpoint="ep_lk_tasm_admin" name="lk_tasm_admin_users">
+        <table name="users" pkcolumn="id" schema="tasm"/>
+        <sql command="read-all-users">select * from tasm.users;</sql>
     </datasource>
 
 </datasources>
