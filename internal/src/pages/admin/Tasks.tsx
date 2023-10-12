@@ -11,6 +11,7 @@ import Select from 'react-select';
 interface TaskProps {
     // sps: SPS;
     projects: Project[];
+    formInfo?: () => void;
 }
 const Tasks = (props: TaskProps) => {
     // console.log('TaskProps: ',props)

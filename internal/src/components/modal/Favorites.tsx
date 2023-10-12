@@ -7,6 +7,7 @@ interface FavoritesProps {
     onSave: (favoriteIds: number[]) => void;
     setIsFavoriteActive: (isOn:boolean) => void;
     projectList: Project[];
+    formInfo?: () => void;
 }
 
 const Favorites = (props: FavoritesProps) => {

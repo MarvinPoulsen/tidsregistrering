@@ -8,6 +8,7 @@ interface StatisticsProps {
     projects: Project[];
     tasks: FavoritTask[];
     user: SpsUser;
+    formInfo?: () => void;
 }
 const Statistics = (props: StatisticsProps) => {
     // console.log('StatisticsProps: ', props);

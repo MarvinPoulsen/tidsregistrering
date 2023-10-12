@@ -44,6 +44,7 @@ interface BasicProps {
     taskId: number;
     setTaskId: (newTaskId) => void;
     setAllDay: (isAllDay: boolean) => void;
+    formInfo?: () => void;
 }
 const Basic = (props: BasicProps) => {
     const [range, setRange] = useState<number>(14);

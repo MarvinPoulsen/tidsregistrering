@@ -27,6 +27,7 @@ interface EditCalendarProps {
     setTaskStart: (start) => void;
     setTaskEnd: (end) => void;
     setTaskTime: (minutes) => void;
+    formInfo?: () => void;
 }
 
 const EditCalendar = (props: EditCalendarProps) => {
@@ -94,7 +95,7 @@ const EditCalendar = (props: EditCalendarProps) => {
             ? selectedOption.description
             : 'Ingen beskrivelse af den valgte opgave endnu';
     return (
-        <>
+        <>{props.formInfo()}
             <div className={'modal' + (props.isActive ? ' is-active' : '')}>
                 <div className="modal-background" onClick={handleClose}></div>
                 <div className="modal-content">

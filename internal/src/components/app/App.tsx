@@ -35,6 +35,17 @@ const App = () => {
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
     const [isEditCalendarActive, setIsEditCalendarActive] = useState<boolean>(false);
 
+    const formInfo = ()=>{
+        // console.log('taskDate: ',taskDate)
+        // console.log('taskTime: ',taskTime)
+        const timeStamp = format(Date.now(), 'HH:mm:ss')
+        console.log('taskEnd (',timeStamp,'): ',taskEnd)
+        // console.log('taskStart: ',taskStart)
+        // console.log('note: ',note)
+        // console.log('taskId: ',taskId)
+        // console.log('allDay: ',allDay)
+    }
+
     const sps = useRef<SPS>(new SPS());
     if (error) {
         console.log(error);
@@ -166,6 +177,7 @@ const App = () => {
                         setNote={setNote}
                         setTaskId={setTaskId}
                         resetForm={resetForm}
+                        formInfo={formInfo}
                     />
                 )}
             </section>
@@ -195,6 +207,7 @@ const App = () => {
                                 setTaskId={setTaskId}
                                 setAllDay={setAllDay}
                                 resetForm={resetForm}
+                                formInfo={formInfo}
                             />
                         }
                     />
@@ -222,6 +235,7 @@ const App = () => {
                                 taskId={taskId}
                                 setTaskId={setTaskId}
                                 setAllDay={setAllDay}
+                                formInfo={formInfo}
                             />
                         }
                     />
@@ -246,12 +260,21 @@ const App = () => {
                                 taskId={taskId}
                                 setTaskId={setTaskId}
                                 setAllDay={setAllDay}
+                                formInfo={formInfo}
                             />
                         }
                     />
                     <Route
                         path="/statistics"
-                        element={<Statistics registrations={registrations} projects={projects} tasks={tasks} user={user} />}
+                        element={
+                            <Statistics 
+                                registrations={registrations} 
+                                projects={projects} 
+                                tasks={tasks} 
+                                user={user} 
+                                formInfo={formInfo}
+                            />
+                        }
                     />
                     <Route 
                         path="/projects" 
@@ -259,6 +282,7 @@ const App = () => {
                             <Projects
                                 // projects={projects}
                                 sps={sps.current}
+                                formInfo={formInfo}
                             />
                         } 
                     />
@@ -267,6 +291,7 @@ const App = () => {
                         element={
                             <Tasks 
                                 projects={projects}
+                                formInfo={formInfo}
                             />
                         } 
                     />
@@ -275,6 +300,7 @@ const App = () => {
                         element={
                             <Users
                                 user={user} 
+                                formInfo={formInfo}
                             />
                         } 
                     />
@@ -287,6 +313,7 @@ const App = () => {
                     onSave={saveFavorites}
                     setIsFavoriteActive={setIsFavoriteActive}
                     projectList={projects}
+                    formInfo={formInfo}
                 />
             )}
             <div className={'modal' + (isDeletingId ? ' is-active' : '')}>
@@ -331,6 +358,7 @@ const App = () => {
                     setTaskStart={setTaskStart}
                     setTaskEnd={setTaskEnd}
                     setTaskTime={setTaskTime}
+                    formInfo={formInfo}
                 />
             )}
         </>

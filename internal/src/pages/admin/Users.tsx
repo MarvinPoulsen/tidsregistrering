@@ -5,6 +5,7 @@ import UserTable from '../../components/table/UserTable';
 interface UserProps {
     user: SpsUser;
     // sps: SPS;
+    formInfo?: () => void;
 }
 
 const Users = (props: UserProps) => {

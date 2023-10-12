@@ -84,6 +84,7 @@ interface ComplexProps {
     taskId: number;
     setTaskId: (newTaskId) => void;
     setAllDay: (isAllDay: boolean) => void;
+    formInfo?: () => void;
 }
 const Complex = (props: ComplexProps) => {
     // console.log('ComplexProps: ', props);
@@ -95,6 +96,7 @@ const Complex = (props: ComplexProps) => {
     }, [props.registrations, props.tasks]);
 
     const handleSelectSlot = ({ start, end }) => {
+        props.formInfo()
         const taskDate = start.toDateString()
         props.setTaskDate(new Date(taskDate));
         props.setTaskStart(start);
@@ -116,6 +118,7 @@ const Complex = (props: ComplexProps) => {
         []
     );
     const handleSelectEvent = useCallback((element) => {
+        props.formInfo()
         props.setNote(element.resource.note);
         props.setTaskId(element.resource.taskId);
         props.setTaskTime(element.resource.taskTime);

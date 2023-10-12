@@ -12,6 +12,7 @@ import { endOfYear } from 'date-fns';
 interface ProjectProps {
     sps: SPS;
     // projects: Project[];
+    formInfo?: () => void;
 }
 const Projects = (props: ProjectProps) => {
     const [projects, setProjects] = useState<Project[]>([]);

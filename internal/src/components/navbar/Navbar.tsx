@@ -19,6 +19,7 @@ interface NavbarProps {
     setNote: (newNote) => void;
     setTaskId: (newTaskId) => void;
     resetForm: () => void;
+    formInfo?: () => void;
 }
 const Navbar = (props: NavbarProps) => {
     const location = useLocation();
