@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
-    <endpoint endpointtype="postgis" name="ep_lk_tasm">
-        <connect>[cbinfo.pg_endpoint.connect]</connect>
-        <user>[cbinfo.pg_endpoint.usr]</user>
-        <pwd>[cbinfo.pg_endpoint.pwd]</pwd>
+    <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm">
+        <connect>[cbinfo.connection.lolland_postgis.url]</connect>
+        <user>[cbinfo.connection.lolland_postgis.user]</user>
+        <pwd>[cbinfo.connection.lolland_postgis.pwd]</pwd>
     </endpoint>
     <datasource endpoint="ep_lk_tasm" name="lk_tasm_registration">
         <!-- <debug>true</debug> -->
@@ -74,11 +74,11 @@
         </sql>
     </datasource>
     <!-- ADMINISTRATOR -->
-    <!-- <endpoint endpointtype="postgis" name="ep_lk_tasm_admin" permissionlevel="authorized"> -->
-    <endpoint endpointtype="postgis" name="ep_lk_tasm_admin">
-        <connect>[cbinfo.pg_endpoint.connect]</connect>
-        <user>[cbinfo.pg_endpoint.usr]</user>
-        <pwd>[cbinfo.pg_endpoint.pwd]</pwd>
+    <!-- <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm_admin" permissionlevel="authorized"> -->
+    <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm_admin">
+        <connect>[cbinfo.connection.lolland_postgis.url]</connect>
+        <user>[cbinfo.connection.lolland_postgis.user]</user>
+        <pwd>[cbinfo.connection.lolland_postgis.pwd]</pwd>
     </endpoint>
     <datasource endpoint="ep_lk_tasm_admin" name="lk_tasm_admin_projects">
         <table name="projects" pkcolumn="id" schema="tasm"/>
