@@ -5,7 +5,7 @@ import App from './components/app/App';
 import './index.scss';
 
 const MOUNT_NODE = document.getElementById('root');
-const root = createRoot(MOUNT_NODE);
+const root = createRoot(MOUNT_NODE as Element);
 root.render(
     <HashRouter>
         <App />
