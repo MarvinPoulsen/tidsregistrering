@@ -1,7 +1,7 @@
 {
   "name": "tasm",
   "version": "1.0.0",
-  "description": "time and schedule management",
+  "description": "task and schedule management",
   "main": "index.js",
   "targets": {
     "main": false
