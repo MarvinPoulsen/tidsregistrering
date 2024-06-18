@@ -1,7 +1,7 @@
 {
-  "name": "timeregistration",
+  "name": "tasm",
   "version": "1.0.0",
-  "description": "",
+  "description": "time and schedule management",
   "main": "index.js",
   "targets": {
     "main": false
