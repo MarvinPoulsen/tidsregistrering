@@ -1,3 +1,4 @@
+// Import statements
 import React from 'react';
 import { Project } from '../../SPS';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -156,7 +157,7 @@ const EditUser = (props: EditUserProps) => {
                                         className="input"
                                         dateFormat="dd-MM-yyyy"
                                         name="date"
-                                        value={props.milestone}
+                                        // value={props.milestone}
                                         popperPlacement="top-end"
                                     />
                                 </div>

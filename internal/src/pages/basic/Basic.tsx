@@ -1,3 +1,4 @@
+// Import statements
 import React, { useState, useEffect } from 'react';
 
 import TimeRegistration from '../../components/timeregistration/TimeRegistration';
@@ -113,6 +114,7 @@ const Basic = (props: BasicProps) => {
             on: isOn,
         });
     });
+    console.log('dataSeries: ',dataSeries)
     const labels: string[][] = [];
     for (let i = 0; i <= dateRange; i++) {
         const labelPair: string[] = [];

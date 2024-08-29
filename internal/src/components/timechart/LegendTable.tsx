@@ -1,3 +1,4 @@
+// Import statements
 import React from 'react';
 import { useTable } from 'react-table';
 import './legendTable.scss';

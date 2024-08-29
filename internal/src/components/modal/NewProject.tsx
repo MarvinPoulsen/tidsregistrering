@@ -1,3 +1,4 @@
+// Import statements
 import React, { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -123,7 +124,7 @@ const NewProject = (props: NewProjectProps) => {
                                         className="input"
                                         dateFormat="dd-MM-yyyy"
                                         name="date"
-                                        value={props.horizon}
+                                        // value={props.horizon}
                                         popperPlacement="top-end"
                                     />
                                 </div>
@@ -198,7 +199,7 @@ const NewProject = (props: NewProjectProps) => {
                             </article>
                         )}
                         {!error && (
-                            <article className="message is-info is-small">
+                            <article className="message is-small">
                                 <div className="message-body">{description}</div>
                             </article>
                         )} */}

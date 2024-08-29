@@ -1,3 +1,4 @@
+// Import statements
 import React, { useEffect, useState, useRef } from 'react';
 import SPS, { User, SpsUser } from '../../SPS';
 import UserTable from '../../components/table/UserTable';
@@ -9,7 +10,7 @@ interface UserProps {
 }
 
 const Users = (props: UserProps) => {
-    console.log('UserProps: ',props)
+    // console.log('UserProps: ',props)
     const [users, setUsers] = useState<User[]>([]);
     // const [error, setError] = useState<string | null>(null);
     // const [hideObsolete, setHideObsolete] = useState<boolean>(true);
@@ -28,7 +29,7 @@ const Users = (props: UserProps) => {
         getDataFromSps();
     }, []);
 
-console.log('users: ',users)
+// console.log('users: ',users)
     return (
         <>
             <section className="section">

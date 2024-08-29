@@ -1,3 +1,4 @@
+// Import statements
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { registerLocale } from 'react-datepicker';
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
@@ -6,9 +7,9 @@ import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import da from 'date-fns/locale/da'; // the locale you want
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { TimeEntry, Project, FavoritTask } from '../../SPS';
+// import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+// import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { TimeEntry, Project, FavoritTask, Holiday } from '../../SPS';
 import { differenceInMinutes } from 'date-fns';
 registerLocale('da', da); // register it with the name you want
 
@@ -40,7 +41,22 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
+// const backgroundEvents = [];
+const makeHolydayList = (holidayList) =>{
+console.log('holidayList: ',holidayList)
+const eventList = [];
+for (const holiday of holidayList) {
 
+    const event = {
+        title: holiday.holiday_name,
+        allDay: 'false',
+        start: holiday.holiday_start,
+        end: holiday.holiday_end,
+    };
+    eventList.push(event);
+}
+return eventList
+};
 const makeEventList = (registrationList, taskList) => {
     const eventList = [];
     for (const registration of registrationList) {
@@ -67,6 +83,7 @@ const makeEventList = (registrationList, taskList) => {
     return eventList;
 };
 interface ComplexProps {
+    holidays: Holiday[];
     registrations: TimeEntry[];
     taskDate: Date;
     projects: Project[];
@@ -89,15 +106,18 @@ interface ComplexProps {
 const Complex = (props: ComplexProps) => {
     // console.log('ComplexProps: ', props);
     const [allEvents, setAllEvents] = useState<Event[]>([]);
+    const [backgroundEvents, setBackgroundEvents] = useState<Event[]>([]);
 
     useEffect(() => {
+const holiday: Event[] = makeHolydayList(props.holidays)
+setBackgroundEvents(holiday)
         const data: Event[] = makeEventList(props.registrations, props.tasks);
         setAllEvents(data);
     }, [props.registrations, props.tasks]);
 
     const handleSelectSlot = ({ start, end }) => {
-        props.formInfo()
-        const taskDate = start.toDateString()
+        props.formInfo();
+        const taskDate = start.toDateString();
         props.setTaskDate(new Date(taskDate));
         props.setTaskStart(start);
         props.setTaskEnd(end);
@@ -118,7 +138,7 @@ const Complex = (props: ComplexProps) => {
         []
     );
     const handleSelectEvent = useCallback((element) => {
-        props.formInfo()
+        props.formInfo();
         props.setNote(element.resource.note);
         props.setTaskId(element.resource.taskId);
         props.setTaskTime(element.resource.taskTime);
@@ -129,7 +149,7 @@ const Complex = (props: ComplexProps) => {
         props.setTaskEnd(element.end);
         props.setIsEditCalendarActive(true);
     }, []);
-
+console.log('allEvents: ',allEvents)
     return (
         <>
             <section className="section">
@@ -153,6 +173,7 @@ const Complex = (props: ComplexProps) => {
                         />
                          */}
                     <Calendar
+                        backgroundEvents={backgroundEvents}
                         defaultView="week"
                         events={allEvents}
                         localizer={localizer}

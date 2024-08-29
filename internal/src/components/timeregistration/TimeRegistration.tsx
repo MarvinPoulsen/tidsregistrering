@@ -1,6 +1,7 @@
+// Import statements
 import React, { useState } from 'react';
 
-import 'react-datepicker/dist/react-datepicker.css';
+// import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import da from 'date-fns/locale/da'; // the locale you want
 import { FavoritTask } from '../../SPS';
@@ -110,7 +111,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                     className="input"
                                     dateFormat="dd-MM-yyyy"
                                     name="date"
-                                    value={props.date}
+                                    // value={props.date}
                                 />
                             </div>
                             <div className="column is-2">
@@ -122,7 +123,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                         <div className="field">
                                             <span className="control">
                                                 <DatePicker
-                                                    selected={new Date().setHours(0, props.taskTime, 0, 0)}
+                                                    selected={new Date(new Date().setHours(0, props.taskTime, 0, 0))}
                                                     onChange={handleTimeChange}
                                                     timeFormat="HH:mm"
                                                     showTimeSelect
@@ -132,7 +133,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                                                     dateFormat="HH:mm"
                                                     className="input"
                                                     name="time"
-                                                    value={new Date().setHours(0, props.taskTime, 0, 0)}
+                                                    // value={new Date().setHours(0, props.taskTime, 0, 0)}
                                                 />
                                             </span>
                                         </div>
@@ -181,7 +182,7 @@ const TimeRegistration = (props: TimeRegistrationProps) => {
                     </article>
                 )}
                 {!error && (
-                    <article className="message is-info is-small">
+                    <article className="message is-small">
                         <div className="message-body">{description}</div>
                     </article>
                 )}

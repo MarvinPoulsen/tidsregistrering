@@ -1,3 +1,4 @@
+// Import statements
 import React, { useEffect, useState, useRef } from 'react';
 import ProjectTable from '../../components/table/ProjectTable';
 import SPS, { Project } from '../../SPS';
@@ -107,7 +108,8 @@ const Projects = (props: ProjectProps) => {
                         <div className="field is-grouped">
                             <p className="control">
                                 <button 
-                                    className="button is-info"
+                                    className="button"
+                                    // className="button is-brand"
                                     onClick={() => setIsNewProjectActive(true)}
                                 >
                                     <Icon path={mdiTablePlus} size={1} /></button>
@@ -137,7 +139,8 @@ const Projects = (props: ProjectProps) => {
                                     </div>
                                 </div>
                             <p className="control">
-                                <button className={'button is-info ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
+                                <button className={'button ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
+                                {/* <button className={'button is-info ' + obsoleteStyle} type="button" onClick={toggleObsolete}> */}
                                     {obsoleteIcon}
                                 </button>
                             </p>

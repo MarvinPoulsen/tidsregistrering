@@ -1,3 +1,4 @@
+// Import statements
 import React, { useState, useEffect } from 'react';
 import { FavoritTask, Project } from '../../SPS';
 

@@ -1,3 +1,4 @@
+// Import statements
 import React, { MouseEvent, useRef, useEffect } from 'react';
 import type { InteractionItem, InteractionMode } from 'chart.js';
 import { Bar, getElementAtEvent } from 'react-chartjs-2';
@@ -41,7 +42,7 @@ export interface StackedDatasets {
     stack: string;
     backgroundColor: string;
 }
-interface StackedBarData {
+export interface StackedBarData {
     labels: string[] | string[][];
     datasets: StackedDatasets[];
 }
@@ -148,7 +149,6 @@ function TimeChart(props: TimeChartProps) {
         }
         handleElementAtEvent(getElementAtEvent(chart, event));
     };
-
     return (
         <>
             <div className="block">

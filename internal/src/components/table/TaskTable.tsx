@@ -1,3 +1,4 @@
+// Import statements
 import React, { useState } from 'react';
 import { useTable } from 'react-table';
 import Icon from '@mdi/react';
@@ -183,7 +184,8 @@ function TaskTable(props: TaskTableProps) {
                         return (
                             <tr
                                 {...row.getRowProps({
-                                    className: row.original.obsolete ? 'has-background-grey has-text-info-light is-italic' : '',
+                                    className: row.original.obsolete ? 'is-italic' : '',
+                                    // className: row.original.obsolete ? 'has-background-grey has-text-info-light is-italic' : '',
                                 })}
                                 key={i}
                             >

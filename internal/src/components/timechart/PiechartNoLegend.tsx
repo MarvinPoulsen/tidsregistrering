@@ -1,3 +1,4 @@
+// Import statements
 import React, { useRef, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, InteractionMode } from 'chart.js';
 import { Pie } from 'react-chartjs-2';

@@ -1,3 +1,4 @@
+// Import statements
 import React, { useEffect, useState, useRef } from 'react';
 import TaskTable from '../../components/table/TaskTable';
 import SPS, { Task, Project } from '../../SPS';
@@ -124,7 +125,7 @@ const Tasks = (props: TaskProps) => {
                     <div className="column is-full">
                         <div className="field is-grouped">
                             <p className="control">
-                                <button className="button is-info" onClick={handleNewTask}>
+                                <button className="button" onClick={handleNewTask}>
                                     <Icon path={mdiTablePlus} size={1} />
                                 </button>
                             </p>
@@ -161,7 +162,7 @@ const Tasks = (props: TaskProps) => {
                                 </div>
                             </div>
                             <p className="control">
-                                <button className={'button is-info ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
+                                <button className={'button ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
                                     {obsoleteIcon}
                                 </button>
                             </p>

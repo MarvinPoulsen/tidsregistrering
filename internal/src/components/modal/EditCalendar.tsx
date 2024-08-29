@@ -1,3 +1,4 @@
+// Import statements
 import React, { useState } from 'react';
 import { FavoritTask, SpsUser } from '../../SPS';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -95,7 +96,7 @@ const EditCalendar = (props: EditCalendarProps) => {
             ? selectedOption.description
             : 'Ingen beskrivelse af den valgte opgave endnu';
     return (
-        <>{props.formInfo()}
+        <>
             <div className={'modal' + (props.isActive ? ' is-active' : '')}>
                 <div className="modal-background" onClick={handleClose}></div>
                 <div className="modal-content">
@@ -149,7 +150,7 @@ const EditCalendar = (props: EditCalendarProps) => {
                                         className="input"
                                         dateFormat="dd-MM-yyyy"
                                         name="date"
-                                        value={props.date}
+                                        // value={props.date}
                                         popperPlacement="top-end"
                                     />
                                 </div>
@@ -166,7 +167,7 @@ const EditCalendar = (props: EditCalendarProps) => {
                                             dateFormat="HH:mm"
                                             className="input"
                                             name="start"
-                                            value={new Date(props.start)}
+                                            // value={new Date(props.start)}
                                             minTime={new Date(props.date)}
                                             maxTime={new Date(props.end)}
                                         />
@@ -184,9 +185,9 @@ const EditCalendar = (props: EditCalendarProps) => {
                                             dateFormat="HH:mm"
                                             className="input"
                                             name="end"
-                                            value={props.end}
+                                            // value={props.end}
                                             minTime={props.start}
-                                            maxTime={new Date(props.date.toDateString()).setHours(23,59,0,0)}
+                                            maxTime={new Date(props.date.setHours(23,59,0,0))}
                                         />
                                 </div>
                             </div>
