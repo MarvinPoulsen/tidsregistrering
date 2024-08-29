@@ -1,3 +1,4 @@
+// Import statements
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
@@ -57,6 +58,7 @@ const Navbar = (props: NavbarProps) => {
     return (
         <>
             <nav className="navbar" role="navigation" aria-label="main navigation">
+            {/* <nav className="navbar is-umbra" role="navigation" aria-label="main navigation"> */}
                 <div className="navbar-brand">
                     <a className="navbar-item noHover">
                         <img src={props.logo} alt="Lolland Kommune" width="112" height="28" />
@@ -89,30 +91,54 @@ const Navbar = (props: NavbarProps) => {
                         <span className="navigation-text">Statistics</span>
                     </Link>
                     {props.user.hasPermission('endpoint.ep_lk_tasm_admin') && (
-                    <div className="navbar-item has-dropdown is-hoverable" key={isActiveTab}>
-                        <a className="navbar-link">
-                            <span
+                        <div className="navbar-item has-dropdown is-hoverable" key={isActiveTab}>
+                            <a
                                 className={
                                     isActiveTab === Tab.Projects || isActiveTab === Tab.Tasks || isActiveTab === Tab.Users
-                                        ? 'is-on navigation-text'
-                                        : 'navigation-text'
+                                        ? 'navbar-link is-on'
+                                        : 'navbar-link'
                                 }
                             >
                                 Admin
-                            </span>
-                        </a>
-                        <div className="navbar-dropdown has-background-info-dark">
-                            <Link to="/projects" className={isActiveTab === Tab.Projects ? 'is-on navbar-item' : 'navbar-item'}>
-                                <span className="navigation-text">Projects</span>
-                            </Link>
-                            <Link to="/tasks" className={isActiveTab === Tab.Tasks ? 'is-on navbar-item' : 'navbar-item'}>
-                                <span className="navigation-text">Tasks</span>
-                            </Link>
-                            <Link to="/users" className={isActiveTab === Tab.Users ? 'is-on navbar-item' : 'navbar-item'}>
-                                <span className="navigation-text">Users</span>
-                            </Link>
+                            </a>
+                            <div className="navbar-dropdown has-shadow">
+                            {/* <div className="navbar-dropdown has-shadow has-background-umbra-lightest"> */}
+                                <Link
+                                    to="/projects"
+                                    className={
+                                        isActiveTab === Tab.Projects
+                                            ? 'is-on navbar-item is-selected'
+                                            : 'navbar-item'
+                                            // : 'navbar-item has-background-umbra-lightest'
+                                    }
+                                >
+                                    Projects
+                                </Link>
+                                <Link
+                                    to="/tasks"
+                                    className={
+                                        isActiveTab === Tab.Tasks
+                                            ? 'is-on navbar-item is-selected'
+                                            : 'navbar-item'
+                                            // : 'navbar-item has-background-umbra-lightest'
+                                    }
+                                >
+                                    Tasks
+                                </Link>
+                                <Link
+                                    to="/users"
+                                    className={
+                                        isActiveTab === Tab.Users
+                                            ? 'is-on navbar-item is-selected'
+                                            : 'navbar-item'
+                                            // : 'navbar-item has-background-umbra-lightest'
+                                    }
+                                >
+                                    Users
+                                </Link>
+                            </div>
                         </div>
-                    </div>)}
+                    )}
                     <div className="navbar-item">
                         <span id="user-name" className="navbar-item noHover">
                             {userName}
