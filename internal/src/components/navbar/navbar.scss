@@ -1,12 +1,14 @@
-span.navigation-text{
- color: #fff;
-}
-a.navbar-link:not(:hover){
-    background-color: #3e8ed0 !important;
-}
-a.navbar-item:focus-within{
-    background-color: #3e8ed0 !important;
-}
+// @use "../../../node_modules//bulma/sass/utilities/css-variables" as cv;
+// @use "../../../node_modules//bulma/sass/utilities/initial-variables" as iv;
+
+
+
+// a.navbar-link:not(:hover){
+//     // background-color: #3e8ed0 ;
+// }
+// a.navbar-item:focus-within{
+//     // background-color: #f8f405 !important;
+// }
 .is-on{
     font-weight: bold;
 }
