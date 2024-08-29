@@ -73,6 +73,10 @@
                 ([string:getUsershortid(sessionid)], [number:taskId]);
         </sql>
     </datasource>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_holidays">
+        <table name="holidays" pkcolumn="id" schema="tasm"/>
+        <sql command="read-all">select * from tasm.holidays;</sql>
+    </datasource>
     <!-- ADMINISTRATOR -->
     <!-- <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm_admin" permissionlevel="authorized"> -->
     <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm_admin">

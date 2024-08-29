@@ -73,6 +73,15 @@ export interface User {
     obsolete: boolean;
 }
 
+export interface Holiday {
+    id: number;
+    holiday_name: string;
+    note: string;
+    all_day: boolean;
+    holiday_start: Date;
+    holiday_end: Date;
+}
+
 export default class SPS {
     private ses: SpatialServer.Session;
 
@@ -371,5 +380,25 @@ export default class SPS {
             };
         });
         return userData;
+    }
+
+    
+    async getHolidays(): Promise<Holiday[]> {
+        const data = await this.executeOnDs('lk_tasm_holidays', { command: 'read-all' });
+        // console.log('lk_tasm_holidays: ', data)
+        const holidaysData: Holiday[] = data.map((element) => {
+            const id = parseInt(element.id as string);
+            const work_time = element.work_time ? parseInt(element.work_time as string) : null; 
+            return {
+                id,
+                holiday_name: element.holiday_name as string,
+                note: element.note as string,
+                all_day: element.all_day === 'true',
+                holiday_start: new Date(element.holiday_start as string),
+                holiday_end: new Date(element.holiday_end as string),
+                work_time,
+            };
+        });
+        return holidaysData;
     }
 }
