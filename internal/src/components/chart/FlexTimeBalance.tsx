@@ -32,6 +32,7 @@ const FlexTimeBalance = (props: FlexTimeBalanceProps) => {
     const chartRef = useRef<ChartJS<'bar', number[]>>(null);
     // CONFIG
     const options = {
+        aspectRatio: 3,
         responsive: true,
         plugins: {
             legend: {
