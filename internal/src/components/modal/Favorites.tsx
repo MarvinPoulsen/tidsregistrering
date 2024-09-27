@@ -6,7 +6,7 @@ interface FavoritesProps {
     isActive: boolean;
     taskList: FavoritTask[];
     onSave: (favoriteIds: number[]) => void;
-    setIsFavoriteActive: (isOn:boolean) => void;
+    setIsFavoriteActive: (isOn: boolean) => void;
     projectList: Project[];
     formInfo?: () => void;
 }
@@ -17,7 +17,6 @@ const Favorites = (props: FavoritesProps) => {
         setTaskListCopy(props.taskList);
     }, [props.taskList]);
 
-
     const onChangeFavorites = (e) => {
         const id = parseInt(e.target.value);
         const on = e.target.checked;
@@ -27,41 +26,39 @@ const Favorites = (props: FavoritesProps) => {
         setTaskListCopy(newTaskList);
     };
 
-    const onSaveButtonClicked = () =>{
-        const favoriteIds = taskListCopy.filter((item: FavoritTask) => item.isFavorite).map((item: FavoritTask)=>item.id)
-        props.onSave(favoriteIds)
-    }
-    const onCloseFavorites = ()=>{
-        props.setIsFavoriteActive(false)
-    }
+    const onSaveButtonClicked = () => {
+        const favoriteIds = taskListCopy.filter((item: FavoritTask) => item.isFavorite).map((item: FavoritTask) => item.id);
+        props.onSave(favoriteIds);
+    };
+    const onCloseFavorites = () => {
+        props.setIsFavoriteActive(false);
+    };
     const listOfTasks = [];
-    const projects = props.projectList
+    const projects = props.projectList;
     for (const project of projects) {
-            const filteredCheckboxes = [];
-            const filteredTasks = taskListCopy.filter(
-                (item) => item.projectId === project.id
+        const filteredCheckboxes = [];
+        const filteredTasks = taskListCopy.filter((item) => item.projectId === project.id);
+        for (const task of filteredTasks) {
+            filteredCheckboxes.push(
+                <div className="control" key={task.id}>
+                    <label className="checkbox vertical-input">
+                        <input
+                            type="checkbox"
+                            checked={task.isFavorite}
+                            onChange={onChangeFavorites}
+                            value={task.id}
+                        />
+                        {task.taskName}
+                    </label>
+                </div>
             );
-                for (const task of filteredTasks) {
-                    filteredCheckboxes.push(
-                        <div className="control" key={task.id}>
-                            <label className="checkbox">
-                                <input
-                                    type="checkbox"
-                                    checked={task.isFavorite}
-                                    onChange={onChangeFavorites}
-                                    value={task.id}
-                                />
-                                {task.taskName}
-                            </label>
-                        </div>
-                    );
-                }
-            
+        }
+
         listOfTasks.push(
-                <div className="field" key={project.id}>
-                    <label className="label">{project.projectName}</label>
-                     {filteredCheckboxes}
-                 </div>
+            <div className="field" key={project.id}>
+                <label className="label">{project.projectName}</label>
+                {filteredCheckboxes}
+            </div>
         );
     }
 
@@ -73,22 +70,21 @@ const Favorites = (props: FavoritesProps) => {
                     <div className="box">
                         <h1 className="title">Vælg favoritter</h1>
                         {listOfTasks}
-                        <button
-                            className="button is-success"
-                            onClick={onSaveButtonClicked}
-                        >
-                            Gem
-                        </button>
-                        <button className="button" onClick={onCloseFavorites}>
-                            Annuller
-                        </button>
+                        <div className="field is-grouped">
+                            <p className="control">
+                                <button className="button is-success" onClick={onSaveButtonClicked}>
+                                    Gem
+                                </button>
+                            </p>
+                            <p className="control">
+                                <button className="button" onClick={onCloseFavorites}>
+                                    Annuller
+                                </button>
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <button
-                    className="modal-close is-large"
-                    aria-label="close"
-                    onClick={onCloseFavorites}
-                ></button>
+                <button className="modal-close is-large" aria-label="close" onClick={onCloseFavorites}></button>
             </div>
         </>
     );

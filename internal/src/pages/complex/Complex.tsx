@@ -28,6 +28,7 @@ interface Resource {
     taskId: number;
     taskTime: number;
     userId: string;
+    color?: string;
 }
 
 const locales = {
@@ -42,27 +43,32 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 // const backgroundEvents = [];
-const makeHolydayList = (holidayList) =>{
-console.log('holidayList: ',holidayList)
-const eventList = [];
-for (const holiday of holidayList) {
-
-    const event = {
-        title: holiday.holiday_name,
-        allDay: 'false',
-        start: holiday.holiday_start,
-        end: holiday.holiday_end,
-    };
-    eventList.push(event);
-}
-return eventList
+const makeHolydayList = (holidayList) => {
+    const eventList = [];
+    for (const holiday of holidayList) {
+        const event = {
+            title: holiday.holiday_name,
+            allDay: 'false',
+            start: holiday.holiday_start,
+            end: holiday.holiday_end,
+        };
+        eventList.push(event);
+    }
+    return eventList;
 };
 const makeEventList = (registrationList, taskList) => {
     const eventList = [];
     for (const registration of registrationList) {
         const task = taskList.find((t) => t.id === registration.taskId);
         const minutes = differenceInMinutes(new Date(registration.taskEnd), new Date(registration.taskStart));
-
+        const color =
+            task.id === 26
+                ? 'rgb(220, 20, 60, 0.6)'
+                : task.id === 24
+                ? 'rgb(238, 130, 238, 0.6)'
+                : task.projectId === 10
+                ? 'rgb(255, 215, 0, 0.6)'
+                : 'rgba(30, 144, 255, 0.6)';
         const resource: Resource = {
             id: registration.id,
             note: registration.note,
@@ -70,6 +76,7 @@ const makeEventList = (registrationList, taskList) => {
             taskId: task.id,
             taskTime: minutes,
             userId: registration.userId,
+            color,
         };
         const event = {
             title: task.taskName,
@@ -109,8 +116,8 @@ const Complex = (props: ComplexProps) => {
     const [backgroundEvents, setBackgroundEvents] = useState<Event[]>([]);
 
     useEffect(() => {
-const holiday: Event[] = makeHolydayList(props.holidays)
-setBackgroundEvents(holiday)
+        const holiday: Event[] = makeHolydayList(props.holidays);
+        setBackgroundEvents(holiday);
         const data: Event[] = makeEventList(props.registrations, props.tasks);
         setAllEvents(data);
     }, [props.registrations, props.tasks]);
@@ -138,18 +145,32 @@ setBackgroundEvents(holiday)
         []
     );
     const handleSelectEvent = useCallback((element) => {
-        props.formInfo();
-        props.setNote(element.resource.note);
-        props.setTaskId(element.resource.taskId);
-        props.setTaskTime(element.resource.taskTime);
-        props.setEditEntry(element.resource.id);
-        props.setAllDay(element.allDay);
-        props.setTaskDate(new Date(element.resource.taskDate.setHours(0, 0, 0, 0)));
-        props.setTaskStart(element.start);
-        props.setTaskEnd(element.end);
-        props.setIsEditCalendarActive(true);
+        if (element.isBackgroundEvent) {
+            console.log('element: ', element);
+        } else {
+            props.formInfo();
+            props.setNote(element.resource.note);
+            props.setTaskId(element.resource.taskId);
+            props.setTaskTime(element.resource.taskTime);
+            props.setEditEntry(element.resource.id);
+            props.setAllDay(element.allDay);
+            props.setTaskDate(new Date(element.resource.taskDate.setHours(0, 0, 0, 0)));
+            props.setTaskStart(element.start);
+            props.setTaskEnd(element.end);
+            props.setIsEditCalendarActive(true);
+        }
     }, []);
-console.log('allEvents: ',allEvents)
+
+    const eventPropGetter = useCallback((event, start, end, isSelected) => {
+        const backgroundColor = event && event.resource && event.resource.color ? event.resource.color : '#666';
+        const style = {
+            backgroundColor,
+        };
+        return {
+            style,
+        };
+    }, []);
+
     return (
         <>
             <section className="section">
@@ -181,10 +202,14 @@ console.log('allEvents: ',allEvents)
                         endAccessor="end"
                         style={{ height: '80vh' }}
                         onSelectSlot={handleSelectSlot}
-                        // onSelectSlot={(slotInfo) => {console.log(slotInfo);}}
+                        // onSelectSlot={(slotInfo) => {
+                        //     console.log(slotInfo);
+                        // }}
                         selectable
                         scrollToTime={scrollToTime}
-                        // onSelectEvent={(eventInfo) => {console.log(eventInfo);}}
+                        // onSelectEvent={(eventInfo) => {
+                        //     console.log(eventInfo);
+                        // }}
                         onSelectEvent={handleSelectEvent}
                         views={{ week: true }}
                         defaultDate={defaultDate}
@@ -193,6 +218,7 @@ console.log('allEvents: ',allEvents)
                         dayLayoutAlgorithm="no-overlap"
                         timeslots={4}
                         step={15}
+                        eventPropGetter={eventPropGetter}
                     />
                 </div>
             </section>

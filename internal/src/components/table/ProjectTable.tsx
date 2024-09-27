@@ -70,6 +70,7 @@ function ProjectTable(props: ProjectTableProps) {
             col3: element.projectName,
             col4: element.timeframe,
             col5: horizon,
+            obsolete: element.obsolete,
         };
     });
     const data = React.useMemo(() => projects, [props.projects]);
@@ -125,7 +126,9 @@ function ProjectTable(props: ProjectTableProps) {
                 {rows.map((row, i) => {
                     prepareRow(row);
                     return (
-                        <tr {...row.getRowProps()} key={i}>
+                        <tr {...row.getRowProps({
+                            className: row.original.obsolete ? 'has-background-white-ter is-italic' : '',
+                        })} key={i}>
                             {row.cells.map((cell, i) => {
                                 return (
                                     <td {...cell.getCellProps()} key={i}>

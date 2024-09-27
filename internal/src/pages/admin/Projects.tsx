@@ -108,7 +108,7 @@ const Projects = (props: ProjectProps) => {
                         <div className="field is-grouped">
                             <p className="control">
                                 <button 
-                                    className="button"
+                                    className="button is-brand"
                                     // className="button is-brand"
                                     onClick={() => setIsNewProjectActive(true)}
                                 >
@@ -128,18 +128,14 @@ const Projects = (props: ProjectProps) => {
                                           <Icon path={mdiMagnify} size={1} />
                                         </span>
                                     </div>
-                                    <div className="control">
-                                        <a className="button">
-                                            <button 
-                                                className="delete"
-                                                onClick={onClear}                                                
-                                            >                                                
-                                            </button>
-                                        </a>
-                                    </div>
+                                <div className="control">
+                                    <a className="button">
+                                        <button className="delete is-medium" onClick={onClear}></button>
+                                    </a>
+                                </div>
                                 </div>
                             <p className="control">
-                                <button className={'button ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
+                                <button className={'button is-brand ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
                                 {/* <button className={'button is-info ' + obsoleteStyle} type="button" onClick={toggleObsolete}> */}
                                     {obsoleteIcon}
                                 </button>

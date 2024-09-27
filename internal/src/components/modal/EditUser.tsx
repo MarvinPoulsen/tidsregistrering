@@ -229,7 +229,7 @@ const EditUser = (props: EditUserProps) => {
                                     <button className="button is-success" disabled={!!props.error}>
                                         Gem
                                     </button>
-                                    <button className="button" type="button" onClick={handleClose}>
+                                <button className="button" type="button" onClick={handleClose}>
                                         Annuller
                                     </button>
                                 </div>

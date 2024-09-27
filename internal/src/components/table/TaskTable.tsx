@@ -179,13 +179,11 @@ function TaskTable(props: TaskTableProps) {
                 </thead>
                 <tbody {...getTableBodyProps()}>
                     {rows.map((row, i) => {
-                        // console.log('row: ', row.original.obsolete);
                         prepareRow(row);
                         return (
                             <tr
                                 {...row.getRowProps({
-                                    className: row.original.obsolete ? 'is-italic' : '',
-                                    // className: row.original.obsolete ? 'has-background-grey has-text-info-light is-italic' : '',
+                                    className: row.original.obsolete ? 'has-background-white-ter is-italic' : '',
                                 })}
                                 key={i}
                             >

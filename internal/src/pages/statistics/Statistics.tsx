@@ -140,7 +140,7 @@ const Statistics = (props: StatisticsProps) => {
     for (const year of props.years) {
         yearList.push(
             <div key={year} className="dropdown-item">
-                <a onClick={() => setSelectedYear(year)} className={selectedYear === year ? 'is-active' : ''}>
+                <a onClick={() => setSelectedYear(year)} className={selectedYear === year ? 'is-active has-text-white' : ''}>
                     {year}
                 </a>
             </div>
@@ -191,7 +191,8 @@ const Statistics = (props: StatisticsProps) => {
                                 <li>
                                     <div className="dropdown is-hoverable">
                                         <div className="dropdown-trigger">
-                                            <a onClick={() => console.log('Hallo!')}>
+                                            {/* <a onClick={() => console.log('Hallo!')}> */}
+                                            <a>
                                                 {selectedYear}
                                                 <span className="bulma-arrow-mixin"></span>
                                             </a>
@@ -203,11 +204,11 @@ const Statistics = (props: StatisticsProps) => {
                                 </li>
                             </ul>
                             <p className="menu-label">Bruger</p>
-                            <ul className="menu-list">
+                            <ul className="menu-list ">
                                 <li>
                                     <a
                                         onClick={() => handleOnClick('Balance')}
-                                        className={selectedOption === 'Balance' ? 'is-active' : ''}
+                                        className={selectedOption === 'Balance' ? 'is-active has-text-white' : ''}
                                     >
                                         Flekstid
                                     </a>
@@ -215,7 +216,7 @@ const Statistics = (props: StatisticsProps) => {
                                 <li>
                                     <a
                                         onClick={() => handleOnClick('Opgaver')}
-                                        className={selectedOption === 'Opgaver' ? 'is-active' : ''}
+                                        className={selectedOption === 'Opgaver' ? 'is-active has-text-white' : ''}
                                     >
                                         Opgaver
                                     </a>

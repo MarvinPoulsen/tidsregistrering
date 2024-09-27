@@ -81,7 +81,6 @@ $family-serif: 'Verdana', 'Georgia', serif;
   )
 );
 
-
 // Import the components you need
 // @forward '../node_modules/bulma/sass/base';
 // @forward '../node_modules/bulma/sass/components/card';
@@ -165,20 +164,22 @@ $family-serif: 'Verdana', 'Georgia', serif;
 .radio-list {
   .radio {
     display: block;
+    input {
+      margin-right: 0.5em;
+    }
 
     & + .radio {
-      margin-left: 0 !important;
-      margin-top: .5em !important;
+      margin-left: 0;
+      margin-top: .5em;
     }
   }
 }
+.vertical-input {
+    input {
+      margin-right: 0.5em;
+    }
 
-
-input
-{
-  margin-right: 0.5em !important;
 }
-
 // span.navigation-text{
 //     color: #fff;
 //    }
@@ -191,3 +192,4 @@ input
 //    .is-on{
 //        font-weight: bold;
 //    }
+

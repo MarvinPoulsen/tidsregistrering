@@ -125,7 +125,7 @@ const Tasks = (props: TaskProps) => {
                     <div className="column is-full">
                         <div className="field is-grouped">
                             <p className="control">
-                                <button className="button" onClick={handleNewTask}>
+                                <button className="button is-brand" onClick={handleNewTask}>
                                     <Icon path={mdiTablePlus} size={1} />
                                 </button>
                             </p>
@@ -157,12 +157,12 @@ const Tasks = (props: TaskProps) => {
                                 </div>
                                 <div className="control">
                                     <a className="button">
-                                        <button className="delete" onClick={onClear}></button>
+                                        <button className="delete is-medium" onClick={onClear}></button>
                                     </a>
                                 </div>
                             </div>
                             <p className="control">
-                                <button className={'button ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
+                                <button className={'button is-brand ' + obsoleteStyle} type="button" onClick={toggleObsolete}>
                                     {obsoleteIcon}
                                 </button>
                             </p>
