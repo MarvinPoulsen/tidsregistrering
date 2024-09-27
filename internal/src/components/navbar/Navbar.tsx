@@ -57,7 +57,7 @@ const Navbar = (props: NavbarProps) => {
     const userName = props.user.name;
     return (
         <>
-            <nav className="navbar" role="navigation" aria-label="main navigation">
+            <nav className="navbar is-fixed-top is-brand" role="navigation" aria-label="main navigation">
             {/* <nav className="navbar is-umbra" role="navigation" aria-label="main navigation"> */}
                 <div className="navbar-brand">
                     <a className="navbar-item noHover">
