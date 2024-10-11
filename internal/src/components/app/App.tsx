@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { toHoursAndMinutes } from '../../utils';
-import SPS, { TimeEntry, Project, SpsUser, FavoritTask, Holiday } from '../../SPS';
+import SPS, { TimeEntry, Project, SpsUser, FavoritTask, Holiday, FlexBalance, Norm, User } from '../../SPS';
 import Navbar from '../../components/navbar/Navbar';
 import Favorites from '../../components/modal/Favorites';
 import EditCalendar from '../../components/modal/EditCalendar';
@@ -48,6 +48,9 @@ const App = () => {
     const [isFavoriteActive, setIsFavoriteActive] = useState<boolean>(false);
     const [isEditCalendarActive, setIsEditCalendarActive] = useState<boolean>(false);
     const [holidays, setHolidays] = useState<Holiday[]>([]);
+    const [balances, setBalances] = useState<FlexBalance[]>([]);
+    const [norms, setNorms] = useState<number[]>([0,450,450,450,540,330,0]);
+    const [ownUserData, setOwnUserData] = useState<User>(null);
 
     // useRef hooks
     const sps = useRef<SPS>(new SPS());
@@ -72,7 +75,7 @@ const App = () => {
         // console.log('note: ',note)
         // console.log('taskId: ',taskId)
         // console.log('allDay: ',allDay)
-        console.log('Dette er blot en test!');
+        console.log('Dette er blot en test! - formInfo()');
     };
 
     const refresh = async () => {
@@ -184,12 +187,24 @@ const App = () => {
             const holidayList: Holiday[] = await sps.current.getHolidays();
             setHolidays(holidayList);
 
+            const ownUserData: User = await sps.current.getOwnUserData();
+            // console.log('ownUserData: ',ownUserData)
+            setOwnUserData(ownUserData);
+
+            const balanceList: FlexBalance[] = await sps.current.getBalances();
+            setBalances(balanceList);
+
+            const norm: number[] = await sps.current.getOwnNorms(ownUserData.normName);
+            // console.log('norm: ',norm)
+            setNorms(norm);
+
             refresh();
         };
         getDataFromSps();
     }, []);
 
     // Data processing
+
     // Conditional values
     // Component return
     return (
@@ -286,6 +301,8 @@ const App = () => {
                                 setTaskId={setTaskId}
                                 setAllDay={setAllDay}
                                 formInfo={formInfo}
+                                norms={norms}
+                                balances={balances}
                             />
                         }
                     />
@@ -302,6 +319,8 @@ const App = () => {
                                 currentDate={taskDate}
                                 years={getYears(registrations)}
                                 setTaskDate={setTaskDate}
+                                norms={norms}
+                                balances={balances}
                             />
                         }
                     />

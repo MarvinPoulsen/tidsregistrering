@@ -62,12 +62,10 @@ export interface SpsUser {
 
 export interface User {
     id: number;
-    user_name: string;
+    name: string;
     abbreviation: string;
-    working_time: number;
-    deviations_time: number;
-    standard_time: number;
-    project: string;
+    normName: string;
+    balance: number;
     team: string;
     sektor: string;
     obsolete: boolean;
@@ -75,11 +73,33 @@ export interface User {
 
 export interface Holiday {
     id: number;
-    holiday_name: string;
+    title: string;
     note: string;
-    all_day: boolean;
-    holiday_start: Date;
-    holiday_end: Date;
+    allDay: boolean;
+    start: Date;
+    end: Date;
+    workTime: number;
+}
+
+export interface FlexBalance {
+    id: number;
+    userId: string;
+    balanceDate: Date;
+    flexBalance: number;
+    obsolete: boolean;
+}
+
+export interface Norm {
+    id: number;
+    normName: string;
+    monday: number;
+    tuesday: number;
+    wednesday: number;
+    thursday: number;
+    friday: number;
+    saturday: number;
+    sunday: number;
+    obsolete: boolean;
 }
 
 export default class SPS {
@@ -194,24 +214,20 @@ export default class SPS {
         return projectData;
     }
 
-    async getOwnUserData(): Promise<User[]> {
+    async getOwnUserData(): Promise<User> {
         const data = await this.executeOnDs('lk_tasm_users', { command: 'read-own-user' });
-        const userData: User[] = data.map((element) => {
-            const id = parseInt(element.id as string);
-            return {
-                id,
-                user_name: element.user_name as string,
-                abbreviation: element.abbreviation as string,
-                working_time: parseFloat(element.working_time as string),
-                deviations_time: parseFloat(element.deviations_time as string),
-                standard_time: parseFloat(element.standard_time as string),
-                project: element.project as string,
-                team: element.team as string,
-                sektor: element.sektor as string,
-                obsolete: element.obsolete === 'true',
-            };
-        });
-        return userData;
+        // console.log('read-own-user: ',typeof data, data)
+            const balance = data[0].balance ? parseFloat(data[0].balance as string) : 0;
+        return {
+            id: parseInt(data[0].id as string),
+            name: data[0].user_name as string,
+            abbreviation: data[0].abbreviation as string,
+            normName: data[0].norm as string,
+            balance,
+            team: data[0].team as string,
+            sektor: data[0].sektor as string,
+            obsolete: data[0].obsolete === 'true',
+        }
     }
 
     async insertTimeRegistration(entry: TimeEntry): Promise<void> {
@@ -366,14 +382,13 @@ export default class SPS {
         const data = await this.executeOnDs('lk_tasm_admin_users', { command: 'read-all-users' });
         const userData: User[] = data.map((element) => {
             const id = parseInt(element.id as string);
+            const balance = element.balance ? parseFloat(element.balance as string) : 0;
             return {
                 id,
-                user_name: element.user_name as string,
+                name: element.user_name as string,
                 abbreviation: element.abbreviation as string,
-                working_time: parseFloat(element.working_time as string),
-                deviations_time: parseFloat(element.deviations_time as string),
-                standard_time: parseFloat(element.standard_time as string),
-                project: element.project as string,
+                normName: element.norm as string,
+                balance: parseFloat(element.balance as string),
                 team: element.team as string,
                 sektor: element.sektor as string,
                 obsolete: element.obsolete === 'true',
@@ -388,17 +403,47 @@ export default class SPS {
         // console.log('lk_tasm_holidays: ', data)
         const holidaysData: Holiday[] = data.map((element) => {
             const id = parseInt(element.id as string);
-            const work_time = element.work_time ? parseInt(element.work_time as string) : null; 
+            const workTime = element.work_time ? parseInt(element.work_time as string) : null; 
             return {
                 id,
-                holiday_name: element.holiday_name as string,
+                title: element.holiday_name as string,
                 note: element.note as string,
-                all_day: element.all_day === 'true',
-                holiday_start: new Date(element.holiday_start as string),
-                holiday_end: new Date(element.holiday_end as string),
-                work_time,
+                allDay: element.all_day === 'true',
+                start: new Date(element.holiday_start as string),
+                end: new Date(element.holiday_end as string),
+                workTime,
             };
         });
         return holidaysData;
+    }
+    
+    async getBalances(): Promise<FlexBalance[]> {
+        const data = await this.executeOnDs('lk_tasm_balances', { command: 'read-by-user' });
+        // console.log('lk_tasm_balances: ', data)
+        const balances: FlexBalance[] = data.map((element) => {
+            const id = parseInt(element.id as string);
+            return {
+                id,
+                userId: element.user_id as string,
+                balanceDate: new Date(element.balance_date as string),
+                flexBalance: parseInt(element.flex_balance as string),
+                obsolete: element.obsolete === 'true',
+            };
+        });
+        return balances;
+    }
+    
+    async getOwnNorms(normName: string): Promise<number[]> {
+        const data = await this.executeOnDs('lk_tasm_norms', { command: 'read-by-name', normName });
+        // console.log('lk_tasm_norms: ', data)
+        let norm: number[] = []
+        norm.push(parseInt(data[0].sunday as string))
+        norm.push(parseInt(data[0].monday as string))
+        norm.push(parseInt(data[0].tuesday as string))
+        norm.push(parseInt(data[0].wednesday as string))
+        norm.push(parseInt(data[0].thursday as string))
+        norm.push(parseInt(data[0].friday as string))
+        norm.push(parseInt(data[0].saturday as string))
+        return norm;
     }
 }

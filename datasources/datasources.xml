@@ -77,6 +77,14 @@
         <table name="holidays" pkcolumn="id" schema="tasm"/>
         <sql command="read-all">select * from tasm.holidays;</sql>
     </datasource>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_norms">
+        <table name="norms" pkcolumn="id" schema="tasm"/>
+        <sql command="read-by-name">select * from tasm.norms where norm_name=[string:normName];</sql>
+    </datasource>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_balances">
+        <table name="balances" pkcolumn="id" schema="tasm"/>
+        <sql command="read-by-user">select * from tasm.balances where user_id=[string:getUsershortid(sessionid)];</sql>
+    </datasource>
     <!-- ADMINISTRATOR -->
     <!-- <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm_admin" permissionlevel="authorized"> -->
     <endpoint endpointtype="[cbinfo.connection.lolland_postgis.type]" name="ep_lk_tasm_admin">
@@ -161,6 +169,10 @@
     <datasource endpoint="ep_lk_tasm_admin" name="lk_tasm_admin_users">
         <table name="users" pkcolumn="id" schema="tasm"/>
         <sql command="read-all-users">select * from tasm.users;</sql>
+    </datasource>
+    <datasource endpoint="ep_lk_tasm" name="lk_tasm_admin_users">
+        <table name="norms" pkcolumn="id" schema="tasm"/>
+        <sql command="read-all">select * from tasm.norms;</sql>
     </datasource>
 
 </datasources>
