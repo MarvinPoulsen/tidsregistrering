@@ -1,9 +1,10 @@
 // Import statements
 import React, { useState } from 'react';
-import { TimeEntry, Project, SpsUser, FavoritTask, Holiday } from '../../SPS';
+import { TimeEntry, Project, SpsUser, FavoritTask, Holiday, Norm, FlexBalance } from '../../SPS';
 import { add, getDay, getDaysInYear, getYear, isSameDay, isSameYear } from 'date-fns';
 import TaskBarchart from '../../components/chart/TaskBarchart';
 import Balance from './Balance';
+import { getPeriodData } from '../../utils';
 // import { overlapMinutes } from '../../utils';
 
 // Interface definitions
@@ -17,6 +18,8 @@ interface StatisticsProps {
     currentDate: Date;
     years: number[];
     setTaskDate: (newTaskDate) => void;
+    norms: number[];
+    balances: FlexBalance[];
 }
 
 export interface FlexStatusYear {
@@ -27,7 +30,7 @@ export interface FlexStatusYear {
 }
 
 // Constants
-const norms = [0, 450, 450, 450, 540, 330, 0];
+// const norms = [0, 450, 450, 450, 540, 330, 0];
 // Helper functions
 export const overlapMinutes = (interval1Start, interval1End, interval2Start, interval2End) => {
     const start = interval1Start > interval2Start ? interval1Start : interval2Start;
@@ -38,86 +41,92 @@ export const overlapMinutes = (interval1Start, interval1End, interval2Start, int
 };
 
 
-const getYearData = (year, data, holidays) => {
-    let flexStatus: number = 0;
-    let vacation: number = 0;
-    let illness: number = 0;
-    let currentDayInYear = new Date(year, 0, 1);
-    const daysInYear = getDaysInYear(currentDayInYear);
-    let day = 1;
-    while (day <= daysInYear) {
-        const filteredByDate = data.filter((d) => isSameDay(d.taskDate, currentDayInYear));
-        const isVacation = filteredByDate.filter((item) => item.taskId === 24);
-        const isIllness = filteredByDate.filter((item) => item.taskId === 27);
-        const isWork = filteredByDate.filter((item) => item.taskId !== 27 && item.taskId !== 24 && item.taskId !== 26);
-        const workTime = isWork.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0);
-        const illnessTime = isIllness.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0);
-        const isFuture = new Date() < currentDayInYear || isSameDay(currentDayInYear, new Date());
-        const holiday = holidays.find((item) => isSameDay(item.holiday_start, currentDayInYear));
-        const dayNo = getDay(currentDayInYear);
-        const norm = norms[dayNo];
+// const getYearData = (year, data, holidays, norms) => {
+//     // Til test
+//     let tilTest: number[] = [];
+//     let flexStatus: number = 0;
+//     let vacation: number = 0;
+//     let illness: number = 0;
+//     let currentDayInYear = new Date(year, 0, 1);
+//     const daysInYear = getDaysInYear(currentDayInYear);
+//     let day = 1;
+//     while (day <= daysInYear) {
+//         const filteredByDate = data.filter((d) => isSameDay(d.taskDate, currentDayInYear));
+//         const isVacation = filteredByDate.filter((item) => item.taskId === 24);
+//         const isIllness = filteredByDate.filter((item) => item.taskId === 27);
+//         const isWork = filteredByDate.filter((item) => item.taskId !== 27 && item.taskId !== 24 && item.taskId !== 26);
+//         const workTime = isWork.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0);
+//         const illnessTime = isIllness.reduce((total, currentItem) => (total = total + (currentItem.taskTime || 0)), 0);
+//         const isFuture = new Date() < currentDayInYear || isSameDay(currentDayInYear, new Date());
+//         const holiday = holidays.find((item) => isSameDay(item.start, currentDayInYear));
+//         const dayNo = getDay(currentDayInYear);
+//         const norm = norms[dayNo];
 
-        if (isVacation.length > 0) {
-            isVacation.forEach((item) => {
-                // console.log('isVacation: ',isVacation)
-                const vacationStart = new Date(item.taskStart);
-                const vacationEnd = new Date(item.taskEnd);
-                const normStart = norm > 0 ? new Date(currentDayInYear.setHours(8, 0, 0, 0)) : currentDayInYear;
-                const normEnd = norm > 0 ? add(normStart, { minutes: norm }) : currentDayInYear;
-                const vacationTime = overlapMinutes(normStart, normEnd, vacationStart, vacationEnd);
+//         if (isVacation.length > 0) {
+//             isVacation.forEach((item) => {
+//                 // console.log('isVacation: ',isVacation)
+//                 const vacationStart = new Date(item.taskStart);
+//                 const vacationEnd = new Date(item.taskEnd);
+//                 const normStart = norm > 0 ? new Date(currentDayInYear.setHours(8, 0, 0, 0)) : currentDayInYear;
+//                 const normEnd = norm > 0 ? add(normStart, { minutes: norm }) : currentDayInYear;
+//                 const vacationTime = overlapMinutes(normStart, normEnd, vacationStart, vacationEnd);
 
-                if (vacationTime > 0 && item.allDay === 'false') {
-                    vacation += vacationTime;
-                    const newNorm = norm - vacationTime;
-                    if (workTime > newNorm) {
-                        flexStatus += workTime - newNorm;
-                    } else {
-                        flexStatus -= newNorm - workTime;
-                    }
-                } else {
-                    flexStatus += workTime;
-                    vacation += norm;
-                }
-            });
-        } else if (holiday) {
-            if (holiday.all_day) {
-                // console.log('holiday all day long!');
-                flexStatus += workTime;
-            } else {
-                const holidayWorkTime = norm > holiday.work_time ? holiday.work_time : norm;
-                if (holidayWorkTime < workTime) {
-                    const flex = workTime - holidayWorkTime;
-                    flexStatus += flex;
-                } else {
-                    const flex = isFuture
-                        ? 0
-                        : illnessTime > holidayWorkTime - workTime
-                        ? 0
-                        : holidayWorkTime - workTime - illnessTime;
-                    flexStatus -= flex;
-                }
-                // console.log('holiday: ', holiday);
-            }
-        } else {
-            if (norm < workTime) {
-                const flex = workTime - norm;
-                flexStatus += flex;
-            } else {
-                const flex = isFuture ? 0 : illnessTime > norm - workTime ? 0 : norm - workTime - illnessTime;
-                flexStatus -= flex;
-            }
-            // console.log('no holiday');
-        }
-        illness += illnessTime;
-        currentDayInYear = add(currentDayInYear, { days: 1 });
-        day++;
-    }
+//                 if (vacationTime > 0 && item.allDay === 'false') {
+//                     vacation += vacationTime;
+//                     const newNorm = norm - vacationTime;
+//                     if (workTime > newNorm) {
+//                         flexStatus += workTime - newNorm;
+//                     } else {
+//                         flexStatus -= newNorm - workTime;
+//                     }
+//                 } else {
+//                     flexStatus += workTime;
+//                     vacation += norm;
+//                 }
+//             });
+//         } else if (holiday) {
+//             if (holiday.allDay) {
+//                 // console.log('holiday all day long!');
+//                 flexStatus += workTime;
+//             } else {
+//                 const holidayWorkTime = norm > holiday.workTime ? holiday.workTime : norm;
+//                 if (holidayWorkTime < workTime) {
+//                     const flex = workTime - holidayWorkTime;
+//                     flexStatus += flex;
+//                 } else {
+//                     const flex = isFuture
+//                         ? 0
+//                         : illnessTime > holidayWorkTime - workTime
+//                         ? 0
+//                         : holidayWorkTime - workTime - illnessTime;
+//                     flexStatus -= flex;
+//                 }
+//                 // console.log('holiday: ', holiday);
+//             }
+//         } else {
+//             if (norm < workTime) {
+//                 const flex = workTime - norm;
+//                 flexStatus += flex;
+//             } else {
+//                 const flex = isFuture ? 0 : illnessTime > norm - workTime ? 0 : norm - workTime - illnessTime;
+//                 flexStatus -= flex;
+//             }
+//             // console.log('no holiday');
+//         }
+//         illness += illnessTime;
+//         currentDayInYear = add(currentDayInYear, { days: 1 });
+//         day++;
 
-    return { flexYear: flexStatus, vacation, illness };
-};
+//         // Til test
+//         tilTest.push(flexStatus)
+//     }
+//     console.log('inline: ',tilTest)
+
+//     return { flexYear: flexStatus, vacation, illness };
+// };
 
 // Component
-const Statistics = (props: StatisticsProps) => {
+const Statistics = ({norms, ...props}: StatisticsProps) => {
     // console.log('StatisticsProps: ', props);
     // useState hooks
     const [selectedOption, setSelectedOption] = useState<string>('Balance');
@@ -132,7 +141,12 @@ const Statistics = (props: StatisticsProps) => {
 
     // useEffect hooks
     // Data processing
-    const { flexYear, vacation, illness } = getYearData(selectedYear, props.registrations, props.holidays);
+    // const { flexYear, vacation, illness } = getYearData(selectedYear, props.registrations, props.holidays, norms);
+    const { flex: flexYear, vacation, illness } = getPeriodData(new Date(selectedYear, 0, 1),new Date(selectedYear, 11, 31),props.registrations, props.holidays,norms);
+
+// console.log(flexYear,flex)
+// console.log(vacation,vaca)
+// console.log(illness,illn)
 
     const year = new Date();
 

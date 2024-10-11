@@ -1,3 +1,5 @@
+import { add, differenceInDays, getDay, isSameDay } from "date-fns";
+
 /**
  * @description
  * Denne funktion tager et tal som input og formaterer det til en mere læsevenlig form ved hjælp af Intl.NumberFormat. For eksempel vil 1000 blive formateret som 1,000 (afhængigt af lokaliteten).
@@ -38,4 +40,83 @@ export const overlapMinutes = (interval1Start, interval1End, interval2Start, int
     const overlap = start < end ? (end - start) / (1000 * 60) : 0; // Convert milliseconds to minutes
 
     return overlap;
+};
+
+
+
+/**
+ * @description
+ * Denne funktion beregner flex, ferie og sygdom for en given periode. den tager en startdato, slutdato, data, helligdage og normtal som input.
+ */
+export const getPeriodData = (startDate: Date, endDate: Date, data, holidays, norms) => {
+    let flexStatus: number = 0;
+    let vacation: number = 0;
+    let illness: number = 0;
+
+    const daysInPeriod = differenceInDays(endDate,startDate)
+    let currentDate = new Date(startDate);
+    for (let i = 0; i <= daysInPeriod; i++){
+        const filteredByDate = data.filter((item) => isSameDay(item.resource ? item.resource.taskDate : item.taskDate, currentDate));
+        const isVacation = filteredByDate.filter((item) => item.resource ? item.resource.taskId === 24 : item.taskId === 24);
+        const isIllness = filteredByDate.filter((item) => item.resource ? item.resource.taskId === 27 : item.taskId === 27);
+        const isWork = filteredByDate.filter((item) => item.resource ? item.resource.taskId !== 27 && item.resource.taskId !== 24 && item.resource.taskId !== 26 : item.taskId !== 27 && item.taskId !== 24 && item.taskId !== 26);
+        const workTime = isWork.reduce((total, currentItem) => (total = total + (currentItem.resource ? currentItem.resource.taskTime || 0 : currentItem.taskTime || 0)), 0);
+        const illnessTime = isIllness.reduce((total, currentItem) => (total = total + (currentItem.resource ? currentItem.resource.taskTime || 0 : currentItem.taskTime || 0)), 0);
+        const isFuture = new Date() < currentDate || isSameDay(currentDate, new Date());
+        const holiday = holidays.find((item) => isSameDay(item.start, currentDate));
+        const dayNo = getDay(currentDate);
+        const norm = norms[dayNo];
+
+        if (isVacation.length > 0) {
+            isVacation.forEach((item) => {
+                const vacationStart = new Date(item.taskStart);
+                const vacationEnd = new Date(item.taskEnd);
+                const normStart = norm > 0 ? new Date(currentDate.setHours(8, 0, 0, 0)) : currentDate;
+                const normEnd = norm > 0 ? add(normStart, { minutes: norm }) : currentDate;
+                const vacationTime = overlapMinutes(normStart, normEnd, vacationStart, vacationEnd);
+
+                if (vacationTime > 0 && item.allDay === 'false') {
+                    vacation += vacationTime;
+                    const newNorm = norm - vacationTime;
+                    if (workTime > newNorm) {
+                        flexStatus += workTime - newNorm;
+                    } else {
+                        flexStatus -= newNorm - workTime;
+                    }
+                } else {
+                    flexStatus += workTime;
+                    vacation += norm;
+                }
+            });
+        } else if (holiday) {
+            if (holiday.allDay) {
+                flexStatus += workTime;
+            } else {
+                const holidayWorkTime = norm > holiday.workTime ? holiday.workTime : norm;
+                if (holidayWorkTime < workTime) {
+                    const flex = workTime - holidayWorkTime;
+                    flexStatus += flex;
+                } else {
+                    const flex = isFuture
+                        ? 0
+                        : illnessTime > holidayWorkTime - workTime
+                        ? 0
+                        : holidayWorkTime - workTime - illnessTime;
+                    flexStatus -= flex;
+                }
+            }
+        } else {
+            if (norm < workTime) {
+                const flex = workTime - norm;
+                flexStatus += flex;
+            } else {
+                const flex = isFuture ? 0 : illnessTime > norm - workTime ? 0 : norm - workTime - illnessTime;
+                flexStatus -= flex;
+            }
+        }
+        illness += illnessTime;
+        currentDate = add(currentDate, { days: 1 });
+    }
+
+    return { flex: flexStatus, vacation, illness };
 };
