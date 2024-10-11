@@ -70,7 +70,10 @@ $family-serif: 'Verdana', 'Georgia', serif;
   $link: $brand-color,
   $info: $brand-color,
   // $control-border-width: 2px
+  $radius-small: $brand-radius,
   $radius: $brand-radius,
+  $radius-medium: $brand-radius,
+  $radius-large:  $brand-radius,
   $custom-colors:(
     'umbra-dark':($umbra),
     'umbra': ($umbra-80),
