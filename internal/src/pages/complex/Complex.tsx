@@ -7,10 +7,9 @@ import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import da from 'date-fns/locale/da'; // the locale you want
-// import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-// import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { TimeEntry, Project, FavoritTask, Holiday } from '../../SPS';
+import { TimeEntry, Project, FavoritTask, Holiday, Norm, FlexBalance } from '../../SPS';
 import { differenceInMinutes } from 'date-fns';
+import CustomToolbar from '../../components/calendar/CustomToolbar';
 registerLocale('da', da); // register it with the name you want
 
 // export interface Event {
@@ -47,10 +46,10 @@ const makeHolydayList = (holidayList) => {
     const eventList = [];
     for (const holiday of holidayList) {
         const event = {
-            title: holiday.holiday_name,
+            title: holiday.title,
             allDay: 'false',
-            start: holiday.holiday_start,
-            end: holiday.holiday_end,
+            start: holiday.start,
+            end: holiday.end,
         };
         eventList.push(event);
     }
@@ -109,9 +108,10 @@ interface ComplexProps {
     setTaskId: (newTaskId) => void;
     setAllDay: (isAllDay: boolean) => void;
     formInfo?: () => void;
+    norms: number[];
+    balances: FlexBalance[];
 }
-const Complex = (props: ComplexProps) => {
-    // console.log('ComplexProps: ', props);
+const Complex = ({norms,  ...props}: ComplexProps) => {
     const [allEvents, setAllEvents] = useState<Event[]>([]);
     const [backgroundEvents, setBackgroundEvents] = useState<Event[]>([]);
 
@@ -123,7 +123,7 @@ const Complex = (props: ComplexProps) => {
     }, [props.registrations, props.tasks]);
 
     const handleSelectSlot = ({ start, end }) => {
-        props.formInfo();
+        // props.formInfo();
         const taskDate = start.toDateString();
         props.setTaskDate(new Date(taskDate));
         props.setTaskStart(start);
@@ -141,14 +141,14 @@ const Complex = (props: ComplexProps) => {
                 weekdayFormat: (date, culture, localizer) => localizer.format(date, 'dddd', culture),
             },
             scrollToTime: new Date(1970, 1, 1, 8),
+            
         }),
         []
     );
     const handleSelectEvent = useCallback((element) => {
         if (element.isBackgroundEvent) {
-            console.log('element: ', element);
         } else {
-            props.formInfo();
+            // props.formInfo();
             props.setNote(element.resource.note);
             props.setTaskId(element.resource.taskId);
             props.setTaskTime(element.resource.taskTime);
@@ -170,6 +170,10 @@ const Complex = (props: ComplexProps) => {
             style,
         };
     }, []);
+
+const components = {
+    toolbar: (props) => <CustomToolbar {...props} events={allEvents} holidays={backgroundEvents} norms={norms}/>,
+}
 
     return (
         <>
@@ -194,6 +198,7 @@ const Complex = (props: ComplexProps) => {
                         />
                          */}
                     <Calendar
+                    components={components}
                         backgroundEvents={backgroundEvents}
                         defaultView="week"
                         events={allEvents}
@@ -202,14 +207,10 @@ const Complex = (props: ComplexProps) => {
                         endAccessor="end"
                         style={{ height: '80vh' }}
                         onSelectSlot={handleSelectSlot}
-                        // onSelectSlot={(slotInfo) => {
-                        //     console.log(slotInfo);
-                        // }}
+                        // onSelectSlot={(slotInfo) => {console.log(slotInfo)}}
                         selectable
                         scrollToTime={scrollToTime}
-                        // onSelectEvent={(eventInfo) => {
-                        //     console.log(eventInfo);
-                        // }}
+                        // onSelectEvent={(eventInfo) => {console.log(eventInfo)}}
                         onSelectEvent={handleSelectEvent}
                         views={{ week: true }}
                         defaultDate={defaultDate}
