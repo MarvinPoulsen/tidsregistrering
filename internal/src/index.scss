@@ -105,7 +105,15 @@ $family-serif: 'Verdana', 'Georgia', serif;
 
 
 // Importing external libraries: Import external CSS files and libraries so that their styles are available.
-@import '../node_modules/react-big-calendar/lib/sass/styles';
+// @import '../node_modules/react-big-calendar/lib/sass/styles';
+@use '../node_modules/react-big-calendar/lib/sass/styles' with (
+  $event-border-radius: $brand-radius
+);
+// Overskriv button styles
+.rbc-toolbar button {
+  border-radius: $brand-radius; // Sætter border-radius til $brand-radius
+}
+
 // @import '../node_modules/react-big-calendar/lib/addons/dragAndDrop/styles'; 
 @import "../node_modules/react-datepicker/dist/react-datepicker.css";
 
