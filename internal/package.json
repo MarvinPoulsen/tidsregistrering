@@ -26,6 +26,7 @@
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",
+    "@types/react-big-calendar": "^1.8.12",
     "bulma": "^1.0.2",
     "chart.js": "^4.4.3",
     "date-fns": "^2.30.0",
