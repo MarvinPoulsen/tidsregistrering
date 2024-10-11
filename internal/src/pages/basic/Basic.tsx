@@ -48,7 +48,7 @@ interface BasicProps {
     formInfo?: () => void;
 }
 const Basic = (props: BasicProps) => {
-    const [range, setRange] = useState<number>(14);
+    const [range, setRange] = useState<number>(7);
     const [legendData, setLegendData] = useState<LegendData[]>([]);
 
     useEffect(() => {
@@ -114,7 +114,6 @@ const Basic = (props: BasicProps) => {
             on: isOn,
         });
     });
-    console.log('dataSeries: ',dataSeries)
     const labels: string[][] = [];
     for (let i = 0; i <= dateRange; i++) {
         const labelPair: string[] = [];
