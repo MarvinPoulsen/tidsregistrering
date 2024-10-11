@@ -45,7 +45,7 @@ const getMonthData = (year, month, data, holidays, norms) => {
         const isFuture = new Date() < dato || isSameDay(dato, new Date());
         const dayNo = getDay(dato);
         const norm = norms[dayNo];
-        const holiday = holidays.find((item) => isSameDay(item.holiday_start, dato));
+        const holiday = holidays.find((item) => isSameDay(item.start, dato));
         const labelPair: string[] = [];
         labelPair.push(new Intl.DateTimeFormat('da-DK', { weekday: 'short' }).format(dato));
         labelPair.push(
@@ -96,13 +96,13 @@ const getMonthData = (year, month, data, holidays, norms) => {
             });
         } else if (holiday) {
             vacation.push(0);
-            if (holiday.all_day) {
+            if (holiday.allDay) {
                 standard.push(0);
                 minus.push(0);
                 plus.push(workTime);
                 flexStatus += workTime;
             } else {
-                const holidayWorkTime = norm > holiday.work_time ? holiday.work_time : norm;
+                const holidayWorkTime = norm > holiday.workTime ? holiday.workTime : norm;
                 if (holidayWorkTime < workTime) {
                     standard.push(holidayWorkTime);
                     minus.push(0);
