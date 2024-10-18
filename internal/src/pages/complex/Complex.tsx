@@ -10,6 +10,7 @@ import da from 'date-fns/locale/da'; // the locale you want
 import { TimeEntry, Project, FavoritTask, Holiday, Norm, FlexBalance } from '../../SPS';
 import { differenceInMinutes } from 'date-fns';
 import CustomToolbar from '../../components/calendar/CustomToolbar';
+import { MyAbsencePresence } from '../../components/app/App';
 registerLocale('da', da); // register it with the name you want
 
 // export interface Event {
@@ -110,8 +111,9 @@ interface ComplexProps {
     formInfo?: () => void;
     norms: number[];
     balances: FlexBalance[];
+    myAbsencePresence: MyAbsencePresence;
 }
-const Complex = ({norms,  ...props}: ComplexProps) => {
+const Complex = ({norms,myAbsencePresence,  ...props}: ComplexProps) => {
     const [allEvents, setAllEvents] = useState<Event[]>([]);
     const [backgroundEvents, setBackgroundEvents] = useState<Event[]>([]);
 
@@ -172,7 +174,7 @@ const Complex = ({norms,  ...props}: ComplexProps) => {
     }, []);
 
 const components = {
-    toolbar: (props) => <CustomToolbar {...props} events={allEvents} holidays={backgroundEvents} norms={norms}/>,
+    toolbar: (props) => <CustomToolbar {...props} events={allEvents} holidays={backgroundEvents} norms={norms} myAbsencePresence={myAbsencePresence} />,
 }
 
     return (

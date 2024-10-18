@@ -15,6 +15,11 @@ import Users from '../../pages/admin/Users';
 import { differenceInMinutes, format, add, getYear } from 'date-fns';
 
 // Interface definitions
+export interface MyAbsencePresence {
+    ssoUrl: string;
+    mitIdUrl: string;
+}
+
 // Constants
 // Helper functions
 const getYears = (data: TimeEntry[]) => {
@@ -51,6 +56,7 @@ const App = () => {
     const [balances, setBalances] = useState<FlexBalance[]>([]);
     const [norms, setNorms] = useState<number[]>([0,450,450,450,540,330,0]);
     const [ownUserData, setOwnUserData] = useState<User>(null);
+    const [myAbsencePresence, setMyAbsencePresence] = useState<MyAbsencePresence | null>(null);
 
     // useRef hooks
     const sps = useRef<SPS>(new SPS());
@@ -178,6 +184,10 @@ const App = () => {
             const siteUrl = sps.current.getParameter('cbinfo.site.url');
             const logoUrl = sps.current.getParameter('module.tasm.logo');
             setLogo(siteUrl + logoUrl);
+            const ssoUrl = sps.current.getParameter('module.tasm.sso.url');
+            const mitIdUrl = sps.current.getParameter('module.tasm.mitid.url');
+            setMyAbsencePresence({ssoUrl, mitIdUrl});
+            
             const taskList = await sps.current.getTaskData();
             setTasks(taskList);
 
@@ -303,6 +313,7 @@ const App = () => {
                                 formInfo={formInfo}
                                 norms={norms}
                                 balances={balances}
+                                myAbsencePresence={myAbsencePresence}
                             />
                         }
                     />
