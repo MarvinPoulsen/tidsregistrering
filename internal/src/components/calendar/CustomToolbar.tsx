@@ -5,6 +5,7 @@ import { da } from 'date-fns/locale';
 import { ToolbarProps as OriginalToolbarProps, View, Event } from 'react-big-calendar';
 import { toHoursAndMinutes, getPeriodData } from '../../utils';
 import WeekStatus from '../../components/modal/WeekStatus';
+import { MyAbsencePresence } from '../app/App';
 
 // Interface definitions
 
@@ -12,6 +13,7 @@ interface ToolbarProps extends OriginalToolbarProps {
     events: Event[];
     holidays: Event[];
     norms: number[];
+    myAbsencePresence: MyAbsencePresence;
 }
 
 // Constants
@@ -30,7 +32,10 @@ const CustomToolbar = ({
     events, // Add events prop here
     norms, // Add events prop here
     holidays, // Add events prop here
+    myAbsencePresence,
 }: ToolbarProps) => {
+
+
     // useState hooks
     const [isWeekStatusActive, setIsWeekStatusActive] = useState<boolean>(false);
 
@@ -103,14 +108,15 @@ const CustomToolbar = ({
                     </button>
                 </span>
             </div>
-            <WeekStatus
+            {myAbsencePresence && <WeekStatus
                 isWeekStatusActive={isWeekStatusActive}
                 setIsWeekStatusActive={setIsWeekStatusActive}
                 flex={flex}
                 vacation={vacation}
                 illness={illness}
                 norm={norm}
-            />
+                myAbsencePresence={myAbsencePresence}
+            />}
         </>
     );
 };
