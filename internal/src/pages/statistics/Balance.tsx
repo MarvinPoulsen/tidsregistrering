@@ -147,7 +147,6 @@ const getMonthData = (year, month, data, holidays, norms) => {
     dataSeries.push({ projectName: 'plus', values: plus, stack: '0' });
     dataSeries.push({ projectName: 'illness', values: illness, stack: '0' });
     dataSeries.push({ projectName: 'vacation', values: vacation, stack: '1' });
-    console.log('dataSeries(',year,'-',month+1,'): ', dataSeries)
     return { dataSeries, labels, flexMonth: flexStatus };
 };
 
@@ -180,8 +179,8 @@ const Balance = (props: BalanceProps) => {
     const flexStatusYear = props.flexYear ? toHoursAndMinutes(props.flexYear) : 0;
     const vacation = props.vacation ? toHoursAndMinutes(props.vacation) : 0;
     const illness = props.illness ? toHoursAndMinutes(props.illness) : 0;
-    const titleMonth = flexMonth < 0 ? 'title has-text-danger' : 'title';
-    const titleYear = props.flexYear < 0 ? 'title has-text-danger' : 'title';
+    const titleMonth = flexMonth < 0 ? 'subtitle has-text-danger' : 'subtitle';
+    const titleYear = props.flexYear < 0 ? 'subtitle has-text-danger' : 'subtitle';
     // Component return
     return (
         <>
@@ -201,13 +200,13 @@ const Balance = (props: BalanceProps) => {
                 <div className="level-item has-text-centered">
                     <div>
                         <p className="heading">Ferie</p>
-                        <p className="title">{vacation}</p>
+                        <p className="subtitle">{vacation}</p>
                     </div>
                 </div>
                 <div className="level-item has-text-centered">
                     <div>
-                        <p className="heading">Sygdom</p>
-                        <p className="title">{illness}</p>
+                        <p className="heading">Fravær</p>
+                        <p className="subtitle">{illness}</p>
                     </div>
                 </div>
             </nav>
