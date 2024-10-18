@@ -35,11 +35,15 @@ const EditCalendar = (props: EditCalendarProps) => {
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (event) => {
-        // window.alert(event.target.value);
         event.preventDefault();
-        props.onSave();
-        props.resetForm();
-        props.setIsEditCalendarActive(false);
+        if (timeInputAlert) {
+            console.log('event: ', event);
+            window.alert(timeInputAlert);
+        } else {
+            props.onSave();
+            props.resetForm();
+            props.setIsEditCalendarActive(false);
+        }
     };
     const handleTaskIdChange = (event) => {
         const newTaskId = parseInt(event.target.value);
@@ -62,32 +66,22 @@ const EditCalendar = (props: EditCalendarProps) => {
 
     const onChangeAllDay = (event) => {
         const on: boolean = event.target.checked;
-        props.setAllDay(on)
-    }
+        props.setAllDay(on);
+    };
 
     const shouldTimesBeIgnored = ' Ignorer tider ';
 
     const handleSetTaskStart = (taskStart) => {
-        if ((taskStart<props.end)){
-            const minutes = differenceInMinutes(props.end, taskStart);
-            props.setTaskTime(minutes)
-            props.setTaskStart(taskStart)
-        } else {
-            window.alert('Hvad laver du!! Starttiden skal være før end sluttiden');
-            console.log('Hvad laver du!! Starttiden skal være mindre end sluttiden')
-        }
-    }
-    
+        const minutes = differenceInMinutes(props.end, taskStart);
+        props.setTaskTime(minutes);
+        props.setTaskStart(taskStart);
+    };
+
     const handleSetTaskEnd = (taskEnd) => {
-        if ((taskEnd>props.start)){
-            const minutes = differenceInMinutes(taskEnd, props.start);
-            props.setTaskTime(minutes)
-            props.setTaskEnd(taskEnd)
-        } else {
-            window.alert('Hvad laver du!! Starttiden skal være før end sluttiden');
-            console.log('Hvad laver du!! Starttiden skal være mindre end sluttiden')
-        }
-    }
+        const minutes = differenceInMinutes(taskEnd, props.start);
+        props.setTaskTime(minutes);
+        props.setTaskEnd(taskEnd);
+    };
 
     const options = props.taskList.filter((t) => t.isFavorite || t.id === props.taskId);
     const selectedOption = options.find((item) => item.id === props.taskId);
@@ -95,6 +89,10 @@ const EditCalendar = (props: EditCalendarProps) => {
         selectedOption && selectedOption.description !== ''
             ? selectedOption.description
             : 'Ingen beskrivelse af den valgte opgave endnu';
+    const timeInputAlert =
+        new Date(props.start) < new Date(props.end) ? undefined : 'Hvad laver du!! Starttiden skal være før end sluttiden';
+    const timeInputStyle = timeInputAlert ? 'input is-danger' : 'input';
+
     return (
         <>
             <div className={'modal' + (props.isActive ? ' is-active' : '')}>
@@ -156,39 +154,39 @@ const EditCalendar = (props: EditCalendarProps) => {
                                 </div>
                                 <div className="column">
                                     <label className="label">Fra:</label>
-                                        <DatePicker
-                                            selected={new Date(props.start)}
-                                            onChange={handleSetTaskStart}
-                                            timeFormat="HH:mm"
-                                            showTimeSelect
-                                            showTimeSelectOnly
-                                            timeIntervals={1}
-                                            timeCaption="Time"
-                                            dateFormat="HH:mm"
-                                            className="input"
-                                            name="start"
-                                            // value={new Date(props.start)}
-                                            minTime={new Date(props.date)}
-                                            maxTime={new Date(props.end)}
-                                        />
+                                    <DatePicker
+                                        selected={new Date(props.start)}
+                                        onChange={handleSetTaskStart}
+                                        timeFormat="HH:mm"
+                                        showTimeSelect
+                                        showTimeSelectOnly
+                                        timeIntervals={1}
+                                        timeCaption="Time"
+                                        dateFormat="HH:mm"
+                                        className={timeInputStyle}
+                                        name="start"
+                                        // value={new Date(props.start)}
+                                        // minTime={new Date(props.date)}
+                                        // maxTime={new Date(props.end)}
+                                    />
                                 </div>
                                 <div className="column">
                                     <label className="label">Til:</label>
-                                        <DatePicker
-                                            selected={props.end}
-                                            onChange={handleSetTaskEnd}
-                                            timeFormat="HH:mm"
-                                            showTimeSelect
-                                            showTimeSelectOnly
-                                            timeIntervals={1}
-                                            timeCaption="Time"
-                                            dateFormat="HH:mm"
-                                            className="input"
-                                            name="end"
-                                            // value={props.end}
-                                            minTime={props.start}
-                                            maxTime={new Date(props.date.setHours(23,59,0,0))}
-                                        />
+                                    <DatePicker
+                                        selected={props.end}
+                                        onChange={handleSetTaskEnd}
+                                        timeFormat="HH:mm"
+                                        showTimeSelect
+                                        showTimeSelectOnly
+                                        timeIntervals={1}
+                                        timeCaption="Time"
+                                        dateFormat="HH:mm"
+                                        className={timeInputStyle}
+                                        name="end"
+                                        // value={props.end}
+                                        // minTime={props.start}
+                                        // maxTime={new Date(props.date.setHours(23,59,0,0))}
+                                    />
                                 </div>
                             </div>
                             <div className="column">
