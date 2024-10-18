@@ -52,6 +52,7 @@ export const getPeriodData = (startDate: Date, endDate: Date, data, holidays, no
     let flexStatus: number = 0;
     let vacation: number = 0;
     let illness: number = 0;
+    let normTime: number = 0;
 
     const daysInPeriod = differenceInDays(endDate,startDate)
     let currentDate = new Date(startDate);
@@ -62,10 +63,12 @@ export const getPeriodData = (startDate: Date, endDate: Date, data, holidays, no
         const isWork = filteredByDate.filter((item) => item.resource ? item.resource.taskId !== 27 && item.resource.taskId !== 24 && item.resource.taskId !== 26 : item.taskId !== 27 && item.taskId !== 24 && item.taskId !== 26);
         const workTime = isWork.reduce((total, currentItem) => (total = total + (currentItem.resource ? currentItem.resource.taskTime || 0 : currentItem.taskTime || 0)), 0);
         const illnessTime = isIllness.reduce((total, currentItem) => (total = total + (currentItem.resource ? currentItem.resource.taskTime || 0 : currentItem.taskTime || 0)), 0);
-        const isFuture = new Date() < currentDate || isSameDay(currentDate, new Date());
+        // const isFuture = new Date() < currentDate || isSameDay(currentDate, new Date());
+        const isFuture = new Date() < currentDate;
         const holiday = holidays.find((item) => isSameDay(item.start, currentDate));
         const dayNo = getDay(currentDate);
         const norm = norms[dayNo];
+        let normDeviation = null;
 
         if (isVacation.length > 0) {
             isVacation.forEach((item) => {
@@ -91,8 +94,10 @@ export const getPeriodData = (startDate: Date, endDate: Date, data, holidays, no
         } else if (holiday) {
             if (holiday.allDay) {
                 flexStatus += workTime;
+                normDeviation = 0;
             } else {
                 const holidayWorkTime = norm > holiday.workTime ? holiday.workTime : norm;
+                normDeviation = holidayWorkTime;
                 if (holidayWorkTime < workTime) {
                     const flex = workTime - holidayWorkTime;
                     flexStatus += flex;
@@ -115,8 +120,9 @@ export const getPeriodData = (startDate: Date, endDate: Date, data, holidays, no
             }
         }
         illness += illnessTime;
+        normTime += normDeviation !== null ? normDeviation : norm;
         currentDate = add(currentDate, { days: 1 });
     }
 
-    return { flex: flexStatus, vacation, illness };
+    return { flex: flexStatus, vacation, illness, normTime };
 };
