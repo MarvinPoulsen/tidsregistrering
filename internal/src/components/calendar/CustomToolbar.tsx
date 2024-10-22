@@ -6,12 +6,13 @@ import { ToolbarProps as OriginalToolbarProps, View, Event } from 'react-big-cal
 import { toHoursAndMinutes, getPeriodData } from '../../utils';
 import WeekStatus from '../../components/modal/WeekStatus';
 import { MyAbsencePresence } from '../app/App';
+import { BackgroundEvent } from '../../pages/complex/Complex';
 
 // Interface definitions
 
 interface ToolbarProps extends OriginalToolbarProps {
     events: Event[];
-    holidays: Event[];
+    holidays: BackgroundEvent[];
     norms: number[];
     myAbsencePresence: MyAbsencePresence;
 }

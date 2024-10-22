@@ -21,6 +21,14 @@ registerLocale('da', da); // register it with the name you want
 //     resource?: Any;
 // }
 
+export interface BackgroundEvent {
+    allDay?: boolean | undefined;
+    title?: React.ReactNode | undefined;
+    start?: Date | undefined;
+    end?: Date | undefined;
+    workTime?: number | undefined;
+}
+
 interface Resource {
     id: number;
     note?: string;
@@ -42,15 +50,15 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
-// const backgroundEvents = [];
 const makeHolydayList = (holidayList) => {
     const eventList = [];
     for (const holiday of holidayList) {
         const event = {
             title: holiday.title,
-            allDay: 'false',
+            allDay: holiday.allDay === true,
             start: holiday.start,
             end: holiday.end,
+            workTime: holiday.workTime,
         };
         eventList.push(event);
     }
@@ -113,12 +121,12 @@ interface ComplexProps {
     balances: FlexBalance[];
     myAbsencePresence: MyAbsencePresence;
 }
-const Complex = ({norms,myAbsencePresence,  ...props}: ComplexProps) => {
+const Complex = ({ norms, myAbsencePresence, ...props }: ComplexProps) => {
     const [allEvents, setAllEvents] = useState<Event[]>([]);
-    const [backgroundEvents, setBackgroundEvents] = useState<Event[]>([]);
+    const [backgroundEvents, setBackgroundEvents] = useState<BackgroundEvent[]>([]);
 
     useEffect(() => {
-        const holiday: Event[] = makeHolydayList(props.holidays);
+        const holiday: BackgroundEvent[] = makeHolydayList(props.holidays);
         setBackgroundEvents(holiday);
         const data: Event[] = makeEventList(props.registrations, props.tasks);
         setAllEvents(data);
@@ -143,7 +151,6 @@ const Complex = ({norms,myAbsencePresence,  ...props}: ComplexProps) => {
                 weekdayFormat: (date, culture, localizer) => localizer.format(date, 'dddd', culture),
             },
             scrollToTime: new Date(1970, 1, 1, 8),
-            
         }),
         []
     );
@@ -172,10 +179,17 @@ const Complex = ({norms,myAbsencePresence,  ...props}: ComplexProps) => {
             style,
         };
     }, []);
-
-const components = {
-    toolbar: (props) => <CustomToolbar {...props} events={allEvents} holidays={backgroundEvents} norms={norms} myAbsencePresence={myAbsencePresence} />,
-}
+    const components = {
+        toolbar: (props) => (
+            <CustomToolbar
+                {...props}
+                events={allEvents}
+                holidays={backgroundEvents}
+                norms={norms}
+                myAbsencePresence={myAbsencePresence}
+            />
+        ),
+    };
 
     return (
         <>
@@ -200,7 +214,7 @@ const components = {
                         />
                          */}
                     <Calendar
-                    components={components}
+                        components={components}
                         backgroundEvents={backgroundEvents}
                         defaultView="week"
                         events={allEvents}
