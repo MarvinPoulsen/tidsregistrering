@@ -26,6 +26,7 @@ const WeekStatus = (props: WeekStatusProps) => {
     // useEffect hooks
     // Data processing
     const flex = toHoursAndMinutes(props.flex);
+    const flexImpact = Math.round((props.flex/60)*100)/100
     const vacation = toHoursAndMinutes(props.vacation);
     const illness = toHoursAndMinutes(props.illness);
     const norm = toHoursAndMinutes(props.norm);
@@ -42,6 +43,7 @@ const WeekStatus = (props: WeekStatusProps) => {
                         <div className="content">
                             <h1>Ugens registrering</h1>
                             <p>Flex balance: {flex}</p>
+                            <p>Flexpåvirkning: {flexImpact}</p>
                             <p> Ferie: {vacation}</p>
                             <p> Fravær: {illness}</p>
                             <p> Norm: {norm}</p>
